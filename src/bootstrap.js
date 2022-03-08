@@ -14,6 +14,9 @@ app.start('../assets/config/config.json').then((config) => {
   const itownsView = app.view;
   const scene3D = itownsView.scene;
   const cameraItowns = itownsView.camera.camera3D;
+  const inputManager = new udviz.Components.InputManager();
+
+  let districtSelection = false;
 
   // Clamp camera
   itownsView.controls.minZenithAngle = 40;
@@ -41,10 +44,7 @@ app.start('../assets/config/config.json').then((config) => {
   );
   app.addModuleView('temporal', temporalModule.view);
 
-  //Start of the application
-
-  //temporalModule.view.enableView();
-
+  /* ------------------------------------ Start of the application ------------------------------------ */
   app.viewerDivElement.addEventListener( 'pointermove', onTileMouseMove );
   app.viewerDivElement.addEventListener( 'click', onTileSelect );
 
@@ -78,6 +78,7 @@ app.start('../assets/config/config.json').then((config) => {
         //Get only 3DTiles layer
         if (objectIntersect.layer.isC3DTilesLayer){
           //Travel to the centroid
+          console.log(objectIntersect);
           udviz.Components.focusCameraOn(itownsView,
             itownsView.controls,
             objectIntersect.point,
@@ -85,13 +86,43 @@ app.start('../assets/config/config.json').then((config) => {
               verticalDistance : 1200,
               horizontalDistance : 1800});
 
+          //Disable all neighbours layers    
+          app.layerManager.tilesManagers.forEach(element => {
+            if (element.layer.name != objectIntersect.layer.name)
+              element.layer.visible = false;
+          });
+
           //Display temporal UI
           temporalModule.view.enableView();
+
+          //Setup state
+          districtSelection = true;
         }   
       }
     }
   }
 
+  inputManager.addKeyInput('Escape','keydown', function () {
+    if (districtSelection){
+      //reset camera to center
+      console.log(app.extent.center());
+      udviz.Components.focusCameraOn(itownsView,
+        itownsView.controls,
+        new udviz.THREE.Vector3(app.extent.center().x, app.extent.center().y, app.extent.center().z),
+        {duration: 1,
+          verticalDistance : 4200,
+          horizontalDistance : 4800});
+      temporalModule.view.disableView();
+
+      //Enable all neighbours layers    
+      app.layerManager.tilesManagers.forEach(element => {
+        element.layer.visible = true;
+      });
+      console.log('escape input');
+    }
+  });
+
   //DEBUG
   console.log(cameraItowns);
+  console.log(app.layerManager);
 });
