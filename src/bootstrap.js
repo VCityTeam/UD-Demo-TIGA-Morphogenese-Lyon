@@ -13,6 +13,14 @@ app.start('../assets/config/config.json').then((config) => {
 
   const itownsView = app.view;
   const scene3D = itownsView.scene;
+  const cameraItowns = itownsView.camera.camera3D;
+
+  // Clamp camera
+  itownsView.controls.minZenithAngle = 40;
+  itownsView.controls.maxZenithAngle = 180;
+  itownsView.controls.maxAltitude = 6000;
+  itownsView.controls.groundLevel = 500;
+  itownsView.controls.handleCollision = true;
 
   ////// ABOUT MODULE
   const about = new udviz.Widgets.AboutWindow();
@@ -35,35 +43,55 @@ app.start('../assets/config/config.json').then((config) => {
 
   //Start of the application
 
+  //temporalModule.view.enableView();
 
-  
-
-  temporalModule.view.enableView();
-
-  app.viewerDivElement.addEventListener( 'pointermove', onDocumentMouseLeave );
+  app.viewerDivElement.addEventListener( 'pointermove', onTileMouseMove );
+  app.viewerDivElement.addEventListener( 'click', onTileSelect );
 
   //Event to select a tile set
-  function onDocumentMouseLeave( event ) {    
+  function onTileMouseMove( event ) {    
     event.preventDefault();
     let intersects = itownsView.pickObjectsAt(event, 1, scene3D);
-    //console.log(intersects);
     if ( intersects.length > 0) {
       for (let index = 0; index < intersects.length; index++) {
         const objectIntersect = intersects[index];
         if (objectIntersect.layer.isC3DTilesLayer) {
-          console.log(objectIntersect);
           objectIntersect.object.material[1].color.set('rgb(255, 0, 0)');
+          app.update3DView();
           //Reset color
           setTimeout(function() {
             objectIntersect.object.material[1].color.set('rgb(255, 255, 255)');
-          }, 500);
-        }
-        
+          }, 100);
+        }  
       }
     }
-    
   }
-  
 
+  //Event to select a tile set
+  function onTileSelect( event ) {    
+    event.preventDefault();
+    //selected objects
+    let intersects = itownsView.pickObjectsAt(event, 1, scene3D);
+    if ( intersects.length > 0) {
+      for (let index = 0; index < intersects.length; index++) {
+        const objectIntersect = intersects[index];
+        //Get only 3DTiles layer
+        if (objectIntersect.layer.isC3DTilesLayer){
+          //Travel to the centroid
+          udviz.Components.focusCameraOn(itownsView,
+            itownsView.controls,
+            objectIntersect.point,
+            {duration: 1,
+              verticalDistance : 1200,
+              horizontalDistance : 1800});
 
+          //Display temporal UI
+          temporalModule.view.enableView();
+        }   
+      }
+    }
+  }
+
+  //DEBUG
+  console.log(cameraItowns);
 });
