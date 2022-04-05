@@ -77,14 +77,16 @@ app.start('../assets/config/config.json').then((config) => {
         const objectIntersect = intersects[index];
         //Get only 3DTiles layer
         if (objectIntersect.layer.isC3DTilesLayer){
+          
           //Travel to the centroid
-          console.log(objectIntersect);
           udviz.Components.focusCameraOn(itownsView,
             itownsView.controls,
             objectIntersect.point,
             {duration: 1,
               verticalDistance : 1200,
               horizontalDistance : 1800});
+
+          objectIntersect.object.material[1].color.set('rgb(255, 225, 225)');
 
           //Disable all neighbours layers    
           app.layerManager.tilesManagers.forEach(element => {
@@ -102,10 +104,10 @@ app.start('../assets/config/config.json').then((config) => {
     }
   }
 
+  // Escape input to reset view on center
   inputManager.addKeyInput('Escape','keydown', function () {
     if (districtSelection){
       //reset camera to center
-      console.log(app.extent.center());
       udviz.Components.focusCameraOn(itownsView,
         itownsView.controls,
         new udviz.THREE.Vector3(app.extent.center().x, app.extent.center().y, app.extent.center().z),
@@ -117,7 +119,10 @@ app.start('../assets/config/config.json').then((config) => {
       //Enable all neighbours layers    
       app.layerManager.tilesManagers.forEach(element => {
         element.layer.visible = true;
+        console.log(element.layer.color = 16777555);
+        //element.object.material[1].color.set('rgb(255, 225, 225)');
       });
+      app.update3DView();
       console.log('escape input');
     }
   });
