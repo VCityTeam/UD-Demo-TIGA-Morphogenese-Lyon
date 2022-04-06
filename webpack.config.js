@@ -33,19 +33,27 @@ module.exports = (env) => {
       ],
     },
   ];
-
-  const plugins = [];
-  if (debugBuild)
-    plugins.push(
-      new HtmlWebpackPlugin({
-        title: 'Demo debug',
-        filename: 'index.html',
-      })
-    );
+ 
+  const plugins = [
+    new HtmlWebpackPlugin({
+      template: "./home.html",
+      chunks: ['home']
+    }),
+    new HtmlWebpackPlugin({
+      // template: "./index.html",
+      title: 'Demo debug',
+      filename: 'index.html',
+      // chunks: ['bootstrap']
+    }),
+  ];
 
   const config = {
     mode,
-    entry: [path.resolve(__dirname, './src/bootstrap.js')],
+    entry: {
+      // main: './src/home.js',
+      index: [path.resolve(__dirname, './src/bootstrap.js')],
+      main: './src/home.js'
+    },
     output: {
       path: outputPath,
       filename: 'app_name.js',
