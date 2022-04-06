@@ -36,23 +36,20 @@ module.exports = (env) => {
  
   const plugins = [
     new HtmlWebpackPlugin({
-      template: "./home.html",
-      chunks: ['home']
+      template: 'home.html',
+      chunks: ['home'],
     }),
     new HtmlWebpackPlugin({
-      // template: "./index.html",
       title: 'Demo debug',
       filename: 'index.html',
-      // chunks: ['bootstrap']
     }),
   ];
 
   const config = {
     mode,
     entry: {
-      // main: './src/home.js',
+      main: './src/home.js',
       index: [path.resolve(__dirname, './src/bootstrap.js')],
-      main: './src/home.js'
     },
     output: {
       path: outputPath,
