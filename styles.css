@@ -1,0 +1,138 @@
+/* Générale*/
+
+body{
+    font-family: 'Lato', sans-serif;
+}
+
+/* Menu */
+.btn{
+    margin: 5px;
+}
+
+.bg-light{
+    background-color: rgb(255, 255, 255)!important;
+    border-bottom: solid 0.8px rgb(199, 197, 197);
+}
+
+.btn:hover{
+    background-color: rgb(220, 221, 221);
+}
+
+#pills-tab{
+    padding: 10px 10px 10px 770px ;
+}
+
+
+/* sous menu catégories */
+
+#navCategories{
+    display: flex;
+}
+
+.navCategories{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#categorie1{
+    color: chocolate;
+    background-color: rgb(255, 255, 255);
+    padding: 15px 20px 15px 20px;
+    border-radius: 20px;
+    border:solid 1px chocolate; 
+    margin-right: 50px;
+}
+
+#categorie2{
+    color: rgb(30, 159, 210);
+    border-radius: 20px;
+    border:solid 1px rgb(30, 159, 210); 
+    background-color: rgb(255, 255, 255);
+    padding: 15px 20px 15px 20px;
+    margin-right: 50px;
+}
+
+#categorie3{
+    color: rgb(210, 198, 30);
+    border-radius: 20px;
+    border:solid 1px rgb(210, 198, 30); 
+    background-color: rgb(255, 255, 255);
+    padding: 15px 20px 15px 20px;
+    margin-right: 50px;
+}
+
+#categorie4{
+    color: rgb(30, 36, 210);
+    border-radius: 20px;
+    border:solid 1px rgb(30, 36, 210); 
+    background-color: rgb(255, 255, 255);
+    padding: 15px 20px 15px 20px;
+    margin-right: 50px;
+}
+
+#categorie5{
+    color: rgb(30, 210, 75);
+    border-radius: 20px;
+    border:solid 1px rgb(30, 210, 75); 
+    background-color: rgb(255, 255, 255);
+    padding: 15px 20px 15px 20px;
+    margin-right: 50px;
+}
+
+#categorie6{
+    color: rgb(210, 30, 30);
+    border-radius: 20px;
+    border:solid 1px rgb(210, 30, 30); 
+    background-color: rgb(255, 255, 255);
+    padding: 15px 20px 15px 20px;
+}
+
+
+/* Caroussel et texte */
+.card-body {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 0px 0px 50px 10px;
+}
+#carouselText{
+    padding: 150px 10px 50px 10px;
+}
+
+/* Bannière */
+#ban1{
+    height: 7rem;
+    position: relative;
+    background: url('https://www.patrimoine-lyon.org/uploads/images/icones/gravure-3d_1680.jpg');
+    background-size: cover;
+    background-position: right;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    text-align: center;
+}
+
+/* Contact */
+.img-contact{
+    border-radius: 50%;
+    height: 150px;
+    width: 150px;
+}
+
+#contact{
+    padding: 100px 0 100px 0;
+}
+
+/* Partenaires */
+.img-partenaire{
+    border-radius: 10%;
+    height: 150px;
+    width: 250px;
+}
+
+/* Visites guidées */
+#visite{
+    padding: 100px 0 100px 0;
+}
+.img-fluid{
+    border-radius: 10%;
+}
+
