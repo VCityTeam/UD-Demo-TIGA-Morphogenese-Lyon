@@ -2,51 +2,69 @@
 
 import * as udviz from 'ud-viz';
 
-const app = new udviz.Templates.AllWidget();
-
-app.start('../assets/config/config.json').then((config) => {
-  app.addBaseMapLayer();
-
-  app.addElevationLayer();
-
-  app.setupAndAdd3DTilesLayers();
-
-  const itownsView = app.view;
-  const scene3D = itownsView.scene;
-  const cameraItowns = itownsView.camera.camera3D;
-  const inputManager = new udviz.Components.InputManager();
+udviz.Components.SystemUtils.File.loadJSON(
+  './assets/config/config.json'
+).then(function (config) { 
 
   let districtSelection = false;
 
-  // Clamp camera
-  itownsView.controls.minZenithAngle = 40;
-  itownsView.controls.maxZenithAngle = 180;
-  itownsView.controls.maxAltitude = 6000;
-  itownsView.controls.groundLevel = 500;
-  itownsView.controls.handleCollision = true;
-
-  ////// ABOUT MODULE
-  const about = new udviz.Widgets.AboutWindow();
-  app.addModuleView('about', about);
-
-  ////// HELP MODULE
-  const help = new udviz.Widgets.Extensions.HelpWindow(config.helpWindow);
-  app.addModuleView('help', help);
-
-  ////// LAYER CHOICE MODULE
-  const layerChoice = new udviz.Widgets.LayerChoice(app.layerManager);
-  app.addModuleView('layerChoice', layerChoice);
-
-  ////// TEMPORAL MODULE
-  const temporalModule = new udviz.Widgets.TemporalModule(
-    app.layerManager.tilesManagers[0],
-    app.config.temporalModule
+  //Get extents coordinates
+  let min_x = parseInt(config['extents']['min_x']);
+  let max_x = parseInt(config['extents']['max_x']);
+  let min_y = parseInt(config['extents']['min_y']);
+  let max_y = parseInt(config['extents']['max_y']);
+  const extent = new udviz.itowns.Extent(
+    config['projection'],
+    min_x,
+    max_x,
+    min_y,
+    max_y
   );
-  app.addModuleView('temporal', temporalModule.view);
+
+  //pass the projection which was used to compute extent
+  const view3D = new udviz.Views.View3D({
+    itownsControls: true,
+    config: config,
+  });
+
+  //pass the extent
+  view3D.initItownsView(extent);
+
+  //Setup skybox
+  udviz.Game.Components.THREEUtils.addEquiRectangularMap(
+    './assets/img/sky.jpg',
+    view3D.getRenderer(),
+    view3D.getScene()
+  );
+
+  const scene3D = view3D.getScene();
+  const itownsView =  view3D.getItownsView();
+
+  //Lighting
+  const directionalLight = new udviz.THREE.DirectionalLight(0xffffff, 0.7);
+  const ambientLight = new udviz.THREE.AmbientLight(0xffffff, 0.7);
+  udviz.Game.Components.THREEUtils.addLights(view3D.getScene());
+  udviz.Game.Components.THREEUtils.bindLightTransform(
+    10,
+    Math.PI / 4,
+    Math.PI / 4,
+    view3D.getScene(),
+    directionalLight,
+    ambientLight
+  );
+
+  // Clamp camera
+  view3D.itownsView.controls.minZenithAngle = 40;
+  view3D.itownsView.controls.maxZenithAngle = 180;
+  view3D.itownsView.controls.maxAltitude = 6000;
+  view3D.itownsView.controls.groundLevel = 500;
+  view3D.itownsView.controls.handleCollision = true;
+
+  const viewerDivElement = document.getElementById('webgl_View3D');
 
   /* ------------------------------------ Start of the application ------------------------------------ */
-  app.viewerDivElement.addEventListener( 'pointermove', onTileMouseMove );
-  app.viewerDivElement.addEventListener( 'click', onTileSelect );
+  viewerDivElement.addEventListener( 'pointermove', onTileMouseMove );
+  viewerDivElement.addEventListener( 'click', onTileSelect );
 
   //Event to select a tile set
   function onTileMouseMove( event ) {    
@@ -57,7 +75,7 @@ app.start('../assets/config/config.json').then((config) => {
         const objectIntersect = intersects[index];
         if (objectIntersect.layer.isC3DTilesLayer) {
           objectIntersect.object.material[1].color.set('rgb(255, 0, 0)');
-          app.update3DView();
+          // app.update3DView();
           //Reset color
           setTimeout(function() {
             objectIntersect.object.material[1].color.set('rgb(255, 255, 255)');
@@ -79,7 +97,7 @@ app.start('../assets/config/config.json').then((config) => {
         if (objectIntersect.layer.isC3DTilesLayer){
           
           //Travel to the centroid
-          udviz.Components.focusCameraOn(itownsView,
+          udviz.Components.focusCameraOn(view3D.getItownsView(),
             itownsView.controls,
             objectIntersect.point,
             {duration: 1,
@@ -89,13 +107,13 @@ app.start('../assets/config/config.json').then((config) => {
           objectIntersect.object.material[1].color.set('rgb(255, 225, 225)');
 
           //Disable all neighbours layers    
-          app.layerManager.tilesManagers.forEach(element => {
+          view3D.layerManager.tilesManagers.forEach(element => {
             if (element.layer.name != objectIntersect.layer.name)
               element.layer.visible = false;
           });
 
           //Display temporal UI
-          temporalModule.view.enableView();
+          // temporalModule.view.enableView();
 
           //Setup state
           districtSelection = true;
@@ -105,29 +123,25 @@ app.start('../assets/config/config.json').then((config) => {
   }
 
   // Escape input to reset view on center
-  inputManager.addKeyInput('Escape','keydown', function () {
+  view3D.inputManager.addKeyInput('Escape','keydown', function () {
     if (districtSelection){
       //reset camera to center
       udviz.Components.focusCameraOn(itownsView,
         itownsView.controls,
-        new udviz.THREE.Vector3(app.extent.center().x, app.extent.center().y, app.extent.center().z),
-        {duration: 1,
+        new udviz.THREE.Vector3(view3D.extent.center().x, view3D.extent.center().y, view3D.extent.center().z),
+        { duration: 1,
           verticalDistance : 4200,
           horizontalDistance : 4800});
-      temporalModule.view.disableView();
+      // temporalModule.view.disableView();
 
       //Enable all neighbours layers    
-      app.layerManager.tilesManagers.forEach(element => {
+      view3D.layerManager.tilesManagers.forEach(element => {
         element.layer.visible = true;
         console.log(element.layer.color = 16777555);
         //element.object.material[1].color.set('rgb(255, 225, 225)');
       });
-      app.update3DView();
+      // app.update3DView();
       console.log('escape input');
     }
   });
-
-  //DEBUG
-  console.log(cameraItowns);
-  console.log(app.layerManager);
 });
