@@ -24,6 +24,13 @@ body{
 
 
 /* sous menu catégories */
+.divCategories{
+    /* position: absolute; */
+    width: 100%;
+    top: 10%;
+    height: 15%;
+    z-index: -500;
+}
 
 #navCategories{
     display: flex;
@@ -85,6 +92,7 @@ body{
     border:solid 1px rgb(210, 30, 30); 
     background-color: rgb(255, 255, 255);
     padding: 15px 20px 15px 20px;
+    margin-right: 50px;
 }
 
 

@@ -1,6 +1,8 @@
 /** @format */
 
 import * as udviz from 'ud-viz';
+import jQuery from 'jquery';
+import '../styles.css';
 
 udviz.Components.SystemUtils.File.loadJSON(
   './assets/config/config.json'
@@ -103,7 +105,26 @@ udviz.Components.SystemUtils.File.loadJSON(
   }));
 
   
-  // document.getElementById('webgl_View3D').append('../assets/html/categorie.html');
+  const uiViewElement =  document.createElement('div');
+  uiViewElement.id = 'UI_categories';
+  uiViewElement.className = 'divCategories';
+  rootDivElement.append(uiViewElement);
+  
+  new Promise((resolve, reject) => {
+    jQuery.ajax({
+      type: 'GET',
+      url: '../assets/html/categorie.html',
+      datatype: 'html',
+      success: (data) => {
+        uiViewElement.innerHTML += data;
+        resolve();
+      },
+      error: (e) => {
+        console.error(e);
+        reject();
+      },
+    });
+  });
 
   /* ------------------------------------ Start of the application ------------------------------------ */
   viewerDivElement.addEventListener( 'pointermove', onTileMouseMove );
