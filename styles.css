@@ -21,19 +21,14 @@ body{
 #pills-tab{
     padding: 10px 10px 10px 770px ;
 }
-
-
-/* sous menu catégories */
-.divCategories{
-    /* position: absolute; */
-    width: 100%;
-    top: 10%;
-    height: 15%;
-    z-index: -500;
+.fixed-top{
+    height: 20%;
 }
+
 
 #navCategories{
     display: flex;
+    height: 20%;
 }
 
 .navCategories{
@@ -143,4 +138,12 @@ body{
 .img-fluid{
     border-radius: 10%;
 }
+
+#js-map {
+    position: absolute;
+    left : 0%;
+    width: 50%;
+    height: 100%;
+    padding-top: 100px;
+  }
 

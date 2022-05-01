@@ -3,6 +3,12 @@
 import * as udviz from 'ud-viz';
 import jQuery from 'jquery';
 import '../styles.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import TileLayer from 'ol/layer/Tile';
+import Overlay from 'ol/Overlay';
+import OSM from 'ol/source/OSM';
 
 udviz.Components.SystemUtils.File.loadJSON(
   './assets/config/config.json'
@@ -77,33 +83,10 @@ udviz.Components.SystemUtils.File.loadJSON(
 
   // Setup planar view
   viewerDivElement.style.position = 'absolute';
-  viewerDivElement.style.left = '0%';
+  viewerDivElement.style.left = '50%';
   viewerDivElement.style.width = '50%';
   viewerDivElement.style.height = '100%';
-
-  // Setup globe view
-  const globeViewElement =  document.createElement('div');
-  globeViewElement.id = 'GlobeView';
-  globeViewElement.style.position = 'absolute';
-  globeViewElement.style.right = '0%';
-  globeViewElement.style.width = '50%';
-  globeViewElement.style.height = '100%';
-
-  rootDivElement.append(globeViewElement);
-
-  let placement = {
-    coord: new udviz.itowns.Coordinates('EPSG:4326', 4.838, 45.756),
-    range: 1000,
-  };
-
-  let globeView = new udviz.itowns.GlobeView(globeViewElement, placement);
-  var promises = [];
-  promises.push(udviz.itowns.Fetcher.json('https://raw.githubusercontent.com/iTowns/itowns/master/examples/layers/JSONLayers/Ortho.json').then(function _(config) {
-    config.source = new udviz.itowns.WMTSSource(config.source);
-    var layer = new udviz.itowns.ColorLayer(config.id, config);
-    globeView.addLayer(layer);
-  }));
-
+  viewerDivElement.style.paddingTop = '100px';
   
   const uiViewElement =  document.createElement('div');
   uiViewElement.id = 'UI_categories';
@@ -125,6 +108,36 @@ udviz.Components.SystemUtils.File.loadJSON(
       },
     });
   });
+
+  //Openlayer
+  const divOpenlayers =  document.createElement('div');
+  divOpenlayers.id = 'js-map';
+  rootDivElement.append(divOpenlayers);
+
+  const map = new Map({
+    layers: [
+      new TileLayer({
+        source: new OSM()
+      })
+    ],
+    target: 'js-map',
+    view: new View({
+      center: [546333.65967,5732777.12139],
+      zoom: 12
+    }),
+    keyboardEventTarget: document
+  });
+  
+
+
+  const popupContainerElement = document.getElementById('popup-coordinates');
+  const popup = new Overlay({
+    element: popupContainerElement,
+    positioning: 'top-right'
+  });
+
+  map.addOverlay(popup);
+
 
   /* ------------------------------------ Start of the application ------------------------------------ */
   viewerDivElement.addEventListener( 'pointermove', onTileMouseMove );
