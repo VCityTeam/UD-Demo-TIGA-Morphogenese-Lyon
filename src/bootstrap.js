@@ -1,20 +1,15 @@
 /** @format */
 
 import * as udviz from 'ud-viz';
-import jQuery from 'jquery';
 import '../styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import Overlay from 'ol/Overlay';
-import OSM from 'ol/source/OSM';
+import {Deck} from '@deck.gl/core';
+import {GeoJsonLayer, ArcLayer} from '@deck.gl/layers';
+import * as proj4 from 'proj4';
 
 udviz.Components.SystemUtils.File.loadJSON(
   './assets/config/config.json'
 ).then(function (config) { 
-
-  let districtSelection = false;
 
   //Get extents coordinates
   let min_x = parseInt(config['extents']['min_x']);
@@ -45,6 +40,12 @@ udviz.Components.SystemUtils.File.loadJSON(
     view3D.getScene()
   );
 
+  
+  let deckGlCanvas = document.createElement('canvas');
+  deckGlCanvas.id = 'deck-canvas';
+  deckGlCanvas.style.zIndex = 2;
+  document.getElementById('root_View3D').appendChild(deckGlCanvas);
+  
 
   const scene3D = view3D.getScene();
   const itownsView =  view3D.getItownsView();
@@ -62,164 +63,141 @@ udviz.Components.SystemUtils.File.loadJSON(
     ambientLight
   );
 
-  //Init camera to center
-  udviz.Components.CameraUtils.focusCameraOn(itownsView,
-    itownsView.controls,
-    new udviz.THREE.Vector3(view3D.extent.center().x, view3D.extent.center().y, view3D.extent.center().z),
-    { duration: 1,
-      verticalDistance : 4200,
-      horizontalDistance : 4800}
-  );
+  // // Initialize itowns view
+  // view3D.getCamera().position.set(4.838991, 45.748826, 5);
+  // view3D.getCamera().rotation.set(1.0619838785677609,-0.3043337605398328, -0.16561814175954986);
 
-  // Clamp camera
-  view3D.itownsView.controls.minZenithAngle = 40;
-  view3D.itownsView.controls.maxZenithAngle = 180;
-  view3D.itownsView.controls.maxAltitude = 6000;
-  view3D.itownsView.controls.groundLevel = 500;
-  view3D.itownsView.controls.handleCollision = true;
+  const AIR_PORTS =
+    'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_10m_airports.geojson';
 
-  const viewerDivElement = document.getElementById('webgl_View3D');
-  const rootDivElement = document.getElementById('root_View3D');
+  const INITIAL_VIEW_STATE = {
+    latitude: 45.740873,
+    longitude: 4.838963,
+    zoom: 10,
+    bearing: 0,
+    pitch: 30
+  };
+  // # Orthographic viewer
 
-  // Setup planar view
-  viewerDivElement.style.position = 'absolute';
-  viewerDivElement.style.left = '50%';
-  viewerDivElement.style.width = '50%';
-  viewerDivElement.style.height = '100%';
-  viewerDivElement.style.paddingTop = '100px';
-  
-  const uiViewElement =  document.createElement('div');
-  uiViewElement.id = 'UI_categories';
-  uiViewElement.className = 'divCategories';
-  rootDivElement.append(uiViewElement);
-  
-  new Promise((resolve, reject) => {
-    jQuery.ajax({
-      type: 'GET',
-      url: '../assets/html/categorie.html',
-      datatype: 'html',
-      success: (data) => {
-        uiViewElement.innerHTML += data;
-        resolve();
-      },
-      error: (e) => {
-        console.error(e);
-        reject();
-      },
-    });
+  // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
+  // var viewerDiv = document.getElementById('map');
+
+  // Instanciate PlanarView
+  // By default itowns' tiles geometry have a "skirt" (ie they have a height),
+  // but in case of orthographic we don't need this feature, so disable it
+  // var view = new udviz.itowns.PlanarView(viewerDiv, extent, { disableSkirt: false, maxSubdivisionLevel: 10,
+  //   placement: new udviz.itowns.Extent('EPSG:3857', -20000000, 20000000, -8000000, 20000000),
+  // });
+
+  // view.controls.addInputListenersToElement(document.getElementById('deckCanvas'));
+
+  // Add a TMS imagery source
+  var ignSource = new udviz.itowns.VectorTilesSource({
+    style: 'https://wxs.ign.fr/static/vectorTiles/styles/PLAN.IGN/standard.json', 
+    zoom: {
+      min: 2,
+      max: 18,
+    },
   });
 
-  //Openlayer
-  const divOpenlayers =  document.createElement('div');
-  divOpenlayers.id = 'js-map';
-  rootDivElement.append(divOpenlayers);
 
-  const map = new Map({
+  // Add a TMS imagery layer
+  var colorLayer = new udviz.itowns.ColorLayer('OPENSM', {
+    updateStrategy: {
+      type: udviz.itowns.STRATEGY_DICHOTOMY,
+    },
+    source: ignSource,
+    opacity: 0.5,
+  });
+
+  itownsView.addLayer(colorLayer);
+
+
+  const deck = new Deck({
+    canvas: 'deck-canvas',
+    width: '100%',
+    height: '100%',
+    initialViewState: INITIAL_VIEW_STATE,
+    map: false,
+    controller: true,
+    onViewStateChange: ({viewState}) => {
+      const cam3D = itownsView.camera.camera3D;
+      const prev = udviz.itowns.CameraUtils.getTransformCameraLookingAtTarget(itownsView, cam3D);
+      const newPos = prev;
+      newPos.coord = new udviz.itowns.Coordinates('EPSG:4326', viewState.longitude, viewState.latitude, 0);
+      // console.log(itownsView.camera);
+      // console.log(viewState);
+      console.log(newPos);
+      // let factory = new udviz.proj4;
+      // let fromProj = proj4.default.defs('EPSG:3414');
+      // let toProf = proj4.default.defs();
+      // let x;
+      // console.log(proj4);
+      /* Converting the coordinates from one projection to another. */
+      // console.log(cam3D.position.clone());
+      // const o = proj4.default('EPSG:3857').inverse(cam3D.position.clone());
+      // console.log(o);
+      // console.log([x, y]);
+      /* Converting the coordinates from one projection to another. */
+      // 
+      // CoordinateReferenceSystem srcCrs = factory.createFromName("EPSG:4326");
+      // CoordinateReferenceSystem dstCrs = factory.createFromName("EPSG:4141");
+
+      // BasicCoordinateTransform transform = new BasicCoordinateTransform(srcCrs, dstCrs);
+
+      newPos.coord = new udviz.itowns.Coordinates('EPSG:4326', viewState.longitude, viewState.latitude, 0);
+
+      // newPos.range = 64118883.098724395 / (2**(viewState.zoom-1));
+      newPos.range = 64118883 / (2**(viewState.zoom-1)); // 64118883 is Range at Z=1 
+      newPos.heading = viewState.bearing;
+      // for some reason I cant access Math.clamp
+      function clamp(val, min, max){
+        if( val >= max ) val = max;
+        else if(val <= min) val = min;
+        return val; 
+      }
+      newPos.tilt = clamp((90 - viewState.pitch), 0, 90); 
+
+      udviz.itowns.CameraUtils.transformCameraToLookAtTarget(itownsView, cam3D, newPos);
+      itownsView.notifyChange();
+      cam3D.updateMatrixWorld();
+      // We can set pitch and bearing to 0 to disable tilting and turning 
+      // viewState.pitch = 0;
+      // viewState.bearing = 0;
+
+
+      return viewState;
+    },
     layers: [
-      new TileLayer({
-        source: new OSM()
+      new GeoJsonLayer({
+        id: 'airports',
+        data: AIR_PORTS,
+        // Styles
+        filled: true,
+        pointRadiusMinPixels: 2,
+        pointRadiusScale: 2000,
+        getPointRadius: f => 11 - f.properties.scalerank,
+        getFillColor: [200, 0, 80, 180],
+        // Interactive props
+        pickable: true,
+        autoHighlight: true,
+        onClick: info =>
+          // eslint-disable-next-line
+          info.object && alert(`${info.object.properties.name} (${info.object.properties.abbrev})`)
+      }),
+      new ArcLayer({
+        id: 'arcs',
+        data: AIR_PORTS,
+        dataTransform: d => d.features.filter(f => f.properties.scalerank < 4),
+        // Styles
+        getSourcePosition: f => [-0.4531566, 51.4709959], // London
+        getTargetPosition: f => f.geometry.coordinates,
+        getSourceColor: [0, 128, 200],
+        getTargetColor: [200, 0, 80],
+        getWidth: 1
       })
-    ],
-    target: 'js-map',
-    view: new View({
-      center: [546333.65967,5732777.12139],
-      zoom: 12
-    }),
-    keyboardEventTarget: document
-  });
-  
-
-
-  const popupContainerElement = document.getElementById('popup-coordinates');
-  const popup = new Overlay({
-    element: popupContainerElement,
-    positioning: 'top-right'
+    ]
   });
 
-  map.addOverlay(popup);
-
-
-  /* ------------------------------------ Start of the application ------------------------------------ */
-  viewerDivElement.addEventListener( 'pointermove', onTileMouseMove );
-  viewerDivElement.addEventListener( 'click', onTileSelect );
-
-  //Event to select a tile set
-  function onTileMouseMove( event ) {    
-    event.preventDefault();
-    let intersects = itownsView.pickObjectsAt(event, 1, scene3D);
-    if ( intersects.length > 0) {
-      for (let index = 0; index < intersects.length; index++) {
-        const objectIntersect = intersects[index];
-        if (objectIntersect.layer.isC3DTilesLayer) {
-          objectIntersect.object.material[1].color.set('rgb(255, 0, 0)');
-          // app.update3DView();
-          //Reset color
-          setTimeout(function() {
-            objectIntersect.object.material[1].color.set('rgb(255, 255, 255)');
-          }, 100);
-        }  
-      }
-    }
-  }
-
-  //Event to select a tile set
-  function onTileSelect( event ) {    
-    event.preventDefault();
-    //selected objects
-    let intersects = itownsView.pickObjectsAt(event, 1, scene3D);
-    if ( intersects.length > 0) {
-      for (let index = 0; index < intersects.length; index++) {
-        const objectIntersect = intersects[index];
-        //Get only 3DTiles layer
-        if (objectIntersect.layer.isC3DTilesLayer){
-          
-          //Travel to the centroid
-          console.log(udviz.Components.CameraUtils);
-          udviz.Components.CameraUtils.focusCameraOn(view3D.getItownsView(),
-            itownsView.controls,
-            objectIntersect.point,
-            {duration: 1,
-              verticalDistance : 1200,
-              horizontalDistance : 1800});
-
-          objectIntersect.object.material[1].color.set('rgb(255, 225, 225)');
-
-          //Disable all neighbours layers    
-          view3D.layerManager.tilesManagers.forEach(element => {
-            if (element.layer.name != objectIntersect.layer.name)
-              element.layer.visible = false;
-          });
-
-          //Display temporal UI
-          // temporalModule.view.enableView();
-
-          //Setup state
-          districtSelection = true;
-        }   
-      }
-    }
-  }
-
-  // Escape input to reset view on center
-  view3D.inputManager.addKeyInput('Escape','keydown', function () {
-    if (districtSelection){
-      //reset camera to center
-      udviz.Components.CameraUtils.focusCameraOn(itownsView,
-        itownsView.controls,
-        new udviz.THREE.Vector3(view3D.extent.center().x, view3D.extent.center().y, view3D.extent.center().z),
-        { duration: 1,
-          verticalDistance : 4200,
-          horizontalDistance : 4800});
-      // temporalModule.view.disableView();
-
-      //Enable all neighbours layers    
-      view3D.layerManager.tilesManagers.forEach(element => {
-        element.layer.visible = true;
-        console.log(element.layer.color = 16777555);
-        //element.object.material[1].color.set('rgb(255, 225, 225)');
-      });
-      // app.update3DView();
-      console.log('escape input');
-    }
-  });
+  itownsView.notifyChange();
 });
