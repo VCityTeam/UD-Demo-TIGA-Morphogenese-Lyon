@@ -40,8 +40,4 @@ app.start('../assets/config/config.json').then((config) => {
   const layerChoice = new udviz.Widgets.LayerChoice(app.view3D.layerManager);
   app.addModuleView('layerChoice', layerChoice);
 
-  const inputManager = new udviz.Components.InputManager();
-  ///// SLIDESHOW MODULE
-  const slideShow = new udviz.Widgets.SlideShow(app, inputManager);
-  app.addModuleView('slideShow', slideShow);
 });
