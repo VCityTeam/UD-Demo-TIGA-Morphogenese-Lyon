@@ -40,6 +40,7 @@ app.start('../assets/config/config.json').then((config) => {
   const layerChoice = new udviz.Widgets.LayerChoice(app.view3D.layerManager);
   app.addModuleView('layerChoice', layerChoice);
 
+  let scale = 0.5;
   app.viewerDivElement.addEventListener( 'click', onTileSelect );
 
   //Event to select a tile set
@@ -59,12 +60,27 @@ app.start('../assets/config/config.json').then((config) => {
       let meshCityObject = cityObject3D.content.children[meshId]; // Mesh of the cityObject picked
       let arrayCityObject = meshCityObject.geometry.attributes.position.array; // Array of the full mesh of te tile
       let arrayWithOnlyGeometryMesh = []; // Array of Vector3 with only the geometry of the cityObject picked
-      for (let i = indexStart; i < indexCount/3; i+=3){
+      // debugger;
+      let centroide = new udviz.THREE.Vector3(0, 0, 0);
+      for (let i = indexStart; i < indexStart + indexCount; i+=3){
         let position = new udviz.THREE.Vector3(arrayCityObject[i],arrayCityObject[i + 1],arrayCityObject[i + 2]);
-        debugger;
+        centroide.add(position);
         arrayWithOnlyGeometryMesh.push(position);
       }
 
+      centroide.divideScalar(arrayWithOnlyGeometryMesh.length);
+      let meshWithScale = [];
+      arrayWithOnlyGeometryMesh.forEach(position => {
+        let directionVector = position.sub(centroide);
+        directionVector.normalize();
+        let newPosition = new udviz.THREE.Vector3(
+          position.x + (directionVector.x * scale),
+          position.y + (directionVector.y * scale),
+          position.z + (directionVector.z * scale));
+        meshWithScale.push( newPosition);
+      });
+
+      debugger;
       let tileManager = app.view3D.layerManager.getTilesManagerByLayerID(
         cityObject.tile.layer.id
       );
