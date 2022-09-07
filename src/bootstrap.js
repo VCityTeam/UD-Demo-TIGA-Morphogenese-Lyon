@@ -47,8 +47,10 @@ app.start('../assets/config/config.json').then((config) => {
     event.preventDefault();
     //selected objects
     let cityObject = app.view3D.layerManager.pickCityObject(event, 1, app.view3D.scene);
-
+    
+    
     if (cityObject){
+      let cityObject3D = cityObject.tile.getObject3D();
       let tileManager = app.view3D.layerManager.getTilesManagerByLayerID(
         cityObject.tile.layer.id
       );
@@ -60,7 +62,10 @@ app.start('../assets/config/config.json').then((config) => {
           tileManager.view
         ),
       });
+      console.log(cityObject3D);
+      cityObject3D.scale.set(1.2, 1.2, 1.2);
+      cityObject3D.updateMatrixWorld();
+
     }
   }
-
 });
