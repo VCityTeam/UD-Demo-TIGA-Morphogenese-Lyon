@@ -48,24 +48,46 @@ app.start('../assets/config/config.json').then((config) => {
     //selected objects
     let cityObject = app.view3D.layerManager.pickCityObject(event, 1, app.view3D.scene);
     
-    
     if (cityObject){
-      let cityObject3D = cityObject.tile.getObject3D();
+
+      let indexCount = cityObject.indexCount;
+      let indexStart = cityObject.indexStart;
+      let meshId = cityObject.meshId;
+
+
+      let cityObject3D = cityObject.tile.getObject3D(); // Object THREE of the CityObject
+      let meshCityObject = cityObject3D.content.children[meshId]; // Mesh of the cityObject picked
+      let arrayCityObject = meshCityObject.geometry.attributes.position.array; // Array of the full mesh of te tile
+      let arrayWithOnlyGeometryMesh = []; // Array of Vector3 with only the geometry of the cityObject picked
+      for (let i = indexStart; i < indexCount/3; i+=3){
+        let position = new udviz.THREE.Vector3(arrayCityObject[i],arrayCityObject[i + 1],arrayCityObject[i + 2]);
+        debugger;
+        arrayWithOnlyGeometryMesh.push(position);
+      }
+
       let tileManager = app.view3D.layerManager.getTilesManagerByLayerID(
         cityObject.tile.layer.id
       );
-      let defaultSelectionStyle = { materialProps: { color: 0x13ddef } };
-      tileManager.setStyle(cityObject.cityObjectId, defaultSelectionStyle);
-
-      tileManager.applyStyles({
-        updateFunction: tileManager.view.notifyChange.bind(
-          tileManager.view
-        ),
-      });
-      console.log(cityObject3D);
+      
       cityObject3D.scale.set(1.2, 1.2, 1.2);
+      // debugger;
       cityObject3D.updateMatrixWorld();
 
     }
+  }
+
+  console.log(app.view3D.layerManager);
+
+  //Event to select a tile set
+  function onObjectSelect( event ) {    
+    event.preventDefault();
+    //selected objects
+    let raycaster =  new udviz.THREE.Raycaster();
+    let mouse3D = new udviz.THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,   
+      -( event.clientY / window.innerHeight ) * 2 + 1,  
+      0.5 );                                        
+    raycaster.setFromCamera( mouse3D, app.view3D.getCamera() );
+     
+    // let intersects = raycaster.intersectObjects()
   }
 });
