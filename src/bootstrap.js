@@ -40,7 +40,7 @@ app.start('../assets/config/config.json').then((config) => {
   const layerChoice = new udviz.Widgets.LayerChoice(app.view3D.layerManager);
   app.addModuleView('layerChoice', layerChoice);
 
-  let scale = 0.5;
+  let scale = 2;
   app.viewerDivElement.addEventListener( 'click', onTileSelect );
 
   //Event to select a tile set
@@ -80,30 +80,30 @@ app.start('../assets/config/config.json').then((config) => {
         meshWithScale.push( newPosition);
       });
 
-      debugger;
-      let tileManager = app.view3D.layerManager.getTilesManagerByLayerID(
-        cityObject.tile.layer.id
-      );
+      let index = 0;
+      let newArray = new Float32Array(arrayCityObject);
+      for (let i = indexStart; i < indexStart + indexCount; i+=3){
+        newArray[i] = meshWithScale[index].x;
+        newArray[i + 1] = meshWithScale[index].y;
+        newArray[i + 2] = meshWithScale[index].z;
+      }
+      cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.array = arrayCityObject;
+      cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.needsUpdate = true;
+
+      cityObject.tile.getObject3D().content.children[meshId].geometry.computeBoundingBox();
+      cityObject.tile.getObject3D().content.children[meshId].geometry.computeBoundingSphere();
+
       
-      cityObject3D.scale.set(1.2, 1.2, 1.2);
+      // const positionIdArray = new Float32Array(newArray).fill(newArray);
+      const positionIdBuffer = new udviz.THREE.BufferAttribute(newArray, 1);
+      cityObject.tile.getObject3D().content.children[meshId].geometry.setAttribute('position', positionIdBuffer);
+      // debugger;
+      
+      // cityObject3D.scale.set(1.2, 1.2, 1.2);
       // debugger;
       cityObject3D.updateMatrixWorld();
-
+      // debugger;
+      console.log(cityObject.tile.getObject3D());
     }
-  }
-
-  console.log(app.view3D.layerManager);
-
-  //Event to select a tile set
-  function onObjectSelect( event ) {    
-    event.preventDefault();
-    //selected objects
-    let raycaster =  new udviz.THREE.Raycaster();
-    let mouse3D = new udviz.THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,   
-      -( event.clientY / window.innerHeight ) * 2 + 1,  
-      0.5 );                                        
-    raycaster.setFromCamera( mouse3D, app.view3D.getCamera() );
-     
-    // let intersects = raycaster.intersectObjects()
   }
 });
