@@ -40,4 +40,27 @@ app.start('../assets/config/config.json').then((config) => {
   const layerChoice = new udviz.Widgets.LayerChoice(app.view3D.layerManager);
   app.addModuleView('layerChoice', layerChoice);
 
+  app.viewerDivElement.addEventListener( 'click', onTileSelect );
+
+  //Event to select a tile set
+  function onTileSelect( event ) {    
+    event.preventDefault();
+    //selected objects
+    let cityObject = app.view3D.layerManager.pickCityObject(event, 1, app.view3D.scene);
+
+    if (cityObject){
+      let tileManager = app.view3D.layerManager.getTilesManagerByLayerID(
+        cityObject.tile.layer.id
+      );
+      let defaultSelectionStyle = { materialProps: { color: 0x13ddef } };
+      tileManager.setStyle(cityObject.cityObjectId, defaultSelectionStyle);
+
+      tileManager.applyStyles({
+        updateFunction: tileManager.view.notifyChange.bind(
+          tileManager.view
+        ),
+      });
+    }
+  }
+
 });
