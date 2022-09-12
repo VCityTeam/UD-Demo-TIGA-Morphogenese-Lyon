@@ -40,7 +40,7 @@ app.start('../assets/config/config.json').then((config) => {
   const layerChoice = new udviz.Widgets.LayerChoice(app.view3D.layerManager);
   app.addModuleView('layerChoice', layerChoice);
 
-  let scale = 2;
+  let scale = 200000;
   app.viewerDivElement.addEventListener( 'click', onTileSelect );
 
   //Event to select a tile set
@@ -74,6 +74,9 @@ app.start('../assets/config/config.json').then((config) => {
         let directionVector = position.sub(centroide);
         directionVector.normalize();
         let newPosition = new udviz.THREE.Vector3(
+          // position.x + 50,
+          // position.y + 50,
+          // position.z + 50
           position.x + (directionVector.x * scale),
           position.y + (directionVector.y * scale),
           position.z + (directionVector.z * scale));
@@ -87,23 +90,37 @@ app.start('../assets/config/config.json').then((config) => {
         newArray[i + 1] = meshWithScale[index].y;
         newArray[i + 2] = meshWithScale[index].z;
       }
-      cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.array = arrayCityObject;
+      // cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.array = arrayCityObject;
+      // cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.needsUpdate = true;
+
+      // cityObject.tile.getObject3D().content.children[meshId].geometry.computeBoundingBox();
+      // cityObject.tile.getObject3D().content.children[meshId].geometry.computeBoundingSphere();
+
+      arrayCityObject = newArray;
+      // cityObject.tile.getObject3D().content.children[meshId].geometry.applyMatrix4();
+      meshCityObject.matrix.applyToBufferAttribute(cityObject3D.content.children[meshId].geometry.attributes.position);
+
+      // cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.applyMatrix4(meshCityObject.matrix);
+      // mesh
+      cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.applyMatrix4(meshCityObject.matrix);
       cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.needsUpdate = true;
-
-      cityObject.tile.getObject3D().content.children[meshId].geometry.computeBoundingBox();
-      cityObject.tile.getObject3D().content.children[meshId].geometry.computeBoundingSphere();
-
       
-      // const positionIdArray = new Float32Array(newArray).fill(newArray);
-      const positionIdBuffer = new udviz.THREE.BufferAttribute(newArray, 1);
-      cityObject.tile.getObject3D().content.children[meshId].geometry.setAttribute('position', positionIdBuffer);
+      // app.view3D.getItownsView().notifyChange();
+
+
+      // const positionIdArray = new Float32Array(arrayCityObject).fill(arrayCityObject);
+      // const positionIdBuffer = new udviz.THREE.BufferAttribute(positionIdArray, 1);
+      // cityObject.tile.getObject3D().content.children[meshId].geometry.setAttribute('position', positionIdBuffer);
       // debugger;
       
+      /* Scaling the object. */
       // cityObject3D.scale.set(1.2, 1.2, 1.2);
+
+      // cityObject3D.updateMatrixWorld();
+      debugger;
+      
       // debugger;
-      cityObject3D.updateMatrixWorld();
-      // debugger;
-      console.log(cityObject.tile.getObject3D());
+      // console.log(cityObject.tile.getObject3D());
     }
   }
 });
