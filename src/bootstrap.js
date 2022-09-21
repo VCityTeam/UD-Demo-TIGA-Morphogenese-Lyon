@@ -1,5 +1,6 @@
 /** @format */
 import * as udviz from 'ud-viz';
+import {LayerExtension} from './LayerExtension.js';
 
 const app = new udviz.Templates.AllWidget();
 
@@ -40,9 +41,11 @@ app.start('../assets/config/config.json').then((config) => {
   const layerChoice = new udviz.Widgets.LayerChoice(app.view3D.layerManager);
   app.addModuleView('layerChoice', layerChoice);
 
+  // const layerLegend = new LayerExtension(app.view3D.layerManager);
+
   let scale = 200000;
   app.viewerDivElement.addEventListener( 'click', onTileSelect );
-
+  debugger
   //Event to select a tile set
   function onTileSelect( event ) {    
     event.preventDefault();
@@ -117,7 +120,7 @@ app.start('../assets/config/config.json').then((config) => {
       // cityObject3D.scale.set(1.2, 1.2, 1.2);
 
       // cityObject3D.updateMatrixWorld();
-      debugger;
+      // debugger;
       
       // debugger;
       // console.log(cityObject.tile.getObject3D());
