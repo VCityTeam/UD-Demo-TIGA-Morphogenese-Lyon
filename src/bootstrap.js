@@ -45,7 +45,7 @@ app.start('../assets/config/config.json').then((config) => {
   const selectionStyle = { materialProps: { color: 0x13ddef } };
   app.view3D.layerManager.registerStyle('grow', selectionStyle);
 
-  let scale = 200000;
+  let scale = 100;
   app.viewerDivElement.addEventListener( 'click', onTileSelect );
   // debugger
   //Event to select a tile set
@@ -79,67 +79,49 @@ app.start('../assets/config/config.json').then((config) => {
       let meshCityObject = cityObject3D.content.children[meshId]; // Mesh of the cityObject picked
       let arrayCityObject = meshCityObject.geometry.attributes.position.array; // Array of the full mesh of te tile
       let arrayWithOnlyGeometryMesh = []; // Array of Vector3 with only the geometry of the cityObject picked
-      // debugger;
       let centroide = new udviz.THREE.Vector3(0, 0, 0);
-      for (let i = indexStart; i < indexStart + indexCount; i+=3){
-        let position = new udviz.THREE.Vector3(arrayCityObject[i],arrayCityObject[i + 1],arrayCityObject[i + 2]);
+
+      /* Looping through the array of the mesh of the cityObject picked. */
+      for (let i = 0; i < indexCount; i+=3){
+        let position = new udviz.THREE.Vector3(
+          arrayCityObject[indexStart + i],
+          arrayCityObject[indexStart + i + 1],
+          arrayCityObject[indexStart + i + 2]);
         centroide.add(position);
+        
         arrayWithOnlyGeometryMesh.push(position);
       }
+      
       console.log(arrayWithOnlyGeometryMesh);
       // debugger
       centroide.divideScalar(arrayWithOnlyGeometryMesh.length);
-      let meshWithScale = [];
-      arrayWithOnlyGeometryMesh.forEach(position => {
-        let directionVector = position.sub(centroide);
+      console.log(arrayCityObject[indexStart]);
+      console.log(centroide);
+
+      // for (let i = 0; i < indexCount; i+=3){
+      //   let directionVector = position.sub(centroide);
+      //   arrayCityObject[indexStart+ i] += 5000.0;
+      //   arrayCityObject[indexStart+ i + 1] += 5000.0;
+      //   arrayCityObject[indexStart+ i + 2] += 5000.0; 
+      // }
+
+      // let meshWithScale = [];
+      let index = 0; 
+      for (let  i = 0; i < indexCount; i+=3){
+        let directionVector = arrayWithOnlyGeometryMesh[index].sub(centroide);
         directionVector.normalize();
-        let newPosition = new udviz.THREE.Vector3(
-          position.x+50,
-          position.y+50,
-          position.z+50
-          /*position.x + (directionVector.x * scale),
-          position.y + (directionVector.y * scale),
-          position.z + (directionVector.z * scale)*/);
-        meshWithScale.push( newPosition);
-      });
-      // debugger
-      let index = 0;
-      let newArray = new Float32Array(arrayCityObject);
-      for (let i = indexStart; i < indexStart + indexCount; i+=3){
-        newArray[i] = meshWithScale[index].x;
-        newArray[i + 1] = meshWithScale[index].z;
-        newArray[i + 2] = meshWithScale[index].y;
+        arrayCityObject[indexStart + i] += directionVector.x * scale;
+        arrayCityObject[indexStart + i + 1] += directionVector.y * scale;
+        arrayCityObject[indexStart + i + 2] += directionVector.z * scale;
+        index++;
       }
-      cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.array = newArray;
-      // cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.needsUpdate = true;
-      // cityObject.tile.getObject3D().content.children[meshId].geometry.computeBoundingBox();
-      // cityObject.tile.getObject3D().content.children[meshId].geometry.computeBoundingSphere();
 
-      arrayCityObject = newArray;
-      // cityObject.tile.getObject3D().content.children[meshId].geometry.applyMatrix4();
-      // meshCityObject.matrix.applyToBufferAttribute(cityObject3D.content.children[meshId].geometry.attributes.position);
-
-      // cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.applyMatrix4(meshCityObject.matrix);
-      // mesh
-      // cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.applyMatrix4(meshCityObject.matrix);
+      // console.log(arrayCityObject[indexStart+1]);
+      // debugger
+      // cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.array = arrayCityObject;
       cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.needsUpdate = true;
       
       app.view3D.getItownsView().notifyChange();
-
-
-      // const positionIdArray = new Float32Array(arrayCityObject).fill(arrayCityObject);
-      // const positionIdBuffer = new udviz.THREE.BufferAttribute(positionIdArray, 1);
-      // cityObject.tile.getObject3D().content.children[meshId].geometry.setAttribute('position', positionIdBuffer);
-      // debugger;
-      
-      /* Scaling the object. */
-      // cityObject3D.scale.set(1.2, 1.2, 1.2);
-
-      // cityObject3D.updateMatrixWorld();
-      // debugger;
-      
-      // debugger;
-      // console.log(cityObject.tile.getObject3D());
     }
   }
 });
