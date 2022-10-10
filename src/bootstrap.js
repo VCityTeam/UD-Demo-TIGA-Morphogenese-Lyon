@@ -47,6 +47,56 @@ app.start('../assets/config/config.json').then((config) => {
 
   let scale = 0.2;
   app.viewerDivElement.addEventListener( 'click', onTileSelect );
+
+
+  //SHADER
+  const material = new udviz.THREE.RawShaderMaterial( {
+
+    uniforms: {
+      time: { value: 1.0 }
+    },
+    vertexShader: `
+      precision mediump float;
+			precision mediump int;
+
+			uniform mat4 modelViewMatrix; // optional
+			uniform mat4 projectionMatrix; // optional
+
+			attribute vec3 position;
+			attribute vec4 color;
+
+			varying vec3 vPosition;
+			varying vec4 vColor;
+
+			void main()	{
+
+				vPosition = position;
+				vColor = color;
+
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+			}`,
+    fragmentShader: `
+    precision mediump float;
+			precision mediump int;
+
+			uniform float time;
+
+			varying vec3 vPosition;
+			varying vec4 vColor;
+
+			void main()	{
+
+				vec4 color = vec4( vColor );
+				color.r += sin( vPosition.x * 10.0 + time ) * 0.5;
+
+				gl_FragColor = color;
+
+			}`,
+    side: udviz.THREE.DoubleSide,
+    transparent: true
+
+  } );
   // debugger
   //Event to select a tile set
   function onTileSelect( event ) {    
@@ -102,19 +152,10 @@ app.start('../assets/config/config.json').then((config) => {
         arrayCityObject[i * 3] += directionVector.x * scale;
         arrayCityObject[i * 3 + 1] += directionVector.y * scale;
         arrayCityObject[i * 3 + 2] += directionVector.z * scale;
-        // arrayCityObject[indexStart + i] += 50;
-        // arrayCityObject[i * 3  + 2] += 10;
-        // arrayCityObject[indexStart + i + 2] += 50;
         index++;
       }
-      console.log();
-      meshCityObject.geometry.attributes.position.array[cityObject.indexStart + 1] += 50;
 
-      // console.log(meshId);
-      // debugger
       cityObject.tile.getObject3D().content.children[meshId].geometry.attributes.position.needsUpdate = true;
-      
-      // app.view3D.getItownsView().notifyChange();
     }
   }
 });
