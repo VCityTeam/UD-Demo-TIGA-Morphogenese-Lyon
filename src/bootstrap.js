@@ -45,7 +45,7 @@ app.start('../assets/config/config.json').then((config) => {
   const selectionStyle = { materialProps: { color: 0x13ddef } };
   app.view3D.layerManager.registerStyle('grow', selectionStyle);
 
-  let scale = 50;
+  let scale = 0.2;
   app.viewerDivElement.addEventListener( 'click', onTileSelect );
   // debugger
   //Event to select a tile set
@@ -98,7 +98,7 @@ app.start('../assets/config/config.json').then((config) => {
       let index = 0; 
       for (let  i = indexStart; i <= indexCount + indexStart; i++){
         let directionVector = arrayWithOnlyGeometryMesh[index].sub(centroide);
-        directionVector.normalize();
+        // directionVector.normalize();
         arrayCityObject[i * 3] += directionVector.x * scale;
         arrayCityObject[i * 3 + 1] += directionVector.y * scale;
         arrayCityObject[i * 3 + 2] += directionVector.z * scale;
