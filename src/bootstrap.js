@@ -1,6 +1,6 @@
 /** @format */
 import * as udviz from 'ud-viz';
-import {LayerExtension} from './LayerExtension.js';
+import {LayerExtension} from './TemporelExtension/LayerExtension.js';
 
 const app = new udviz.Templates.AllWidget();
 
@@ -44,5 +44,16 @@ app.start('../assets/config/config.json').then((config) => {
   // const layerLegend = new LayerExtension(app.view3D.layerManager);
   const selectionStyle = { materialProps: { color: 0x13ddef } };
   app.view3D.layerManager.registerStyle('grow', selectionStyle);
+
+  const temporalExtension = new LayerExtension(app.view3D.layerManager);
+  temporalExtension.windowCreated();
+  // app.addModuleView('temporalExtension', temporelExtension);
+
+  ////// TEMPORAL MODULE
+  // const temporalModule = new udviz.Widgets.TemporalModule(
+  //   app.view3D.getLayerManager().tilesManagers[0],
+  //   app.config.temporalModule
+  // );
+  // app.addModuleView('temporal', temporalModule.view);
 
 });

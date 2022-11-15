@@ -98,20 +98,6 @@
       }
     },
     {
-      "id": "Flux 1990",
-      "url": "C:/Users/Vcity/Downloads/FLUX/FLUX/FLUX_1990_5dep_3857.geojson",
-      "crs": "EPSG:3946",
-      "style": {
-        "fill": {
-          "color": "green",
-          "opacity": 0.5
-        },
-        "stroke": {
-          "color": "black"
-        }
-      }
-    },
-    {
       "id": "velo-v",
       "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=pvo_patrimoine_voirie.pvostationvelov&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
       "crs": "EPSG:3946",
