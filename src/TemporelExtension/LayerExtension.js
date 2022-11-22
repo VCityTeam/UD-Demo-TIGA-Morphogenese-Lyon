@@ -28,6 +28,7 @@ export class LayerExtension {
       <span class="output outputOne"></span>
       <span class="output outputTwo"></span>
       <span class="full-range"></span>
+      <span class="dot"></span>
       <span class="incl-range"></span>
       <input name="rangeOne" value="10" min="0" max="100" step="1" type="range">
       <input name="rangeTwo" value="90" min="0" max="100" step="1" type="range">
@@ -37,13 +38,11 @@ export class LayerExtension {
 
   windowCreated() {
     let viewerDiv = document.getElementById('root_View3D');
-    // viewerDiv.innerHTML += this.innerContentHtml;
     let temporalDiv = document.createElement('div');
     temporalDiv.id = 'temporal-updated';
     temporalDiv.innerHTML = this.innerContentHtml;
     
     viewerDiv.append(temporalDiv);
-    // viewerDiv.innerHTML += this.innerContentHtml;
     let rangeOne = document.querySelector('input[name="rangeOne"]'),
       rangeTwo = document.querySelector('input[name="rangeTwo"]'),
       outputOne = document.querySelector('.outputOne'),
@@ -52,11 +51,11 @@ export class LayerExtension {
       updateView = function () {
 
         if (this.getAttribute('name') === 'rangeOne') {
-          outputOne.innerHTML =  parseInt(this.value * 0.38) + 1980;
+          outputOne.innerHTML =  parseInt(this.value * 0.71) + 1950;
           outputOne.style.left = this.value / this.getAttribute('max') * 100 + '%';
         } else {
           outputTwo.style.left = this.value / this.getAttribute('max') * 100 + '%';
-          outputTwo.innerHTML = parseInt(this.value * 0.38) + 1980;
+          outputTwo.innerHTML = parseInt(this.value * 0.71) + 1950;
         }
         if (parseInt(rangeOne.value) > parseInt(rangeTwo.value)) {
           inclRange.style.width = (rangeOne.value - rangeTwo.value) / this.getAttribute('max') * 100 + '%';
@@ -70,7 +69,7 @@ export class LayerExtension {
     let geometryLayers = this.layerManager.getGeometryLayers();
     let layerManager = this.layerManager;
     rangeOne.oninput = function(){
-      if (parseInt(this.value * 0.38) + 1980 > 2000)
+      if (parseInt(this.value * 0.71) + 1950 > 2000)
         geometryLayers[2].visible = false;
       layerManager.notifyChange();
     };
