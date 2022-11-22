@@ -178,3 +178,11 @@ input[type=range]:focus {
 .incl-range {
   background: #999eb9;
 }
+
+.dot {
+  height: 25px;
+  width: 25px;
+  background-color: rgb(0, 241, 93);
+  border-radius: 50%;
+  display: inline-block;
+}
