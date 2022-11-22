@@ -47,6 +47,29 @@ app.start('../assets/config/config.json').then((config) => {
 
   const temporalExtension = new LayerExtension(app.view3D.layerManager);
   temporalExtension.windowCreated();
+
+  // Declare the source for the data on Ariege area
+  const batBerlietSource = new udviz.itowns.FileSource({
+    url: 'https://raw.githubusercontent.com/VCityTeam/UD-Demo-TIGA-Morphogenese-Lyon/master/assets/Bat_Berliet_1993_l93_3946.geojson?token=GHSAT0AAAAAAB23Z4DABDGJ7MEJBHWGT4SOY33V56Q',
+    crs: 'EPSG:3946',
+    format: 'application/json',
+  });
+  // Create a ColorLayer for the Ariege area
+  const berlierLayer = new udviz.itowns.ColorLayer('Berliet', {
+    name: 'berliet',
+    transparent: true,
+    source: batBerlietSource,
+    style: new udviz.itowns.Style({
+      fill: {
+        color: 'orange',
+        opacity: 0.9,
+      },
+      stroke: {
+        color: 'white',
+      },
+    }),
+  });
+  app.view3D.getItownsView().addLayer(berlierLayer);
   // app.addModuleView('temporalExtension', temporelExtension);
 
   ////// TEMPORAL MODULE

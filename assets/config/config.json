@@ -18,9 +18,9 @@
     "link": "link"
   },
   "extents": {
-    "min_x": "1837860.980127206",
+    "min_x": "1836339.980127206",
     "max_x": "1851647",
-    "min_y": "5169347.4265999",
+    "min_y": "5158494.4265999",
     "max_y": "5180575"
   },
   "hmtlWindow":{
@@ -151,6 +151,11 @@
     {
       "id": "Lyon-8",
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-8_2015/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Cité Berliet",
+      "url": "file:///C:/Users/Vcity/Desktop/py3dtilers/Berliet_1954/tileset.json",
       "color": "0xFFFFFF"
     }
   ],
@@ -324,19 +329,5 @@
         "displayable": "false"
       }
     }
-  },
-  "slideShow": {
-    "slides": [
-      {
-        "name": "diapo1",
-        "folder": "../assets/diapositive1",
-        "diapositives": ["1.jpeg", "2.jpeg", "3.jpeg", "cloudVideo.mp4"]
-      },
-      {
-        "name": "diapo2",
-        "folder": "../assets/diapositive1",
-        "diapositives": ["11.jpeg", "12.jpeg", "cloudVideo.mp4", "13.jpeg"]
-      }
-    ]
   }
 }

@@ -6,6 +6,7 @@
 import * as udviz from 'ud-viz';
 import './temporalExtension.css';
 import $ from 'jquery';
+import { View3D } from 'ud-viz/src/Views/Views';
 
 export class LayerExtension {
   /**
@@ -43,12 +44,13 @@ export class LayerExtension {
     
     viewerDiv.append(temporalDiv);
     // viewerDiv.innerHTML += this.innerContentHtml;
-    var rangeOne = document.querySelector('input[name="rangeOne"]'),
+    let rangeOne = document.querySelector('input[name="rangeOne"]'),
       rangeTwo = document.querySelector('input[name="rangeTwo"]'),
       outputOne = document.querySelector('.outputOne'),
       outputTwo = document.querySelector('.outputTwo'),
       inclRange = document.querySelector('.incl-range'),
       updateView = function () {
+
         if (this.getAttribute('name') === 'rangeOne') {
           outputOne.innerHTML =  parseInt(this.value * 0.38) + 1980;
           outputOne.style.left = this.value / this.getAttribute('max') * 100 + '%';
@@ -64,6 +66,14 @@ export class LayerExtension {
           inclRange.style.left = rangeOne.value / this.getAttribute('max') * 100 + '%';
         }
       };
+
+    let geometryLayers = this.layerManager.getGeometryLayers();
+    let layerManager = this.layerManager;
+    rangeOne.oninput = function(){
+      if (parseInt(this.value * 0.38) + 1980 > 2000)
+        geometryLayers[2].visible = false;
+      layerManager.notifyChange();
+    };
 
     document.addEventListener('DOMContentLoaded', function () {
       updateView.call(rangeOne);
