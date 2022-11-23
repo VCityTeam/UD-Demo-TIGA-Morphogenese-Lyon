@@ -156,17 +156,17 @@
     {
       "id": "Cité Berliet 1954",
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_1954/tileset.json",
-      "color": "0xff0000"
+      "color": "0x7A0000"
     },
     {
       "id": "Cité Berliet 1966",
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_1966/tileset.json",
-      "color": "0xFFFFFF"
+      "color": "0xA30404"
     },
     {
       "id": "Cité Berliet 1978",
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_1978/tileset.json",
-      "color": "0xFFFFFF"
+      "color": "0xCF0707"
     },
     {
       "id": "Cité Berliet 1986",
@@ -176,7 +176,7 @@
     {
       "id": "Cité Berliet 1993",
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_1993/tileset.json",
-      "color": "#ffa14f"
+      "color": "0xFFFFFF"
     },
     {
       "id": "Cité Berliet 2021",
