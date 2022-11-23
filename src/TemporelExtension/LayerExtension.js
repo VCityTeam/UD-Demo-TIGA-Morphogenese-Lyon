@@ -24,6 +24,14 @@ export class LayerExtension {
 
     this.temporalDiv;
 
+    this.berlietData = [[this.layerManager.tilesManagers[8], 1954],
+      [this.layerManager.tilesManagers[9], 1966],
+      [this.layerManager.tilesManagers[10], 1978],
+      [this.layerManager.tilesManagers[11], 1986],
+      [this.layerManager.tilesManagers[12], 1993],
+      [this.layerManager.tilesManagers[13], 2021]
+    ];
+
     this.windowCreated();
     this.createdDotElementData();
   }
@@ -42,6 +50,7 @@ export class LayerExtension {
   }
 
   windowCreated() {
+  
     let viewerDiv = document.getElementById('root_View3D');
     this.temporalDiv = document.createElement('div');
     this.temporalDiv.id = 'temporal-updated';
@@ -82,11 +91,34 @@ export class LayerExtension {
     
     // geometryLayers[9].object3d.position.z += 20;
     // geometryLayers[9].object3d.children[0].children[0].position.z += 20;
-    this.layerManager.notifyChange();
+
+    let data = this.berlietData;
+
+    //Hide or Show data
     rangeOne.oninput = function(){
-      if (parseInt(this.value * 0.71) + 1950 > 2000)
-        geometryLayers[9].visible = false;
-      layerManager.notifyChange();
+      let valueOne = parseInt(this.value * 0.71) + 1950;
+      let valueTwo = parseInt(rangeTwo.value * 0.71) + 1950;
+      data.forEach(element => {
+        if (element[1] < valueOne || element[1] > valueTwo){
+          element[0].layer.visible = false;
+        }else{
+          element[0].layer.visible = true;
+        }          
+        layerManager.notifyChange();
+      }); 
+    };
+
+    rangeTwo.oninput = function(){
+      let valueTwo = parseInt(this.value * 0.71) + 1950;
+      let valueOne = parseInt(rangeOne.value * 0.71) + 1950;
+      data.forEach(element => {
+        if (element[1] < valueOne || element[1] > valueTwo){
+          element[0].layer.visible = false;
+        }else{
+          element[0].layer.visible = true;
+        }          
+        layerManager.notifyChange();
+      }); 
     };
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -101,36 +133,19 @@ export class LayerExtension {
   }
 
   createdDotElementData(){
-    
-    let berlietData = [this.layerManager.tilesManagers[8],
-      this.layerManager.tilesManagers[9],
-      this.layerManager.tilesManagers[10],
-      this.layerManager.tilesManagers[11],
-      this.layerManager.tilesManagers[12],
-      this.layerManager.tilesManagers[13]
-    ];
-
-    let allTime = [1954, 1966, 1978, 1986, 1993, 2021];
-
 
     //Create html element
-    for (let i = 0 ; i < berlietData.length; i++){
-
+    this.berlietData.forEach(element => {
       let dotElement = document.createElement('span');
       dotElement.className = 'dot';
 
       //Transform decimal color in hexa
       let c = new udviz.THREE.Color(); 
-      c.set(berlietData[i].color);
+      c.set(element[0].color);
       dotElement.style.backgroundColor = '#' + c.getHexString();
 
-      let time = allTime[i];
-      dotElement.style.left = (((time - 1950) * 600) / 71 - 2).toString() + 'px' ;
+      dotElement.style.left = (((element[1] - 1950) * 590) / 71 - 5).toString() + 'px' ;
       document.getElementsByClassName('range-slider container')[0].append(dotElement);
-    }
-    
-
-    
-    
+    });
   }
 }
