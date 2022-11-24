@@ -47,6 +47,10 @@ app.start('../assets/config/config.json').then((config) => {
 
   const temporalExtension = new LayerExtension(app.view3D.layerManager);
   // temporalExtension.windowCreated();
+  // console.log(app.view3D.layerManager.tilesManagers[9].EVENT_TILE_LOADED);
+  console.log(app.view3D.layerManager.getGeometryLayers()[9]);
+  // console.log(app.view3D.layerManager.getGeometryLayers().onTileContentLoaded);
+  // debugger
 
   // Declare the source for the data on Ariege area
   // const batBerlietSource = new udviz.itowns.FileSource({

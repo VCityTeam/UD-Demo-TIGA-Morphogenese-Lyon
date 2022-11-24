@@ -34,6 +34,7 @@ export class LayerExtension {
 
     this.windowCreated();
     this.createdDotElementData();
+    this.createBurgerLayer();
   }
 
   get innerContentHtml() {
@@ -147,5 +148,21 @@ export class LayerExtension {
       dotElement.style.left = (((element[1] - 1950) * 590) / 71 - 5).toString() + 'px' ;
       document.getElementsByClassName('range-slider container')[0].append(dotElement);
     });
+  }
+
+  createBurgerLayer(){
+    console.log(this.berlietData[0][0].layer);
+    this.berlietData[0][0].layer.onTileContentLoaded = () => {
+      // console.log(this.layerManager.tilesManagers[8].layer.object3d.children[0].children.lenght);
+      let layer = this.berlietData[0][0].layer;
+      if (layer.object3d.children[0].children[0] != undefined){
+        console.log(layer.object3d.children[0].children[0]);
+        // this.layerManager.tilesManagers[9].layer.object3d.children[0].children[0].translateOnAxis(new udviz.THREE.Vector3(0, 0, 1), 100);
+        layer.object3d.children[0].children[0].position.z += 50;
+        layer.object3d.children[0].children[0].updateMatrixWorld();
+        this.layerManager.notifyChange();
+      }
+      
+    };
   }
 }
