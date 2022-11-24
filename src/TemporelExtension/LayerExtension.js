@@ -32,9 +32,10 @@ export class LayerExtension {
       [this.layerManager.tilesManagers[13], 2021]
     ];
 
+    
     this.windowCreated();
     this.createdDotElementData();
-    this.createBurgerLayer();
+    // this.createBurgerLayer();
   }
 
   get innerContentHtml() {
@@ -44,8 +45,8 @@ export class LayerExtension {
       <span class="output outputTwo"></span>
       <span class="full-range"></span>
       <span class="incl-range"></span>
-      <input name="rangeOne" value="10" min="0" max="100" step="1" type="range">
-      <input name="rangeTwo" value="90" min="0" max="100" step="1" type="range">
+      <input name="rangeOne" value="0" min="0" max="100" step="1" type="range">
+      <input name="rangeTwo" value="100" min="0" max="100" step="1" type="range">
   </section>
     `;
   }
@@ -81,7 +82,7 @@ export class LayerExtension {
         }
       };
 
-    let geometryLayers = this.layerManager.getGeometryLayers();
+    // let geometryLayers = this.layerManager.getGeometryLayers();
     let layerManager = this.layerManager;
     console.log(this.layerManager);
 
@@ -152,17 +153,23 @@ export class LayerExtension {
 
   createBurgerLayer(){
     console.log(this.berlietData[0][0].layer);
-    this.berlietData[0][0].layer.onTileContentLoaded = () => {
-      // console.log(this.layerManager.tilesManagers[8].layer.object3d.children[0].children.lenght);
-      let layer = this.berlietData[0][0].layer;
-      if (layer.object3d.children[0].children[0] != undefined){
-        console.log(layer.object3d.children[0].children[0]);
-        // this.layerManager.tilesManagers[9].layer.object3d.children[0].children[0].translateOnAxis(new udviz.THREE.Vector3(0, 0, 1), 100);
-        layer.object3d.children[0].children[0].position.z += 50;
-        layer.object3d.children[0].children[0].updateMatrixWorld();
-        this.layerManager.notifyChange();
-      }
-      
-    };
+
+    let maxHeightLayers = 600;
+    this.berlietData.forEach(element => {
+      element[0].layer.onTileContentLoaded = () => {
+        let layer = element[0].layer;
+        if (layer.object3d.children[0].children[0] != undefined){
+          // layer.object3d.children[0].children[0].position.z += maxHeightLayers;
+          // layer.object3d.children[0].children[0].updateMatrixWorld();
+          layer.object3d.children[0].children.forEach( elementTwo => {
+            elementTwo.position.z += maxHeightLayers;
+            elementTwo.updateMatrixWorld();
+          });
+          maxHeightLayers -= 50;
+          console.log(layer.object3d.children[0]);
+        }
+        
+      };
+    });
   }
 }
