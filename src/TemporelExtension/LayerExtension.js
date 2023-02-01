@@ -6,6 +6,7 @@
 import './temporalExtension.css';
 import $ from 'jquery';
 import * as udviz from 'ud-viz';
+import { View3D } from 'ud-viz/src/Views/Views';
 
 export class LayerExtension {
   /**
@@ -13,23 +14,25 @@ export class LayerExtension {
    *
    * @param {LayerManager} layerManager
    */
-  constructor(layerManager) {
+  constructor(view3D) {
 
     /**
      * the layerManager
      */
-    this.layerManager = layerManager;
+    this.layerManager = view3D.layerManager;
+    this.view3D = view3D;
 
     this.listElementDot;
 
     this.temporalDiv;
 
-    this.berlietData = [[this.layerManager.tilesManagers[8], 1954],
-      [this.layerManager.tilesManagers[9], 1966],
-      [this.layerManager.tilesManagers[10], 1978],
-      [this.layerManager.tilesManagers[11], 1986],
-      [this.layerManager.tilesManagers[12], 1993],
-      [this.layerManager.tilesManagers[13], 2021]
+    
+    this.berlietData = [[this.layerManager.tilesManagers[0], 1954],
+      [this.layerManager.tilesManagers[1], 1966],
+      [this.layerManager.tilesManagers[2], 1978],
+      [this.layerManager.tilesManagers[3], 1986],
+      [this.layerManager.tilesManagers[4], 1993],
+      [this.layerManager.tilesManagers[5], 2021]
     ];
 
     
@@ -126,6 +129,15 @@ export class LayerExtension {
         updateView.call(this);
       });
     });
+
+    //DEBUG
+    const button = document.createElement('button');
+    button.id = 'button_update';
+    button.name = 'Update';
+    viewerDiv.append(button);
+    button.addEventListener('click', () => {
+      this.createBurgerLayer();
+    });
   }
 
   createdDotElementData(){
@@ -146,28 +158,16 @@ export class LayerExtension {
   }
 
   createBurgerLayer(){
-    console.log(this.berlietData[0][0].layer.object3d);
-
-    console.log(this.layerManager.getLoaded3DTilesTileCount());
-    console.log(this.layerManager.getTotal3DTilesTileCount());
-
     let maxHeightLayers = 600;
-    let nb = 0;
-    this.berlietData.forEach(element => {
-      let layer = element[0].layer;
-      layer.onTileContentLoaded = function() {
-        if (layer.object3d.children[0].children[0] != undefined){
-          layer.object3d.children[0].children.forEach( elementTwo => {
-            elementTwo.position.z += maxHeightLayers;
-            elementTwo.updateMatrixWorld();
-          });
-          
-          console.log(nb++);
-        }
-        
-      };
-      console.log();
-      maxHeightLayers += -50;
+    this.layerManager.tilesManagers.forEach(element => {
+      console.log(element);
+      const layer = element.layer;
+      layer.root.children.forEach(object => {
+        object.position.z = maxHeightLayers;
+        object.updateMatrixWorld();
+      });
+      maxHeightLayers -= 80;
     });
+        
   } 
 }

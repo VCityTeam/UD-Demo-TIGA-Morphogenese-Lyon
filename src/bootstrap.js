@@ -13,8 +13,8 @@ app.start('../assets/config/config.json').then((config) => {
   app.addModuleView('about', about);
 
   ////// HELP MODULE
-  const help = new udviz.Widgets.Extensions.HelpWindow(config.helpWindow);
-  app.addModuleView('help', help);
+  // const help = new udviz.Widgets.Extensions.HelpWindow(config.helpWindow);
+  // app.addModuleView('help', help);
 
   ////// CITY OBJECTS MODULE
   let cityObjectModule = new udviz.Widgets.CityObjectModule(
@@ -45,7 +45,8 @@ app.start('../assets/config/config.json').then((config) => {
   const selectionStyle = { materialProps: { color: 0x13ddef } };
   app.view3D.layerManager.registerStyle('grow', selectionStyle);
 
-  const temporalExtension = new LayerExtension(app.view3D.layerManager);
+  const temporalExtension = new LayerExtension(app.view3D);
+  // temporalExtension.createBurgerLayer();
   // temporalExtension.windowCreated();
 
   // Declare the source for the data on Ariege area

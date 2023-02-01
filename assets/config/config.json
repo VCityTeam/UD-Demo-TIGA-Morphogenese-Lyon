@@ -114,73 +114,33 @@
   ],
   "3DTilesLayers": [
     {
-      "id": "Lyon-1",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-1_2015/tileset.json",
-      "color": "0xFFFFFF"
-    },
-    {
-      "id": "Lyon-2",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-2_2015/tileset.json",
-      "color": "0xFFFFFF"
-    },
-    {
-      "id": "Lyon-3",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-3_2015/tileset.json",
-      "color": "0xFFFFFF"
-    },
-    {
-      "id": "Lyon-4",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-4_2015/tileset.json",
-      "color": "0xFFFFFF"
-    },
-    {
-      "id": "Lyon-5",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-5_2015/tileset.json",
-      "color": "0xFFFFFF"
-    },
-    {
-      "id": "Lyon-6",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-6_2015/tileset.json",
-      "color": "0xFFFFFF"
-    },
-    {
-      "id": "Lyon-7",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-7_2015/tileset.json",
-      "color": "0xFFFFFF"
-    },
-    {
-      "id": "Lyon-8",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-8_2015/tileset.json",
-      "color": "0xFFFFFF"
-    },
-    {
       "id": "Cité Berliet 1954",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_1954/tileset.json",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
       "color": "0x7A0000"
     },
     {
       "id": "Cité Berliet 1966",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_1966/tileset.json",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
       "color": "0xA30404"
     },
     {
       "id": "Cité Berliet 1978",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_1978/tileset.json",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
       "color": "0xCF0707"
     },
     {
       "id": "Cité Berliet 1986",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_1986/tileset.json",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
       "color": "0x8F604D"
     },
     {
       "id": "Cité Berliet 1993",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_1993/tileset.json",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
       "color": "0x473385"
     },
     {
       "id": "Cité Berliet 2021",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Berliet_1954_1966_1978_1986_1993_2021_TiletSet/Berliet_2021/tileset.json",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
       "color": "0x12F96E"
     }
   ],
