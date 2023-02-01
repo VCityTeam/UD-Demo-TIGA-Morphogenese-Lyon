@@ -84,12 +84,6 @@ export class LayerExtension {
 
     // let geometryLayers = this.layerManager.getGeometryLayers();
     let layerManager = this.layerManager;
-    console.log(this.layerManager);
-
-
-    // debugger
-    // console.log(geometryLayers[9].object3d.getWorldPosition());
-    // debugger
     
     // geometryLayers[9].object3d.position.z += 20;
     // geometryLayers[9].object3d.children[0].children[0].position.z += 20;
@@ -152,24 +146,28 @@ export class LayerExtension {
   }
 
   createBurgerLayer(){
-    console.log(this.berlietData[0][0].layer);
+    console.log(this.berlietData[0][0].layer.object3d);
+
+    console.log(this.layerManager.getLoaded3DTilesTileCount());
+    console.log(this.layerManager.getTotal3DTilesTileCount());
 
     let maxHeightLayers = 600;
+    let nb = 0;
     this.berlietData.forEach(element => {
-      element[0].layer.onTileContentLoaded = () => {
-        let layer = element[0].layer;
+      let layer = element[0].layer;
+      layer.onTileContentLoaded = function() {
         if (layer.object3d.children[0].children[0] != undefined){
-          // layer.object3d.children[0].children[0].position.z += maxHeightLayers;
-          // layer.object3d.children[0].children[0].updateMatrixWorld();
           layer.object3d.children[0].children.forEach( elementTwo => {
             elementTwo.position.z += maxHeightLayers;
             elementTwo.updateMatrixWorld();
           });
-          maxHeightLayers -= 50;
-          console.log(layer.object3d.children[0]);
+          
+          console.log(nb++);
         }
         
       };
+      console.log();
+      maxHeightLayers += -50;
     });
-  }
+  } 
 }
