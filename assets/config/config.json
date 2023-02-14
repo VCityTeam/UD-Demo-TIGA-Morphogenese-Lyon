@@ -124,6 +124,18 @@
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
       "extensions": ["3DTILES_temporal"],
       "color": "0xFFFFFF"
+    },
+    {
+      "id": "Temporal 3",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
+      "extensions": ["3DTILES_temporal"],
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Temporal 4",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
+      "extensions": ["3DTILES_temporal"],
+      "color": "0xFFFFFF"
     }
   ],
   "geocoding": {
