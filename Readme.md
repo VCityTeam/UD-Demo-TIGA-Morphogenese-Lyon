@@ -1,3 +1,6 @@
+# TO-DO
+- Install doc
+
 # Morphogenèse urbaine : Définition du projet 
 
 Ce projet s’inscrit dans le cadre de l’action 14 (Think and do Tank) du projet TIGA piloté par la Métropole de Lyon. Il vise à mettre en place un travail partenarial entre deux laboratoires de recherche parties prenantes du Think and do Tank : le laboratoire d’Informatique en Image et Systèmes d’Information (LIRIS) et le laboratoire Environnement, Ville et Société (EVS). S’organisant au sein du LabEx IMU, le projet de morphogenèse urbaine cherche à initier une démarche transdisciplinaire autour de l’urbain en mobilisant les acteurs de la recherche au profit de la collectivité ou des citoyens.  
