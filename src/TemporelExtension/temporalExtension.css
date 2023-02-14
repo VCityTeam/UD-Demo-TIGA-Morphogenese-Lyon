@@ -194,12 +194,12 @@ input[type=range]:focus {
   position: absolute;
   top: 10%;
   left: 10%;
-  min-width: 200px;
-  min-height: 200px;
+  min-width: 100px;
+  min-height: 100px;
   background-color: rgba(30,30,30,0.9);
   border-radius: 5px;
-  width: 10%;
-  height: 10%;
+  width: 5%;
+  height: 5%;
   padding: 0;
   overflow: hidden;
   display: grid;

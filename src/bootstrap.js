@@ -72,11 +72,11 @@ app.start('../assets/config/config.json').then((config) => {
   // });
   // app.view3D.getItownsView().addLayer(berlierLayer);
 
-  ////// TEMPORAL MODULE
-  // const temporalModule = new udviz.Widgets.TemporalModule(
-  //   app.view3D.getLayerManager().tilesManagers[0],
-  //   app.config.temporalModule
-  // );
-  // app.addModuleView('temporal', temporalModule.view);
+  //// TEMPORAL MODULE
+  const temporalModule = new udviz.Widgets.TemporalModule(
+    app.view3D.getLayerManager().tilesManagers[0],
+    app.config.temporalModule
+  );
+  app.addModuleView('temporal', temporalModule.view);
 
 });

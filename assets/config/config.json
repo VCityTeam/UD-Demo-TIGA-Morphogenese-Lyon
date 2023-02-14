@@ -51,7 +51,7 @@
     "format": "image/jpeg",
     "layer_name": "Base_Map",
     "transparent": true,
-    "maxSubdivisionLevel": 3
+    "maxSubdivisionLevel": 6
   },
   "elevation_layer": {
     "url": "https://download.data.grandlyon.com/wms/grandlyon",
@@ -114,34 +114,16 @@
   ],
   "3DTilesLayers": [
     {
-      "id": "Cité Berliet 1954",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
-      "color": "0x7A0000"
+      "id": "Temporal",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
+      "extensions": ["3DTILES_temporal"],
+      "color": "0xFFFFFF"
     },
     {
-      "id": "Cité Berliet 1966",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
-      "color": "0xA30404"
-    },
-    {
-      "id": "Cité Berliet 1978",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
-      "color": "0xCF0707"
-    },
-    {
-      "id": "Cité Berliet 1986",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
-      "color": "0x8F604D"
-    },
-    {
-      "id": "Cité Berliet 1993",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
-      "color": "0x473385"
-    },
-    {
-      "id": "Cité Berliet 2021",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018_with_color/tileset.json",
-      "color": "0x12F96E"
+      "id": "Temporal 2",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
+      "extensions": ["3DTILES_temporal"],
+      "color": "0xFFFFFF"
     }
   ],
   "geocoding": {

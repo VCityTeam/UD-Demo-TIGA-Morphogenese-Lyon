@@ -29,10 +29,10 @@ export class LayerExtension {
     
     this.berlietData = [[this.layerManager.tilesManagers[0], 1954],
       [this.layerManager.tilesManagers[1], 1966],
-      [this.layerManager.tilesManagers[2], 1978],
-      [this.layerManager.tilesManagers[3], 1986],
-      [this.layerManager.tilesManagers[4], 1993],
-      [this.layerManager.tilesManagers[5], 2021]
+      // [this.layerManager.tilesManagers[2], 1978],
+      // [this.layerManager.tilesManagers[3], 1986],
+      // [this.layerManager.tilesManagers[4], 1993],
+      // [this.layerManager.tilesManagers[5], 2021]
     ];
 
     
@@ -158,15 +158,15 @@ export class LayerExtension {
   }
 
   createBurgerLayer(){
-    let maxHeightLayers = 600;
+    let maxHeightLayers = 0;
     this.layerManager.tilesManagers.forEach(element => {
       console.log(element);
       const layer = element.layer;
       layer.root.children.forEach(object => {
-        object.position.z = maxHeightLayers;
+        object.position.z += maxHeightLayers;
         object.updateMatrixWorld();
       });
-      maxHeightLayers -= 80;
+      maxHeightLayers += 150;
     });
         
   } 
