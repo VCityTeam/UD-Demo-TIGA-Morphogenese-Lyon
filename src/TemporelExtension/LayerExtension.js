@@ -6,15 +6,16 @@
 import './temporalExtension.css';
 import $ from 'jquery';
 import * as udviz from 'ud-viz';
-import { View3D } from 'ud-viz/src/Views/Views';
+import { TilesManager } from 'ud-viz/src/Components/Components';
 
 export class LayerExtension {
   /**
    * Creates the layer choice windows
    *
-   * @param {LayerManager} layerManager
+   * @param {udviz.Views} layerManager
+   * @param {Array<TemporalProvider>} listTemporalProvider
    */
-  constructor(view3D) {
+  constructor(view3D, listTemporalProvider) {
 
     /**
      * the layerManager
@@ -26,18 +27,31 @@ export class LayerExtension {
 
     this.temporalDiv;
 
+    this.listTemporalProvider = listTemporalProvider;
+
     
-    this.berlietData = [[this.layerManager.tilesManagers[0], 1954],
-      [this.layerManager.tilesManagers[1], 1966],
-      // [this.layerManager.tilesManagers[2], 1978],
-      // [this.layerManager.tilesManagers[3], 1986],
+    this.berlietData = [[this.layerManager.tilesManagers[0], 2009],
+      [this.layerManager.tilesManagers[1], 2010],
+      [this.layerManager.tilesManagers[2], 2011],
+      [this.layerManager.tilesManagers[3], 2012],
       // [this.layerManager.tilesManagers[4], 1993],
       // [this.layerManager.tilesManagers[5], 2021]
     ];
 
+    this.rangeData = Math.abs(this.berlietData[0][1] - this.berlietData[this.berlietData.length - 1][1]) / 100;
     
     this.windowCreated();
     this.createdDotElementData();
+
+    this.view3D.layerManager.tilesManagers.forEach(element => {
+      element.addEventListener(
+        TilesManager.EVENT_TILE_LOADED, () => {
+          if (this.layerManager.getTotal3DTilesTileCount() == this.layerManager.getLoaded3DTilesTileCount())
+            this.createBurgerLayer();
+        }
+        
+      );
+    });    
     // this.createBurgerLayer();
   }
 
@@ -62,6 +76,10 @@ export class LayerExtension {
     this.temporalDiv.innerHTML = this.innerContentHtml;
     
     viewerDiv.append(this.temporalDiv);
+
+    let olderData = this.berlietData[0][1];
+    let rangeData = this.rangeData;
+
     let rangeOne = document.querySelector('input[name="rangeOne"]'),
       rangeTwo = document.querySelector('input[name="rangeTwo"]'),
       outputOne = document.querySelector('.outputOne'),
@@ -70,11 +88,11 @@ export class LayerExtension {
       updateView = function () {
 
         if (this.getAttribute('name') === 'rangeOne') {
-          outputOne.innerHTML =  parseInt(this.value * 0.71) + 1950;
+          outputOne.innerHTML =  parseInt(this.value * rangeData) + olderData;
           outputOne.style.left = this.value / this.getAttribute('max') * 100 + '%';
         } else {
           outputTwo.style.left = this.value / this.getAttribute('max') * 100 + '%';
-          outputTwo.innerHTML = parseInt(this.value * 0.71) + 1950;
+          outputTwo.innerHTML = parseInt(this.value * rangeData) + olderData;
         }
         if (parseInt(rangeOne.value) > parseInt(rangeTwo.value)) {
           inclRange.style.width = (rangeOne.value - rangeTwo.value) / this.getAttribute('max') * 100 + '%';
@@ -85,38 +103,30 @@ export class LayerExtension {
         }
       };
 
-    // let geometryLayers = this.layerManager.getGeometryLayers();
-    let layerManager = this.layerManager;
-    
-    // geometryLayers[9].object3d.position.z += 20;
-    // geometryLayers[9].object3d.children[0].children[0].position.z += 20;
-
-    let data = this.berlietData;
-
     //Hide or Show data
-    rangeOne.oninput = function(){
-      let valueOne = parseInt(this.value * 0.71) + 1950;
-      let valueTwo = parseInt(rangeTwo.value * 0.71) + 1950;
-      data.forEach(element => {
+    rangeOne.oninput = () => {
+      let valueOne = parseInt(this.value * this.rangeData) + this.berlietData[0][1];
+      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.berlietData[0][1];
+      this.berlietData.forEach(element => {
         if (element[1] < valueOne || element[1] > valueTwo){
           element[0].layer.visible = false;
         }else{
           element[0].layer.visible = true;
         }          
-        layerManager.notifyChange();
+        this.layerManager.notifyChange();
       }); 
     };
 
-    rangeTwo.oninput = function(){
-      let valueTwo = parseInt(this.value * 0.71) + 1950;
-      let valueOne = parseInt(rangeOne.value * 0.71) + 1950;
-      data.forEach(element => {
+    rangeTwo.oninput = () => {
+      let valueTwo = parseInt(this.value * this.rangeData) + this.berlietData[0][1];
+      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.berlietData[0][1];
+      this.berlietData.forEach(element => {
         if (element[1] < valueOne || element[1] > valueTwo){
           element[0].layer.visible = false;
         }else{
           element[0].layer.visible = true;
         }          
-        layerManager.notifyChange();
+        this.layerManager.notifyChange();
       }); 
     };
 
@@ -128,15 +138,6 @@ export class LayerExtension {
       }).on('mousedown input', function () {
         updateView.call(this);
       });
-    });
-
-    //DEBUG
-    const button = document.createElement('button');
-    button.id = 'button_update';
-    button.name = 'Update';
-    viewerDiv.append(button);
-    button.addEventListener('click', () => {
-      this.createBurgerLayer();
     });
   }
 
@@ -152,12 +153,14 @@ export class LayerExtension {
       c.set(element[0].color);
       dotElement.style.backgroundColor = '#' + c.getHexString();
 
-      dotElement.style.left = (((element[1] - 1950) * 590) / 71 - 5).toString() + 'px' ;
+      dotElement.style.left = (((element[1] - this.berlietData[0][1]) * 590) / (this.rangeData * 100) - 5).toString() + 'px' ;
       document.getElementsByClassName('range-slider container')[0].append(dotElement);
     });
   }
 
   createBurgerLayer(){
+    // console.log(this.listTemporalProvider[0].COStyles);
+
     let maxHeightLayers = 0;
     this.layerManager.tilesManagers.forEach(element => {
       console.log(element);

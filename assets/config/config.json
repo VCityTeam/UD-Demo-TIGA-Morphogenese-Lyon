@@ -114,25 +114,31 @@
   ],
   "3DTilesLayers": [
     {
-      "id": "Temporal",
+      "id": "Temporal 2009",
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
       "extensions": ["3DTILES_temporal"],
       "color": "0xFFFFFF"
     },
     {
-      "id": "Temporal 2",
+      "id": "Temporal 2010",
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
       "extensions": ["3DTILES_temporal"],
       "color": "0xFFFFFF"
     },
     {
-      "id": "Temporal 3",
+      "id": "Temporal 2011",
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
       "extensions": ["3DTILES_temporal"],
       "color": "0xFFFFFF"
     },
     {
-      "id": "Temporal 4",
+      "id": "Temporal 2012",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
+      "extensions": ["3DTILES_temporal"],
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Temporal 2013",
       "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/la-doua_2009-2018-temporal_tileset/tileset.json",
       "extensions": ["3DTILES_temporal"],
       "color": "0xFFFFFF"

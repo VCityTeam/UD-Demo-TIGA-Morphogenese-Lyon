@@ -43,54 +43,29 @@ app.start('../assets/config/config.json').then((config) => {
   const layerChoice = new udviz.Widgets.LayerChoice(app.view3D.layerManager);
   app.addModuleView('layerChoice', layerChoice);
 
-  // const layerLegend = new LayerExtension(app.view3D.layerManager);
-  const selectionStyle = { materialProps: { color: 0x13ddef } };
-  app.view3D.layerManager.registerStyle('grow', selectionStyle);
+  //Temporal PROVIDER
+  const listTemporalProvider = [];
+  const tilesManagers = app.view3D.getLayerManager().tilesManagers;
+  for( let i = 0; i < tilesManagers.length; i++) {
+    
+    let model = new $3DTemporalExtension();
 
-  const temporalExtension = new LayerExtension(app.view3D);
-  // temporalExtension.createBurgerLayer();
-  // temporalExtension.windowCreated();
+    const test = new TemporalProvider(
+      model,
+      tilesManagers[i],
+      2009 + i
+    );
+    listTemporalProvider.push(test);
+  }
 
-  // Declare the source for the data on Ariege area
-  // const batBerlietSource = new udviz.itowns.FileSource({
-  //   url: 'https://raw.githubusercontent.com/VCityTeam/UD-Demo-TIGA-Morphogenese-Lyon/master/assets/Bat_Berliet_1993_l93_3946.geojson?token=GHSAT0AAAAAAB23Z4DBGR6KX5NAYGOJZANOY3574RQ',
-  //   crs: 'EPSG:3946',
-  //   format: 'application/json',
-  // });
-  // // Create a ColorLayer for the Ariege area
-  // const berlierLayer = new udviz.itowns.ColorLayer('Berliet', {
-  //   name: 'berliet',
-  //   transparent: true,
-  //   source: batBerlietSource,
-  //   style: new udviz.itowns.Style({
-  //     fill: {
-  //       color: 'orange',
-  //       opacity: 0.9,
-  //     },
-  //     stroke: {
-  //       color: 'white',
-  //     },
-  //   })
-  // });
-  // app.view3D.getItownsView().addLayer(berlierLayer);
-
+  const temporalExtension = new LayerExtension(app.view3D, listTemporalProvider);
+ 
   //// TEMPORAL MODULE
   // const temporalModule = new udviz.Widgets.TemporalModule(
   //   app.view3D.getLayerManager().tilesManagers[0],
   //   app.config.temporalModule
   // );
   // app.addModuleView('temporal', temporalModule.view);
-  const tilesManagers = app.view3D.getLayerManager().tilesManagers;
-  for( let i = 0; i < tilesManagers.length; i++) {
-    
-    let model = new $3DTemporalExtension();
-
-    new TemporalProvider(
-      model,
-      tilesManagers[i],
-      2009 + i
-    );
-  }
   
 
   // // 2010
