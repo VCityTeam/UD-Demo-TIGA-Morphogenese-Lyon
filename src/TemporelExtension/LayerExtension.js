@@ -7,6 +7,7 @@ import './temporalExtension.css';
 import $ from 'jquery';
 import * as udviz from 'ud-viz';
 import { TilesManager } from 'ud-viz/src/Components/Components';
+import { CityObjectID } from 'ud-viz/src/Components/3DTiles/Model/CityObject';
 
 export class LayerExtension {
   /**
@@ -159,11 +160,29 @@ export class LayerExtension {
   }
 
   createBurgerLayer(){
-    // console.log(this.listTemporalProvider[0].COStyles);
+    /* A comment. */
+    
+    this.listTemporalProvider.forEach(temporalProvider => {
+      const tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
+      for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
+        const tileDisplayStates = tiles.get(tileId + 1);
+        for (let i = 0; i < tileDisplayStates.length; i++) {
+          // console.log(tileDisplayStates[i]);
+          // console.log(this.layerManager.tilesManagers[tileId]);
+          this.layerManager.tilesManagers.forEach( tileManager => {
+            const cityObject = tileManager.getCityObject(new CityObjectID(tileId + 1, i));
+            // tileManager.tiles[tileId]
+            if (tileDisplayStates[i] == 'creation')
+              console.log(cityObject);
+            // if (cityObject)
+          });
+          // this.setCityObjectStyle(tileId, i, tileDisplayStates[i]);
+        }
+      }
+    });
 
     let maxHeightLayers = 0;
     this.layerManager.tilesManagers.forEach(element => {
-      console.log(element);
       const layer = element.layer;
       layer.root.children.forEach(object => {
         object.position.z += maxHeightLayers;
