@@ -1,9 +1,7 @@
 /** @format */
 
 //Components
-// import { Window } from '../node_modules/ud-viz/src/Components/GUI/js/Window';
-// import { LayerManager } from 'ud-viz/src/Components/LayerManager/LayerManager';
-import * as udviz from 'ud-viz';
+
 
 export class LayerExtension extends Window {
   /**

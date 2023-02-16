@@ -1,12 +1,9 @@
 /** @format */
 import * as udviz from 'ud-viz';
-import {LayerExtension} from './LayerExtension.js';
 
 const app = new udviz.Templates.AllWidget();
 
 app.start('../assets/config/config.json').then((config) => {
-  ////// REQUEST SERVICE
-  const requestService = new udviz.Components.RequestService();
 
   ////// ABOUT MODULE
   const about = new udviz.Widgets.AboutWindow();
