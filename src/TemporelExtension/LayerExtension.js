@@ -201,7 +201,12 @@ export class LayerExtension {
                 material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
                 const line = new udviz.THREE.Line( geometry, material );
                 this.view3D.getScene().add( line );
-              } 
+              } else if ( tileDisplayStates[i] == 'modification' ){
+                //create a red LineBasicMaterial
+                material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
+                const line = new udviz.THREE.Line( geometry, material );
+                this.view3D.getScene().add( line );
+              }
               
             }
             // if (cityObject)
