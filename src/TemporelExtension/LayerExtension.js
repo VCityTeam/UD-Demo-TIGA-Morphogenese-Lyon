@@ -171,13 +171,13 @@ export class LayerExtension {
       maxHeightLayers += 150;
     });
     
-    this.listTemporalProvider.forEach(temporalProvider => {
+    //Create lines
+    let height = 0;
+    this.listTemporalProvider.forEach(temporalProvider => { // Parcours des provider
       const tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
       for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
         const tileDisplayStates = tiles.get(tileId + 1);
         for (let i = 0; i < tileDisplayStates.length; i++) {
-          // console.log(tileDisplayStates[i]);
-          // console.log(this.layerManager.tilesManagers[tileId]);
           this.layerManager.tilesManagers.forEach( tileManager => {
             const cityObject = tileManager.getCityObject(new CityObjectID(tileId + 1, i));
             // tileManager.tiles[tileId]
@@ -185,8 +185,8 @@ export class LayerExtension {
               let material;
               const COCentroid = cityObject.centroid;
               const points = [];
-              points.push( COCentroid );
-              points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 ) );
+              points.push( new udviz.THREE.Vector3(COCentroid.x, COCentroid.y, COCentroid.z + height) );
+              points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
               
               const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
               
@@ -201,11 +201,11 @@ export class LayerExtension {
                 material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
                 const line = new udviz.THREE.Line( geometry, material );
                 this.view3D.getScene().add( line );
-              } else if ( tileDisplayStates[i] == 'modification' ){
-                //create a red LineBasicMaterial
-                material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
-                const line = new udviz.THREE.Line( geometry, material );
-                this.view3D.getScene().add( line );
+              // } else if ( tileDisplayStates[i] == 'modification' ){
+              //   //create a red LineBasicMaterial
+              //   material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
+              //   const line = new udviz.THREE.Line( geometry, material );
+              //   this.view3D.getScene().add( line );
               }
               
             }
@@ -214,6 +214,7 @@ export class LayerExtension {
           // this.setCityObjectStyle(tileId, i, tileDisplayStates[i]);
         }
       }
+      height+=150;
     });
 
         
