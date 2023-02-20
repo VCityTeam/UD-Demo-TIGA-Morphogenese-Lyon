@@ -173,26 +173,11 @@ export class LayerExtension {
       maxHeightLayers += 150;
     });
 
-    let material = new udviz.THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );    
-    const loader = new FontLoader();
-    let font;
-    loader.load( './../../assets/font/helvetiker_regular.typeface.json', function ( response ) {
-      
-      font = response;
-      
-    } );
-    
-    
-    
-    // textMesh.position.x = 0;
-    // textMesh.position.y = 0;
-    // textMesh.position.z = 0;
-        
-    // textMesh.rotation.x = 0;
-    // textMesh.rotation.y = Math.PI * 2;
+    // let materialText = new udviz.THREE.MeshPhongMaterial( { color: 'red', flatShading: true } );
     
     //Create lines
     let height = 0;
+    let materialText;
     this.listTemporalProvider.forEach(temporalProvider => { // Parcours des provider
       const tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
       for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
@@ -209,43 +194,60 @@ export class LayerExtension {
               points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
               
               const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+              let text = '';
               
               if (tileDisplayStates[i] == 'creation'){
+                text = 'creation';
                 //create a blue LineBasicMaterial
                 material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
+                // materialText = new udviz.THREE.MeshPhongMaterial( { color: 'green', flatShading: true } );
                 const line = new udviz.THREE.Line( geometry, material );
-                this.view3D.getScene().add( line );
+                // this.view3D.getScene().add( line );
                 
               } else if (tileDisplayStates[i] == 'demolition') {
-                //create a red LineBasicMaterial
-                let textGeo = new TextGeometry( 'demolition', {
-      
-                  font: font,
-                  
-                  size: 70,
-                  height: 20,
-                  curveSegments: 4,
-                  
-                  bevelThickness: 2,
-                  bevelSize: 1.5,
-                  bevelEnabled: true
-                  
-                } );
-                let textMesh = new udviz.THREE.Mesh( textGeo, material );
-                textMesh.position.set(COCentroid.x, COCentroid.y, COCentroid.z + 75 + height);
-                textMesh.scale.set(20,20,20);
-                textMesh.updateMatrixWorld();
-                this.view3D.getScene().add(textMesh);
+                
                 //Text
+                text = 'demolition';
                 material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
+                materialText = new udviz.THREE.MeshPhongMaterial( { color: 'red', flatShading: true } );
                 const line = new udviz.THREE.Line( geometry, material );
                 this.view3D.getScene().add( line );
+                //LOAD FONT
+                const loader = new FontLoader();
+                loader.load( './../../assets/font/helvetiker_regular.typeface.json', ( response ) => {
+                  let textGeo = new TextGeometry( text, {
+      
+                    font: response,
+                    
+                    size: 20,
+                    height: 20,
+                    curveSegments: 4,
+                    
+                    bevelThickness: 2,
+                    bevelSize: 1.5,
+                    bevelEnabled: true
+                    
+                  } );
+                  textGeo.computeBoundingBox();
+                  const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+                  let textMesh = new udviz.THREE.Mesh( textGeo, materialText );
+                  textMesh.position.set(COCentroid.x + centerOffset, COCentroid.y, COCentroid.z + 300);
+                  textMesh.rotation.x = 90 * (Math.PI/180);
+                  // textMesh.rotation.z = 90;
+                  textMesh.scale.multiplyScalar(1);
+                  textMesh.updateMatrixWorld();
+                  // console.log(textMesh);
+                  this.view3D.getScene().add(textMesh);
+                 
+                } );
+                // this.view3D.getScene().add( line );
               // } else if ( tileDisplayStates[i] == 'modification' ){
               //   //create a red LineBasicMaterial
               //   material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
               //   const line = new udviz.THREE.Line( geometry, material );
               //   this.view3D.getScene().add( line );
               }
+
               
             }
             // if (cityObject)
