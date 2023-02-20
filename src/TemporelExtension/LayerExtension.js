@@ -35,8 +35,10 @@ export class LayerExtension {
     
     this.berlietData = [[this.layerManager.tilesManagers[0], 2009],
       [this.layerManager.tilesManagers[1], 2010],
-      // [this.layerManager.tilesManagers[2], 2011],
-      // [this.layerManager.tilesManagers[3], 2012],
+      [this.layerManager.tilesManagers[2], 2011],
+      [this.layerManager.tilesManagers[3], 2012],
+      [this.layerManager.tilesManagers[4], 2013],
+      [this.layerManager.tilesManagers[5], 2014],
       // [this.layerManager.tilesManagers[4], 1993],
       // [this.layerManager.tilesManagers[5], 2021]
     ];
@@ -108,7 +110,7 @@ export class LayerExtension {
 
     //Hide or Show data
     rangeOne.oninput = () => {
-      let valueOne = parseInt(this.value * this.rangeData) + this.berlietData[0][1];
+      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.berlietData[0][1];
       let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.berlietData[0][1];
       this.berlietData.forEach(element => {
         if (element[1] < valueOne || element[1] > valueTwo){
@@ -121,7 +123,7 @@ export class LayerExtension {
     };
 
     rangeTwo.oninput = () => {
-      let valueTwo = parseInt(this.value * this.rangeData) + this.berlietData[0][1];
+      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.berlietData[0][1];
       let valueOne = parseInt(rangeOne.value * this.rangeData) + this.berlietData[0][1];
       this.berlietData.forEach(element => {
         if (element[1] < valueOne || element[1] > valueTwo){
@@ -173,11 +175,8 @@ export class LayerExtension {
       maxHeightLayers += 150;
     });
 
-    // let materialText = new udviz.THREE.MeshPhongMaterial( { color: 'red', flatShading: true } );
-    
     //Create lines
     let height = 0;
-    let test = 0;
     let materialText;
     this.listTemporalProvider.forEach(temporalProvider => { // Parcours des provider
       const tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
@@ -243,8 +242,6 @@ export class LayerExtension {
                   this.view3D.getScene().add( line );
                   
                 } );
-                // console.log(test);
-                // this.view3D.getScene().add( line );
                 // } else if ( tileDisplayStates[i] == 'modification' ){
                 //   //create a red LineBasicMaterial
                 //   material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
@@ -254,12 +251,10 @@ export class LayerExtension {
 
               
             }
-            // if (cityObject)
           });
           // this.setCityObjectStyle(tileId, i, tileDisplayStates[i]);
         }
       }
-      test+=50;
       height+=150;
     });
 
