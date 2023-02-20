@@ -8,6 +8,8 @@ import $ from 'jquery';
 import * as udviz from 'ud-viz';
 import { TilesManager } from 'ud-viz/src/Components/Components';
 import { CityObjectID } from 'ud-viz/src/Components/3DTiles/Model/CityObject';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
 export class LayerExtension {
   /**
@@ -170,6 +172,24 @@ export class LayerExtension {
       });
       maxHeightLayers += 150;
     });
+
+    let material = new udviz.THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );    
+    const loader = new FontLoader();
+    let font;
+    loader.load( './../../assets/font/helvetiker_regular.typeface.json', function ( response ) {
+      
+      font = response;
+      
+    } );
+    
+    
+    
+    // textMesh.position.x = 0;
+    // textMesh.position.y = 0;
+    // textMesh.position.z = 0;
+        
+    // textMesh.rotation.x = 0;
+    // textMesh.rotation.y = Math.PI * 2;
     
     //Create lines
     let height = 0;
@@ -198,6 +218,25 @@ export class LayerExtension {
                 
               } else if (tileDisplayStates[i] == 'demolition') {
                 //create a red LineBasicMaterial
+                let textGeo = new TextGeometry( 'demolition', {
+      
+                  font: font,
+                  
+                  size: 70,
+                  height: 20,
+                  curveSegments: 4,
+                  
+                  bevelThickness: 2,
+                  bevelSize: 1.5,
+                  bevelEnabled: true
+                  
+                } );
+                let textMesh = new udviz.THREE.Mesh( textGeo, material );
+                textMesh.position.set(COCentroid.x, COCentroid.y, COCentroid.z + 75 + height);
+                textMesh.scale.set(20,20,20);
+                textMesh.updateMatrixWorld();
+                this.view3D.getScene().add(textMesh);
+                //Text
                 material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
                 const line = new udviz.THREE.Line( geometry, material );
                 this.view3D.getScene().add( line );
