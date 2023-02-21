@@ -50,12 +50,12 @@ app.start('../assets/config/config.json').then((config) => {
     
     let model = new $3DTemporalExtension();
 
-    const test = new TemporalProvider(
+    const dataTemporal = new TemporalProvider(
       model,
       tilesManagers[i],
       2009 + i
     );
-    listTemporalProvider.push(test);
+    listTemporalProvider.push(dataTemporal);
   }
 
   const temporalExtension = new LayerExtension(app.view3D, listTemporalProvider);
