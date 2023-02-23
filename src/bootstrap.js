@@ -13,7 +13,6 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   '../assets/config/layer/elevation.json',
   '../assets/config/widget/about.json',
   '../assets/config/widget/help.json',
-  '../assets/config/widget/sparql_server.json'
 ]).then((configs) => {
   // http://proj4js.org/
   // define a projection as a string and reference it that way
