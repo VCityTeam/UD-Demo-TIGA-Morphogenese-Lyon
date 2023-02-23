@@ -2,6 +2,27 @@
 
 Ce projet s’inscrit dans le cadre de l’action 14 (Think and do Tank) du projet TIGA piloté par la Métropole de Lyon. Il vise à mettre en place un travail partenarial entre deux laboratoires de recherche parties prenantes du Think and do Tank : le laboratoire d’Informatique en Image et Systèmes d’Information (LIRIS) et le laboratoire Environnement, Ville et Société (EVS). S’organisant au sein du LabEx IMU, le projet de morphogenèse urbaine cherche à initier une démarche transdisciplinaire autour de l’urbain en mobilisant les acteurs de la recherche au profit de la collectivité ou des citoyens.  
 
+### Component Setup
+To configure the demo and the components that support it edit the `.env` file to be launched with docker-compose. By default the following ports are used by the following services:
+- 8996: `PostGIS`
+- 8997: `Strabon`
+
+The following sections will describe how to configure this file for each component. 
+
+### Build Images and run containers
+First, build the PostGIS and Strabon docker images and run their containers:
+```
+docker-compose up
+```
+
+**Note:** Make sure to set the `sparqlModule/url` port in the `./ud-viz-context/config.json` file to the same port for the _Strabon_ container declared in the `.env` file.
+
+Then install and run the UD-Viz application:
+```
+npm i
+npm run debug
+```
+
  
 
 ## Objectifs du projet  

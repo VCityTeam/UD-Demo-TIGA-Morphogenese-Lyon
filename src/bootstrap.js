@@ -13,6 +13,9 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   '../assets/config/layer/elevation.json',
   '../assets/config/widget/about.json',
   '../assets/config/widget/help.json',
+  '../assets/config/widget/sparql_widget.json',
+  '../assets/config/server/sparql_server.json',
+  '../assets/config/styles.json',
 ]).then((configs) => {
   // http://proj4js.org/
   // define a projection as a string and reference it that way
@@ -101,4 +104,24 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   }
   
   const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider);
+
+  // //// CITY OBJECTS PROVIDER
+  const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
+    app.getFrame3DPlanar().getLayerManager(),
+    configs['styles']
+  );
+
+  // //// SPARQL MODULE
+  const sparqlWidgetView = new udvizBrowser.Widget.Server.SparqlWidgetView(
+    new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
+      configs['sparql_server']
+    ),
+    cityObjectProvider,
+    listTemporalProvider[0],
+    app.getFrame3DPlanar().getLayerManager(),
+    configs['sparql_widget']
+  );
+  app.addWidgetView('sparqlModule', sparqlWidgetView, {
+    name: 'SPARQL Query',
+  });
 });

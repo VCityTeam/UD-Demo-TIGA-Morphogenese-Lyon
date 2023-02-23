@@ -1,0 +1,33 @@
+volumes:
+  postgres_volume:
+    name: ${POSTGRES_VOLUME_NAME}
+services:
+#   blazegraph:
+#     hostname: blazegraph
+#     image: lyrasis/blazegraph:2.1.5
+#     ports:
+#       - "${BLAZEGRAPH_PORT}:8080"
+  postgis:
+    image: bde2020/postgis
+    hostname: postgis
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB_NAME}
+    volumes:
+      - postgres_volume:/var/lib/postgresql/9.4/main:rw
+    ports:
+      - "${POSTGRES_PORT}:5432"
+  strabon:
+    build:
+      context: ./strabon-context
+    hostname: strabon
+    environment:
+      - STRABON_CONNECTION_hostname=${POSTGRES_ORDBMS}
+      - STRABON_CONNECTION_port=${POSTGRES_PORT}
+      - STRABON_CREDENTIALS_username=${STRABON_CREDENTIALS_username}
+      - STRABON_CREDENTIALS_password=${STRABON_CREDENTIALS_password}
+    volumes:
+      - ./strabon-context/data:/data
+    ports:
+      - "${STRABON_PORT}:8080"
