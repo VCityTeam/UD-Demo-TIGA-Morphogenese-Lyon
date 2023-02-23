@@ -5,7 +5,7 @@
 // import { LayerManager } from 'ud-viz/src/Components/LayerManager/LayerManager';
 import './temporalExtension.css';
 import $ from 'jquery';
-import * as udviz from '@ud-viz/browser';
+import * as udviz from '../../UD-Viz/packages/browser/src';
 import { TilesManager } from '@ud-viz/browser/src/Component/Itowns/Itowns';
 import { CityObjectID } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObject';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
@@ -15,7 +15,7 @@ export class LayerExtension {
   /**
    * Creates the layer choice windows
    *
-   * @param {udviz.Views} layerManager
+   * @param {udviz.Frame3DPlanar} view3D
    * @param {Array<TemporalProvider>} listTemporalProvider
    */
   constructor(view3D, listTemporalProvider) {
@@ -75,7 +75,7 @@ export class LayerExtension {
 
   windowCreated() {
   
-    let viewerDiv = document.getElementById('root_View3D');
+    let viewerDiv = this.view3D.rootHtml;
     this.temporalDiv = document.createElement('div');
     this.temporalDiv.id = 'temporal-updated';
     this.temporalDiv.innerHTML = this.innerContentHtml;

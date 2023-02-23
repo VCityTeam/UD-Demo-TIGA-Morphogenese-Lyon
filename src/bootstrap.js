@@ -2,7 +2,7 @@
 import * as udvizBrowser  from '@ud-viz/browser';
 import { $3DTemporalExtension } from '@ud-viz/browser/src/Component/Widget/Temporal/Model/3DTemporalExtension';
 import { TemporalProvider } from '@ud-viz/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider';
-// import {LayerExtension} from './TemporelExtension/LayerExtension.js';
+import { LayerExtension } from './TemporelExtension/LayerExtension.js';
 
 udvizBrowser.FileUtil.loadMultipleJSON([
   '../assets/config/all_widget.json',
@@ -100,5 +100,5 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     listTemporalProvider.push(dataTemporal);
   }
   
-  // const temporalExtension = new LayerExtension(app.view3D, listTemporalProvider);
+  const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider);
 });
