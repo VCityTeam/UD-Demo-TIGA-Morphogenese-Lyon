@@ -1,55 +1,98 @@
 /** @format */
-import * as udviz from 'ud-viz';
-import {LayerExtension} from './TemporelExtension/LayerExtension.js';
-import { $3DTemporalExtension } from 'ud-viz/src/Widgets/Temporal/Model/3DTemporalExtension';
-import { TemporalProvider } from 'ud-viz/src/Widgets/Temporal/ViewModel/TemporalProvider';
+import * as udvizBrowser  from '@ud-viz/browser';
+import { $3DTemporalExtension } from '@ud-viz/browser/src/Component/Widget/Temporal/Model/3DTemporalExtension';
+import { TemporalProvider } from '@ud-viz/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider';
+// import {LayerExtension} from './TemporelExtension/LayerExtension.js';
 
-const app = new udviz.Templates.AllWidget();
-
-app.start('../assets/config/config.json').then((config) => {
-  ////// REQUEST SERVICE
-  const requestService = new udviz.Components.RequestService();
-
-  ////// ABOUT MODULE
-  const about = new udviz.Widgets.AboutWindow();
-  app.addModuleView('about', about);
-
-  ////// HELP MODULE
-  // const help = new udviz.Widgets.Extensions.HelpWindow(config.helpWindow);
-  // app.addModuleView('help', help);
-
-  ////// CITY OBJECTS MODULE
-  let cityObjectModule = new udviz.Widgets.CityObjectModule(
-    app.view3D.layerManager,
-    app.config
+udvizBrowser.FileUtil.loadMultipleJSON([
+  '../assets/config/all_widget.json',
+  '../assets/config/extent_lyon.json',
+  '../assets/config/frame3D_planars.json',
+  '../assets/config/layer/3DTiles.json',
+  '../assets/config/layer/base_maps.json',
+  '../assets/config/layer/elevation.json',
+  '../assets/config/widget/about.json',
+  '../assets/config/widget/help.json',
+  '../assets/config/widget/sparql_server.json'
+]).then((configs) => {
+  // http://proj4js.org/
+  // define a projection as a string and reference it that way
+  // the definition of the projection should be in config TODO_ISSUE
+  udvizBrowser.proj4.default.defs(
+    configs['extent_lyon'].crs,
+    '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
   );
-  app.addModuleView('cityObjects', cityObjectModule.view);
 
-  ////// 3DTILES DEBUG
-  const debug3dTilesWindow = new udviz.Widgets.Debug3DTilesWindow(
-    app.view3D.layerManager
+  const extent = new udvizBrowser.itowns.Extent(
+    configs['extent_lyon'].crs,
+    parseInt(configs['extent_lyon'].west),
+    parseInt(configs['extent_lyon'].east),
+    parseInt(configs['extent_lyon'].south),
+    parseInt(configs['extent_lyon'].north)
   );
-  app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+
+  const app = new udvizBrowser.AllWidget(
+    extent,
+    configs['all_widget'],
+    configs['frame3D_planars'][0]
+  );
+
+  const frame3DPlanar = app.getFrame3DPlanar();
+
+  // /// ADD LAYERS
+  udvizBrowser.add3DTilesLayers(
+    configs['3DTiles'],
+    frame3DPlanar.layerManager,
+    frame3DPlanar.itownsView
+  );
+
+  udvizBrowser.addBaseMapLayer(
+    configs['base_maps'][0],
+    frame3DPlanar.itownsView,
+    extent
+  );
+
+  udvizBrowser.addElevationLayer(
+    configs['elevation'],
+    frame3DPlanar.itownsView,
+    extent
+  );
+
+  // //// ABOUT MODULE
+  const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
+  app.addWidgetView('about', about);
+
+  // //// HELP MODULE
+  new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
+
+  // //// 3DTILES DEBUG
+  const debug3dTilesWindow = new udvizBrowser.Widget.Debug3DTilesWindow(
+    app.getFrame3DPlanar().getLayerManager()
+  );
+  app.addWidgetView('3dtilesDebug', debug3dTilesWindow, {
     name: '3DTiles Debug',
   });
 
-  ////// CAMERA POSITIONER
-  const cameraPosition = new udviz.Widgets.CameraPositionerView(
-    app.view3D.getItownsView()
+  // //// CAMERA POSITIONER
+  const cameraPosition = new udvizBrowser.Widget.CameraPositionerView(
+    app.getFrame3DPlanar().getItownsView()
   );
-  app.addModuleView('cameraPositioner', cameraPosition);
+  app.addWidgetView('cameraPositioner', cameraPosition);
 
-  ////// LAYER CHOICE MODULE
-  const layerChoice = new udviz.Widgets.LayerChoice(app.view3D.layerManager);
-  app.addModuleView('layerChoice', layerChoice);
+  // //// LAYER CHOICE MODULE
+  const layerChoice = new udvizBrowser.Widget.LayerChoice(
+    app.getFrame3DPlanar().getLayerManager()
+  );
+  app.addWidgetView('layerChoice', layerChoice);
 
   //Temporal PROVIDER
   const listTemporalProvider = [];
-  const tilesManagers = app.view3D.getLayerManager().tilesManagers;
+  const tilesManagers = app.getFrame3DPlanar().getLayerManager().tilesManagers;
   for( let i = 0; i < tilesManagers.length; i++) {
-    
+      
     let model = new $3DTemporalExtension();
-
+  
     const dataTemporal = new TemporalProvider(
       model,
       tilesManagers[i],
@@ -57,26 +100,6 @@ app.start('../assets/config/config.json').then((config) => {
     );
     listTemporalProvider.push(dataTemporal);
   }
-
-  const temporalExtension = new LayerExtension(app.view3D, listTemporalProvider);
- 
-  //// TEMPORAL MODULE
-  // const temporalModule = new udviz.Widgets.TemporalModule(
-  //   app.view3D.getLayerManager().tilesManagers[0],
-  //   app.config.temporalModule
-  // );
-  // app.addModuleView('temporal', temporalModule.view);
   
-
-  // // 2010
-  // model = new $3DTemporalExtension();
-
-  // new TemporalProvider(
-  //   model,
-  //   app.view3D.getLayerManager().tilesManagers[1],
-  //   2010
-  // );
-
-  // this.view = new TemporalView(this.provider, temporalOptions);
-
+  // const temporalExtension = new LayerExtension(app.view3D, listTemporalProvider);
 });

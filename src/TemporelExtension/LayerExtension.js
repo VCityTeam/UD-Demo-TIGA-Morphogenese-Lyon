@@ -5,9 +5,9 @@
 // import { LayerManager } from 'ud-viz/src/Components/LayerManager/LayerManager';
 import './temporalExtension.css';
 import $ from 'jquery';
-import * as udviz from 'ud-viz';
-import { TilesManager } from 'ud-viz/src/Components/Components';
-import { CityObjectID } from 'ud-viz/src/Components/3DTiles/Model/CityObject';
+import * as udviz from '@ud-viz/browser';
+import { TilesManager } from '@ud-viz/browser/src/Component/Itowns/Itowns';
+import { CityObjectID } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObject';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
