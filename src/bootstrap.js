@@ -8,7 +8,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   '../assets/config/all_widget.json',
   '../assets/config/extent_lyon.json',
   '../assets/config/frame3D_planars.json',
-  '../assets/config/layer/3DTiles.json',
+  '../assets/config/layer/3DTiles_temporal.json',
   '../assets/config/layer/base_maps.json',
   '../assets/config/layer/elevation.json',
   '../assets/config/widget/about.json',
@@ -41,7 +41,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
 
   // /// ADD LAYERS
   udvizBrowser.add3DTilesLayers(
-    configs['3DTiles'],
+    configs['3DTiles_temporal'],
     frame3DPlanar.layerManager,
     frame3DPlanar.itownsView
   );
