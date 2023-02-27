@@ -169,7 +169,10 @@ export class LayerExtension {
     this.layerManager.tilesManagers.forEach(element => {
       const layer = element.layer;
       layer.root.children.forEach(object => {
+        // Height
         object.position.z += maxHeightLayers;
+        const centroidBB = new udviz.THREE.Vector3();
+        object.boundingVolume.box.getCenter(centroidBB);
         object.updateMatrixWorld();
       });
       maxHeightLayers += 150;
@@ -177,7 +180,6 @@ export class LayerExtension {
 
     //Create lines
     let height = 0;
-    let materialText;
     this.listTemporalProvider.forEach(temporalProvider => { // Parcours des provider
       const tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
       for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
@@ -190,58 +192,23 @@ export class LayerExtension {
               let material;
               const COCentroid = cityObject.centroid;
               const points = [];
-              const linkObjectPos = new udviz.THREE.Vector3(COCentroid.x, COCentroid.y, COCentroid.z + height + 75);
+
               points.push( new udviz.THREE.Vector3(COCentroid.x, COCentroid.y, COCentroid.z + height) );
               points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
               
               const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-              let text = '';
-              
+              let line;
               if (tileDisplayStates[i] == 'creation'){
-                text = 'creation';
                 //create a blue LineBasicMaterial
                 material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
-                // materialText = new udviz.THREE.MeshPhongMaterial( { color: 'green', flatShading: true } );
-                const line = new udviz.THREE.Line( geometry, material );
+                line = new udviz.THREE.Line( geometry, material );
                 // this.view3D.getScene().add( line );
                 
               } else if (tileDisplayStates[i] == 'demolition') {
-                
-                //Text
-                text = 'demolition';
-                materialText = new udviz.THREE.MeshPhongMaterial( { color: 'red', flatShading: true } );
-                //LOAD FONT
-                const loader = new FontLoader();
-                loader.load( './../../assets/font/helvetiker_regular.typeface.json', ( response ) => {
-                  let textGeo = new TextGeometry( text, {
-                    
-                    font: response,
-                    
-                    size: 10,
-                    height: 5,
-                    curveSegments: 1,
-                    
-                    bevelThickness: 2,
-                    bevelSize: 1.5,
-                    bevelEnabled: false
-                    
-                  } );
-                  textGeo.computeBoundingBox();
-                  const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
-                  let textMesh = new udviz.THREE.Mesh( textGeo, materialText );
-                  textMesh.position.set(linkObjectPos.x + centerOffset, linkObjectPos.y, linkObjectPos.z);
-                  textMesh.rotation.x = 90 * (Math.PI/180);
-                  // textMesh.rotation.z = 90;
-                  textMesh.scale.multiplyScalar(1);
-                  textMesh.updateMatrixWorld();
-                  this.view3D.getScene().add(textMesh);
-
-                  //LINE
-                  material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
-                  const line = new udviz.THREE.Line( geometry, material );
-                  this.view3D.getScene().add( line );
-                  
-                } );
+                //LINE
+                material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
+                line = new udviz.THREE.Line( geometry, material );
+                this.view3D.getScene().add( line );
                 // } else if ( tileDisplayStates[i] == 'modification' ){
                 //   //create a red LineBasicMaterial
                 //   material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
@@ -255,9 +222,41 @@ export class LayerExtension {
           // this.setCityObjectStyle(tileId, i, tileDisplayStates[i]);
         }
       }
+      const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
+      const positionText = new udviz.THREE.Vector3(objectLayer.position.x - 400 , objectLayer.position.y, objectLayer.position.z + height);
+      this.addTextInScene(temporalProvider.currentTime, positionText);
       height+=150;
-    });
-
-        
+    });   
   } 
+
+  addTextInScene(text, position){
+    //Text
+    let materialText = new udviz.THREE.MeshPhongMaterial( { color: 'red', flatShading: true } );
+    const loader = new FontLoader();
+    loader.load( './../../assets/font/helvetiker_regular.typeface.json', ( response ) => {
+      let textGeo = new TextGeometry( text.toString(), {
+                 
+        font: response,
+                 
+        size: 20,
+        height: 5,
+        curveSegments: 1,
+                 
+        bevelThickness: 2,
+        bevelSize: 1.5,
+        bevelEnabled: false
+                 
+      } );
+      textGeo.computeBoundingBox();
+      // const centerOffset = - 0.5 * ( object.boundingVolume.box.max.x - object.boundingVolume.box.min.x );
+      let textMesh = new udviz.THREE.Mesh( textGeo, materialText );
+      textMesh.position.set(position.x, position.y, position.z);
+      textMesh.rotation.x = 90 * (Math.PI/180);
+
+      textMesh.scale.multiplyScalar(1);
+      textMesh.updateMatrixWorld();
+      this.view3D.getScene().add(textMesh);
+               
+    });
+  }
 }

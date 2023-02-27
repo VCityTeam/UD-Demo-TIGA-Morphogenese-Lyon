@@ -117,7 +117,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
       configs['sparql_server']
     ),
     cityObjectProvider,
-    listTemporalProvider[0],
+    listTemporalProvider,
     app.getFrame3DPlanar().getLayerManager(),
     configs['sparql_widget']
   );
