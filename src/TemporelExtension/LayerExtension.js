@@ -7,7 +7,8 @@ import './temporalExtension.css';
 import $ from 'jquery';
 import * as udviz from '../../UD-Viz/packages/browser/src';
 import { TilesManager } from '@ud-viz/browser/src/Component/Itowns/Itowns';
-import { CityObjectID } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObject';
+import { CityObject, CityObjectID } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObject';
+import { CityObjectStyle } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObjectStyle';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
@@ -32,15 +33,13 @@ export class LayerExtension {
 
     this.listTemporalProvider = listTemporalProvider;
 
-    
+    //To-Do generalize this set of data
     this.berlietData = [[this.layerManager.tilesManagers[0], 2009],
       [this.layerManager.tilesManagers[1], 2010],
       [this.layerManager.tilesManagers[2], 2011],
       [this.layerManager.tilesManagers[3], 2012],
       [this.layerManager.tilesManagers[4], 2013],
       [this.layerManager.tilesManagers[5], 2014],
-      // [this.layerManager.tilesManagers[4], 1993],
-      // [this.layerManager.tilesManagers[5], 2021]
     ];
 
     this.rangeData = Math.abs(this.berlietData[0][1] - this.berlietData[this.berlietData.length - 1][1]) / 100;
@@ -51,13 +50,32 @@ export class LayerExtension {
     this.view3D.layerManager.tilesManagers.forEach(element => {
       element.addEventListener(
         TilesManager.EVENT_TILE_LOADED, () => {
-          if (this.layerManager.getTotal3DTilesTileCount() == this.layerManager.getLoaded3DTilesTileCount())
+          if (this.layerManager.getTotal3DTilesTileCount() == this.layerManager.getLoaded3DTilesTileCount()){
             this.createBurgerLayer();
+
+            //EVENT
+            const clickListener = (event) => {
+              const cityObject = this.layerManager.pickCityObject(event);
+              // console.log(cityObject);
+              this.selectionCityObjectSTC(cityObject);
+            };
+            const viewerDiv = document.getElementById('viewerDiv');
+            viewerDiv.addEventListener('mousedown', clickListener);
+            
+          }
         }
-        
       );
-    });    
-    // this.createBurgerLayer();
+    });
+
+    //Register Style
+    this.unSelectedStyle = new CityObjectStyle({
+      materialProps: { opacity: 0.1, color: 0xffffff },
+    });
+    this.view3D.layerManager.registerStyle(
+      'unSelected',
+      this.unSelectedStyle
+    );
+
   }
 
   get innerContentHtml() {
@@ -166,6 +184,7 @@ export class LayerExtension {
   createBurgerLayer(){
 
     let maxHeightLayers = 0;
+    let currentTime = 2009;
     this.layerManager.tilesManagers.forEach(element => {
       const layer = element.layer;
       layer.root.children.forEach(object => {
@@ -175,58 +194,12 @@ export class LayerExtension {
         object.boundingVolume.box.getCenter(centroidBB);
         object.updateMatrixWorld();
       });
+      const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
+      const positionText = new udviz.THREE.Vector3(objectLayer.position.x - 400 , objectLayer.position.y, objectLayer.position.z + maxHeightLayers);
+      this.addTextInScene(currentTime.toString(), positionText);
+      currentTime += 1;
       maxHeightLayers += 150;
     });
-
-    //Create lines
-    let height = 0;
-    this.listTemporalProvider.forEach(temporalProvider => { // Parcours des provider
-      const tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
-      for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
-        const tileDisplayStates = tiles.get(tileId + 1);
-        for (let i = 0; i < tileDisplayStates.length; i++) {
-          this.layerManager.tilesManagers.forEach( tileManager => {
-            const cityObject = tileManager.getCityObject(new CityObjectID(tileId + 1, i));
-            // tileManager.tiles[tileId]
-            if (cityObject){
-              let material;
-              const COCentroid = cityObject.centroid;
-              const points = [];
-
-              points.push( new udviz.THREE.Vector3(COCentroid.x, COCentroid.y, COCentroid.z + height) );
-              points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
-              
-              const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-              let line;
-              if (tileDisplayStates[i] == 'creation'){
-                //create a blue LineBasicMaterial
-                material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
-                line = new udviz.THREE.Line( geometry, material );
-                // this.view3D.getScene().add( line );
-                
-              } else if (tileDisplayStates[i] == 'demolition') {
-                //LINE
-                material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
-                line = new udviz.THREE.Line( geometry, material );
-                this.view3D.getScene().add( line );
-                // } else if ( tileDisplayStates[i] == 'modification' ){
-                //   //create a red LineBasicMaterial
-                //   material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
-              //   const line = new udviz.THREE.Line( geometry, material );
-              //   this.view3D.getScene().add( line );
-              }
-
-              
-            }
-          });
-          // this.setCityObjectStyle(tileId, i, tileDisplayStates[i]);
-        }
-      }
-      const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
-      const positionText = new udviz.THREE.Vector3(objectLayer.position.x - 400 , objectLayer.position.y, objectLayer.position.z + height);
-      this.addTextInScene(temporalProvider.currentTime, positionText);
-      height+=150;
-    });   
   } 
 
   addTextInScene(text, position){
@@ -234,7 +207,7 @@ export class LayerExtension {
     let materialText = new udviz.THREE.MeshPhongMaterial( { color: 'red', flatShading: true } );
     const loader = new FontLoader();
     loader.load( './../../assets/font/helvetiker_regular.typeface.json', ( response ) => {
-      let textGeo = new TextGeometry( text.toString(), {
+      let textGeo = new TextGeometry( text, {
                  
         font: response,
                  
@@ -259,4 +232,119 @@ export class LayerExtension {
                
     });
   }
+
+  selectionCityObjectSTC(cityObjectSelected){
+    //Create lines
+    let height = 0;
+    this.listTemporalProvider.forEach(temporalProvider => {
+      if (!cityObjectSelected)
+        return;
+
+      this.setStyleSelectionSTC(cityObjectSelected); //Apply style
+
+      const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(cityObjectSelected.cityObjectId.tileId)[cityObjectSelected.cityObjectId.batchId];
+      
+      let material;
+      const COCentroid = cityObjectSelected.centroid;
+      const points = [];
+
+      points.push( new udviz.THREE.Vector3(COCentroid.x, COCentroid.y, COCentroid.z + height) );
+      let line;
+      if (transactionType == 'creation'){
+        //Line
+        points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
+        const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+        material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
+        line = new udviz.THREE.Line( geometry, material );
+        this.view3D.getScene().add( line );
+            
+      } else if (transactionType == 'demolition') {
+        //Line
+        points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z - 150 + height) );
+        const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+        material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
+        line = new udviz.THREE.Line( geometry, material );
+        this.view3D.getScene().add( line );
+        /* Creating a yellow line. */
+      } else if ( transactionType == 'modification' ){
+        points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
+        const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+        material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
+        line = new udviz.THREE.Line( geometry, material );
+        this.view3D.getScene().add( line );
+      } else if (transactionType == 'noTransaction' ){
+        points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
+        const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+        material = new udviz.THREE.LineBasicMaterial( { color: 'white' } );
+        line = new udviz.THREE.Line( geometry, material );
+        this.view3D.getScene().add( line );
+      }
+      height += 150;
+    });
+  }
+
+  displayAllTransaction(){
+    let height = 0;
+    this.listTemporalProvider.forEach(temporalProvider => { // Parcours des provider
+      const tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
+      for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
+        const tileDisplayStates = tiles.get(tileId + 1);
+        for (let i = 0; i < tileDisplayStates.length; i++) {
+          this.layerManager.tilesManagers.forEach( tileManager => {
+            const cityObject = tileManager.getCityObject(new CityObjectID(tileId + 1, i));
+            // tileManager.tiles[tileId]
+            if (cityObject){
+              let material;
+              const COCentroid = cityObject.centroid;
+              const points = [];
+    
+              points.push( new udviz.THREE.Vector3(COCentroid.x, COCentroid.y, COCentroid.z + height) );
+              let line;
+              if (tileDisplayStates[i] == 'creation'){
+                //Line
+                points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
+                const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+                material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
+                line = new udviz.THREE.Line( geometry, material );
+                this.view3D.getScene().add( line );
+                    
+              } else if (tileDisplayStates[i] == 'demolition') {
+                //Line
+                points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z - 150 + height) );
+                const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+                material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
+                line = new udviz.THREE.Line( geometry, material );
+                this.view3D.getScene().add( line );
+              } else if ( tileDisplayStates[i] == 'modification' ){
+                //line
+                points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
+                const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+                material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
+                line = new udviz.THREE.Line( geometry, material );
+                this.view3D.getScene().add( line );
+              }    
+            }
+          });
+        }
+      }
+      height+=150;
+    }); 
+  }
+
+  setStyleSelectionSTC(selectedCityObject){
+    this.view3D.layerManager.tilesManagers.forEach( tilesManager => {
+      tilesManager.tiles.forEach( tile => {
+        if (!tile.cityObjects)
+          return;
+        selectedCityObject.
+          tile.cityObjects.forEach(cityObject => {
+            if (selectedCityObject !=  cityObject) {
+              tilesManager.setStyle(cityObject.cityObjectId, this.unSelectedStyle);
+              tilesManager.applyStyles();
+            }
+          });
+      });
+    });
+  }
+
 }
