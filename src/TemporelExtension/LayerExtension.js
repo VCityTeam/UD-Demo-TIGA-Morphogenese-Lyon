@@ -20,10 +20,6 @@ export class LayerExtension {
    * @param {Array<TemporalProvider>} listTemporalProvider
    */
   constructor(view3D, listTemporalProvider) {
-
-    /**
-     * the layerManager
-     */
     this.layerManager = view3D.layerManager;
     this.view3D = view3D;
 
@@ -33,16 +29,14 @@ export class LayerExtension {
 
     this.listTemporalProvider = listTemporalProvider;
 
-    //To-Do generalize this set of data
-    this.berlietData = [[this.layerManager.tilesManagers[0], 2009],
-      [this.layerManager.tilesManagers[1], 2010],
-      [this.layerManager.tilesManagers[2], 2011],
-      [this.layerManager.tilesManagers[3], 2012],
-      [this.layerManager.tilesManagers[4], 2013],
-      [this.layerManager.tilesManagers[5], 2014],
-    ];
+    this.listTilesDates = [];
+    let date = 2009;
+    this.layerManager.tilesManagers.forEach( tile => {
+      this.listTilesDates.push([tile,date]);
+      date+=1;
+    });
 
-    this.rangeData = Math.abs(this.berlietData[0][1] - this.berlietData[this.berlietData.length - 1][1]) / 100;
+    this.rangeData = Math.abs(this.listTilesDates[0][1] - this.listTilesDates[this.listTilesDates.length - 1][1]) / 100;
     
     this.windowCreated();
     this.createdDotElementData();
@@ -100,7 +94,7 @@ export class LayerExtension {
     
     viewerDiv.append(this.temporalDiv);
 
-    let olderData = this.berlietData[0][1];
+    let olderData = this.listTilesDates[0][1];
     let rangeData = this.rangeData;
 
     let rangeOne = document.querySelector('input[name="rangeOne"]'),
@@ -128,9 +122,9 @@ export class LayerExtension {
 
     //Hide or Show data
     rangeOne.oninput = () => {
-      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.berlietData[0][1];
-      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.berlietData[0][1];
-      this.berlietData.forEach(element => {
+      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.listTilesDates[0][1];
+      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.listTilesDates[0][1];
+      this.listTilesDates.forEach(element => {
         if (element[1] < valueOne || element[1] > valueTwo){
           element[0].layer.visible = false;
         }else{
@@ -141,9 +135,9 @@ export class LayerExtension {
     };
 
     rangeTwo.oninput = () => {
-      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.berlietData[0][1];
-      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.berlietData[0][1];
-      this.berlietData.forEach(element => {
+      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.listTilesDates[0][1];
+      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.listTilesDates[0][1];
+      this.listTilesDates.forEach(element => {
         if (element[1] < valueOne || element[1] > valueTwo){
           element[0].layer.visible = false;
         }else{
@@ -153,21 +147,19 @@ export class LayerExtension {
       }); 
     };
 
-    document.addEventListener('DOMContentLoaded', function () {
-      updateView.call(rangeOne);
-      updateView.call(rangeTwo);
-      $('input[type="range"]').on('mouseup', function() {
-        this.blur();
-      }).on('mousedown input', function () {
-        updateView.call(this);
-      });
+    updateView.call(rangeOne);
+    updateView.call(rangeTwo);
+    $('input[type="range"]').on('mouseup', function() {
+      this.blur();
+    }).on('mousedown input', function () {
+      updateView.call(this);
     });
   }
 
   createdDotElementData(){
 
     //Create html element
-    this.berlietData.forEach(element => {
+    this.listTilesDates.forEach(element => {
       let dotElement = document.createElement('span');
       dotElement.className = 'dot';
 
@@ -176,13 +168,12 @@ export class LayerExtension {
       c.set(element[0].color);
       dotElement.style.backgroundColor = '#' + c.getHexString();
 
-      dotElement.style.left = (((element[1] - this.berlietData[0][1]) * 590) / (this.rangeData * 100) - 5).toString() + 'px' ;
+      dotElement.style.left = (((element[1] - this.listTilesDates[0][1]) * 590) / (this.rangeData * 100) - 5).toString() + 'px' ;
       document.getElementsByClassName('range-slider container')[0].append(dotElement);
     });
   }
 
   createBurgerLayer(){
-
     let maxHeightLayers = 0;
     let currentTime = 2009;
     this.layerManager.tilesManagers.forEach(element => {
@@ -255,30 +246,26 @@ export class LayerExtension {
         points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
         const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
         material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
-        line = new udviz.THREE.Line( geometry, material );
-        this.view3D.getScene().add( line );
-            
+        line = new udviz.THREE.Line( geometry, material );            
       } else if (transactionType == 'demolition') {
         //Line
         points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z - 150 + height) );
         const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
         material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
         line = new udviz.THREE.Line( geometry, material );
-        this.view3D.getScene().add( line );
         /* Creating a yellow line. */
       } else if ( transactionType == 'modification' ){
         points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
         const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
         material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
         line = new udviz.THREE.Line( geometry, material );
-        this.view3D.getScene().add( line );
       } else if (transactionType == 'noTransaction' ){
         points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
         const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
         material = new udviz.THREE.LineBasicMaterial( { color: 'white' } );
         line = new udviz.THREE.Line( geometry, material );
-        this.view3D.getScene().add( line );
       }
+      this.view3D.getScene().add( line );
       height += 150;
     });
   }
@@ -336,13 +323,12 @@ export class LayerExtension {
       tilesManager.tiles.forEach( tile => {
         if (!tile.cityObjects)
           return;
-        selectedCityObject.
-          tile.cityObjects.forEach(cityObject => {
-            if (selectedCityObject !=  cityObject) {
-              tilesManager.setStyle(cityObject.cityObjectId, this.unSelectedStyle);
-              tilesManager.applyStyles();
-            }
-          });
+        tile.cityObjects.forEach(cityObject => {
+          if (selectedCityObject.tile.tileId !=  cityObject.tile.tileId ) {
+            tilesManager.setStyle(cityObject.cityObjectId, this.unSelectedStyle);
+            tilesManager.applyStyles(); // TO-DO : Chercher dans Temporal provider / ExtModel / TransactionParTuile / Destinattion + source
+          }
+        });
       });
     });
   }
