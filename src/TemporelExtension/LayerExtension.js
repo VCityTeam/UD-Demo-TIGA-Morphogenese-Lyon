@@ -224,6 +224,10 @@ export class LayerExtension {
     });
   }
 
+  /**
+   * 
+   * @param {CityObject} cityObjectSelected 
+   */
   selectionCityObjectSTC(cityObjectSelected){
     //Create lines
     let height = 0;
@@ -233,43 +237,17 @@ export class LayerExtension {
 
       this.setStyleSelectionSTC(cityObjectSelected); //Apply style
 
+      //Here change how to select CO
       const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(cityObjectSelected.cityObjectId.tileId)[cityObjectSelected.cityObjectId.batchId];
-      
-      let material;
-      const COCentroid = cityObjectSelected.centroid;
-      const points = [];
 
-      points.push( new udviz.THREE.Vector3(COCentroid.x, COCentroid.y, COCentroid.z + height) );
-      let line;
-      if (transactionType == 'creation'){
-        //Line
-        points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
-        const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-        material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
-        line = new udviz.THREE.Line( geometry, material );            
-      } else if (transactionType == 'demolition') {
-        //Line
-        points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z - 150 + height) );
-        const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-        material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
-        line = new udviz.THREE.Line( geometry, material );
-        /* Creating a yellow line. */
-      } else if ( transactionType == 'modification' ){
-        points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
-        const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-        material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
-        line = new udviz.THREE.Line( geometry, material );
-      } else if (transactionType == 'noTransaction' ){
-        points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
-        const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-        material = new udviz.THREE.LineBasicMaterial( { color: 'white' } );
-        line = new udviz.THREE.Line( geometry, material );
-      }
-      this.view3D.getScene().add( line );
+      this.createTransactionLine(transactionType, cityObjectSelected, height);
       height += 150;
     });
   }
 
+  /**
+   * 
+   */
   displayAllTransaction(){
     let height = 0;
     this.listTemporalProvider.forEach(temporalProvider => { // Parcours des provider
@@ -281,35 +259,7 @@ export class LayerExtension {
             const cityObject = tileManager.getCityObject(new CityObjectID(tileId + 1, i));
             // tileManager.tiles[tileId]
             if (cityObject){
-              let material;
-              const COCentroid = cityObject.centroid;
-              const points = [];
-    
-              points.push( new udviz.THREE.Vector3(COCentroid.x, COCentroid.y, COCentroid.z + height) );
-              let line;
-              if (tileDisplayStates[i] == 'creation'){
-                //Line
-                points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
-                const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-                material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
-                line = new udviz.THREE.Line( geometry, material );
-                this.view3D.getScene().add( line );
-                    
-              } else if (tileDisplayStates[i] == 'demolition') {
-                //Line
-                points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z - 150 + height) );
-                const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-                material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
-                line = new udviz.THREE.Line( geometry, material );
-                this.view3D.getScene().add( line );
-              } else if ( tileDisplayStates[i] == 'modification' ){
-                //line
-                points.push( new udviz.THREE.Vector3( COCentroid.x, COCentroid.y, COCentroid.z + 150 + height) );
-                const geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-                material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
-                line = new udviz.THREE.Line( geometry, material );
-                this.view3D.getScene().add( line );
-              }    
+              this.createTransactionLine(tileDisplayStates[i], cityObject, height);   
             }
           });
         }
@@ -318,17 +268,65 @@ export class LayerExtension {
     }); 
   }
 
+  /**
+   * 
+   * @param {string} transactionType 
+   * @param {CityObject} cityObject
+   * @param {number} height
+   */
+  createTransactionLine(transactionType, cityObject, height){
+
+    const points = [];
+    points.push( new udviz.THREE.Vector3(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + height) );
+    let geometry;
+    let material;
+    switch (transactionType) {
+      case 'creation':
+        //Line
+        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 150 + height) );
+        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+        material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
+        break;
+      case 'demolition':
+        //Line
+        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z - 150 + height) );
+        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+        material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
+        break;
+      case 'modification':
+        //Line
+        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 150 + height) );
+        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+        material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
+        break;
+      case 'noTransaction':
+        //Line
+        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 150 + height) );
+        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+        material = new udviz.THREE.LineBasicMaterial( { color: 'white' } );
+        break;
+    
+      default:
+        break;
+    }
+    const line = new udviz.THREE.Line( geometry, material ); 
+    this.view3D.getScene().add( line );
+  }
+
+  /**
+   * 
+   * @param {CityObject} selectedCityObject 
+   */
   setStyleSelectionSTC(selectedCityObject){
     this.view3D.layerManager.tilesManagers.forEach( tilesManager => {
-      tilesManager.tiles.forEach( tile => {
-        if (!tile.cityObjects)
-          return;
-        tile.cityObjects.forEach(cityObject => {
-          if (selectedCityObject.tile.tileId !=  cityObject.tile.tileId ) {
-            tilesManager.setStyle(cityObject.cityObjectId, this.unSelectedStyle);
-            tilesManager.applyStyles(); // TO-DO : Chercher dans Temporal provider / ExtModel / TransactionParTuile / Destinattion + source
-          }
-        });
+      const tile = tilesManager.tiles[selectedCityObject.cityObjectId.tileId];
+      if (!tile.cityObjects)
+        return;
+      tile.cityObjects.forEach(cityObject => {
+        if (selectedCityObject.tile.tileId !=  cityObject.tile.tileId ) {
+          tilesManager.setStyle(cityObject.cityObjectId, this.unSelectedStyle);
+          tilesManager.applyStyles(); // TO-DO : Chercher dans Temporal provider / ExtModel / TransactionParTuile / Destinattion + source
+        }
       });
     });
   }
