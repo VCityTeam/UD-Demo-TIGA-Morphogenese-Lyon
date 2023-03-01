@@ -11,6 +11,7 @@ import { CityObject, CityObjectID } from '@ud-viz/browser/src/Component/Itowns/3
 import { CityObjectStyle } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObjectStyle';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { getUriLocalname } from '@ud-viz/browser/src/Component/Widget/Server/SPARQL/Model/URI';
 
 export class LayerExtension {
   /**
@@ -50,6 +51,7 @@ export class LayerExtension {
             //EVENT
             const clickListener = (event) => {
               const cityObject = this.layerManager.pickCityObject(event);
+
               // console.log(cityObject);
               this.selectionCityObjectSTC(cityObject);
             };
@@ -193,6 +195,11 @@ export class LayerExtension {
     });
   } 
 
+  /**
+   * 
+   * @param {string} text 
+   * @param {udviz.THREE.Vector3} position 
+   */
   addTextInScene(text, position){
     //Text
     let materialText = new udviz.THREE.MeshPhongMaterial( { color: 'red', flatShading: true } );
@@ -225,16 +232,30 @@ export class LayerExtension {
   }
 
   /**
-   * 
+   * Le cityobject doit changer en fonction de son layerTemporel car il change de GMLID
    * @param {CityObject} cityObjectSelected 
    */
   selectionCityObjectSTC(cityObjectSelected){
+    if (!cityObjectSelected)
+      return;
+    
+    this.getGmlIdsfromSelectedCO(cityObjectSelected);
+    
     //Create lines
     let height = 0;
-    this.listTemporalProvider.forEach(temporalProvider => {
-      if (!cityObjectSelected)
-        return;
+    // const temporalProvider = this.listTemporalProvider[0];
+    // const transactionPerTile = temporalProvider.tempExtModel.transactionsPerTile.get(cityObjectSelected.cityObjectId.tileId);
+    // const gml_id = cityObjectSelected.props.gml_id;
+    // const temporalPrimaryTransaction = transactionPerTile.get('2013::' + gml_id);
 
+    // this.layerManager.tilesManagers.forEach( layer  => {
+    //   const tile = layer.tiles[cityObjectSelected.cityObjectId.tileId];
+    //   tile.cityObjects.find(object => {
+    //     return object.batchId == cityObjectSelected.batchId;
+    //   });
+    // });
+    this.listTemporalProvider.forEach(temporalProvider => {
+      const tile = temporalProvider.tempExtModel.transactionsPerTile.get(cityObjectSelected.cityObjectId.tileId);
       this.setStyleSelectionSTC(cityObjectSelected); //Apply style
 
       //Here change how to select CO
@@ -319,16 +340,61 @@ export class LayerExtension {
    */
   setStyleSelectionSTC(selectedCityObject){
     this.view3D.layerManager.tilesManagers.forEach( tilesManager => {
-      const tile = tilesManager.tiles[selectedCityObject.cityObjectId.tileId];
-      if (!tile.cityObjects)
-        return;
-      tile.cityObjects.forEach(cityObject => {
-        if (selectedCityObject.tile.tileId !=  cityObject.tile.tileId ) {
-          tilesManager.setStyle(cityObject.cityObjectId, this.unSelectedStyle);
-          tilesManager.applyStyles(); // TO-DO : Chercher dans Temporal provider / ExtModel / TransactionParTuile / Destinattion + source
-        }
+      tilesManager.tiles.forEach( tile => {
+        if (!tile.cityObjects)
+          return;
+        tile.cityObjects.forEach(cityObject => {
+          if (selectedCityObject.tile.tileId !=  cityObject.tile.tileId ) {
+            tilesManager.setStyle(cityObject.cityObjectId, this.unSelectedStyle);
+            tilesManager.applyStyles(); // TO-DO : Chercher dans Temporal provider / ExtModel / TransactionParTuile / Destinattion + source
+          }
+        });
       });
+      // const tile = tilesManager.tiles[selectedCityObject.cityObjectId.tileId];
     });
   }
 
+  /**
+   * @param {CityObject} cityObjectSelected 
+   */
+  getGmlIdsfromSelectedCO(cityObjectSelected){
+    let cityObjects = [];
+    this.layerManager.tilesManagers.forEach( tiles => {
+      cityObjects = cityObjects.concat(tiles.pickCityObjectsByBatchTable('gml_id', cityObjectSelected.props.gml_id));
+    });
+    console.log(cityObjects);
+  }
+
+  /**
+   * 
+   * @param {JSON} query 
+   * @returns {Map}
+   */
+  parseSPARQLrequete(query) {
+    let transactionsFromGmlId = new Map(); 
+    const allgmlID = Object.entries(query.results.bindings[0]);
+    let currentTime = 2009;
+    allgmlID.forEach( element => {
+      const gml_id = getUriLocalname(element[1].value);
+      transactionsFromGmlId.set(currentTime, gml_id);
+      if (currentTime == 2018)
+        return;
+      transactionsFromGmlId.set(currentTime + 1, gml_id);
+      transactionsFromGmlId.set(currentTime + 2, gml_id);
+      currentTime += 3;
+    });
+    
+    return transactionsFromGmlId;
+  }
+
+  /**
+   * Get all CityObject with gml ID
+   * 
+   */
+  getCityObjectFromListOfGmlId(listOfGmlId) {
+    let listCOTransaction = [];
+    listOfGmlId.forEach( gml_id => {
+      listCOTransaction.push(this.layerManager.pickCityObjectByBatchTable(gml_id));
+    });
+  }
 }

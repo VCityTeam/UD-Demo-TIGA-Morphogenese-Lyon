@@ -110,12 +110,25 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     app.getFrame3DPlanar().getLayerManager(),
     configs['styles']
   );
+  // cityObjectProvider.selectCityObject()
 
+  // //// CITY OBJECTS MODULE
+  const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
+    cityObjectProvider,
+    configs['styles']
+  );
+  app.addWidgetView('cityObjects', cityObjectModule.view);
+
+
+  const sparqlProvider = new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
+    configs['sparql_server']
+  );
+
+  
+  
   // //// SPARQL MODULE
   const sparqlWidgetView = new udvizBrowser.Widget.Server.SparqlWidgetView(
-    new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
-      configs['sparql_server']
-    ),
+    sparqlProvider,
     cityObjectProvider,
     listTemporalProvider,
     app.getFrame3DPlanar().getLayerManager(),
@@ -124,4 +137,12 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   app.addWidgetView('sparqlModule', sparqlWidgetView, {
     name: 'SPARQL Query',
   });
+
+  
+  sparqlProvider.addEventListener(
+    udvizBrowser.Widget.Server.SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
+    (response) =>
+      temporalExtension.parseSPARQLrequete(response)
+  );
+  sparqlWidgetView.window.getTransactionChain('VILLEURBANNE_00129_0');
 });
