@@ -102,8 +102,6 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     );
     listTemporalProvider.push(dataTemporal);
   }
-  
-  const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider);
 
   // //// CITY OBJECTS PROVIDER
   const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
@@ -138,11 +136,13 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     name: 'SPARQL Query',
   });
 
+  const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider, sparqlWidgetView);
   
-  sparqlProvider.addEventListener(
-    udvizBrowser.Widget.Server.SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
-    (response) =>
-      temporalExtension.parseSPARQLrequete(response)
-  );
-  sparqlWidgetView.window.getTransactionChain('VILLEURBANNE_00129_0');
+  // sparqlProvider.addEventListener(
+  //   udvizBrowser.Widget.Server.SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
+  //   (response) =>
+  //     temporalExtension.parseSPARQLrequete(response)
+  // );
+  // sparqlWidgetView.window.getTransactionChain('VILLEURBANNE_00129_0');
+
 });

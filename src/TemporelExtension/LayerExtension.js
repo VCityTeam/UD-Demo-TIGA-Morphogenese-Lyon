@@ -12,6 +12,8 @@ import { CityObjectStyle } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Mo
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { getUriLocalname } from '@ud-viz/browser/src/Component/Widget/Server/SPARQL/Model/URI';
+import { SparqlWidgetView } from '@ud-viz/browser/src/Component/Widget/Server/Server';
+
 
 export class LayerExtension {
   /**
@@ -19,8 +21,9 @@ export class LayerExtension {
    *
    * @param {udviz.Frame3DPlanar} view3D
    * @param {Array<TemporalProvider>} listTemporalProvider
+   * @param {SparqlWidgetView}  sparqlWidgetView
    */
-  constructor(view3D, listTemporalProvider) {
+  constructor(view3D, listTemporalProvider, sparqlWidgetView) {
     this.layerManager = view3D.layerManager;
     this.view3D = view3D;
 
@@ -52,8 +55,15 @@ export class LayerExtension {
             const clickListener = (event) => {
               const cityObject = this.layerManager.pickCityObject(event);
 
-              // console.log(cityObject);
-              this.selectionCityObjectSTC(cityObject);
+              if (cityObject){
+                // Get transaction chain
+                sparqlWidgetView.window.sparqlProvider.addEventListener(udviz.Widget.Server.SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
+                  (response) =>
+                    this.selectionCityObjectSTC(this.parseSPARQLrequete(response))
+                );
+                sparqlWidgetView.window.getTransactionChain(cityObject.props.gml_id);
+              }
+
             };
             const viewerDiv = document.getElementById('viewerDiv');
             viewerDiv.addEventListener('mousedown', clickListener);
@@ -233,35 +243,25 @@ export class LayerExtension {
 
   /**
    * Le cityobject doit changer en fonction de son layerTemporel car il change de GMLID
-   * @param {CityObject} cityObjectSelected 
+   * @param {Array<CityObject>} listOfCityObjects 
    */
-  selectionCityObjectSTC(cityObjectSelected){
-    if (!cityObjectSelected)
+  selectionCityObjectSTC(listOfCityObjects){
+    if (!listOfCityObjects)
       return;
-    
-    this.getGmlIdsfromSelectedCO(cityObjectSelected);
-    
+
     //Create lines
     let height = 0;
-    // const temporalProvider = this.listTemporalProvider[0];
-    // const transactionPerTile = temporalProvider.tempExtModel.transactionsPerTile.get(cityObjectSelected.cityObjectId.tileId);
-    // const gml_id = cityObjectSelected.props.gml_id;
-    // const temporalPrimaryTransaction = transactionPerTile.get('2013::' + gml_id);
 
-    // this.layerManager.tilesManagers.forEach( layer  => {
-    //   const tile = layer.tiles[cityObjectSelected.cityObjectId.tileId];
-    //   tile.cityObjects.find(object => {
-    //     return object.batchId == cityObjectSelected.batchId;
-    //   });
-    // });
+    let index = 0;
     this.listTemporalProvider.forEach(temporalProvider => {
-      const tile = temporalProvider.tempExtModel.transactionsPerTile.get(cityObjectSelected.cityObjectId.tileId);
-      this.setStyleSelectionSTC(cityObjectSelected); //Apply style
+      const CO = listOfCityObjects[index];
+      this.setStyleSelectionSTC(CO); //Apply style
 
       //Here change how to select CO
-      const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(cityObjectSelected.cityObjectId.tileId)[cityObjectSelected.cityObjectId.batchId];
+      const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
+      this.createTransactionLine(transactionType, CO, height);
 
-      this.createTransactionLine(transactionType, cityObjectSelected, height);
+      index++;
       height += 150;
     });
   }
@@ -326,6 +326,12 @@ export class LayerExtension {
         geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
         material = new udviz.THREE.LineBasicMaterial( { color: 'white' } );
         break;
+      case 'union':
+        //Line
+        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 150 + height) );
+        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
+        material = new udviz.THREE.LineBasicMaterial( { color: 'blue' } );
+        break;
     
       default:
         break;
@@ -350,25 +356,27 @@ export class LayerExtension {
           }
         });
       });
-      // const tile = tilesManager.tiles[selectedCityObject.cityObjectId.tileId];
     });
   }
 
   /**
    * @param {CityObject} cityObjectSelected 
+   * @returns {Array<CityObject>} cityObjects
    */
   getGmlIdsfromSelectedCO(cityObjectSelected){
     let cityObjects = [];
     this.layerManager.tilesManagers.forEach( tiles => {
       cityObjects = cityObjects.concat(tiles.pickCityObjectsByBatchTable('gml_id', cityObjectSelected.props.gml_id));
+      //AMELIORATION
     });
-    console.log(cityObjects);
+
+    return cityObjects;
   }
 
   /**
    * 
    * @param {JSON} query 
-   * @returns {Map}
+   * @returns {Map} Map of transactions chain
    */
   parseSPARQLrequete(query) {
     let transactionsFromGmlId = new Map(); 
@@ -383,8 +391,7 @@ export class LayerExtension {
       transactionsFromGmlId.set(currentTime + 2, gml_id);
       currentTime += 3;
     });
-    
-    
+
     return this.getCityObjectFromListOfGmlId(transactionsFromGmlId);
   }
 
