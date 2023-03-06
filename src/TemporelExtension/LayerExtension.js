@@ -377,24 +377,27 @@ export class LayerExtension {
     allgmlID.forEach( element => {
       const gml_id = getUriLocalname(element[1].value);
       transactionsFromGmlId.set(currentTime, gml_id);
-      if (currentTime == 2018)
+      if (currentTime == 2018) //To-Do hard coded value / need to be a variable
         return;
       transactionsFromGmlId.set(currentTime + 1, gml_id);
       transactionsFromGmlId.set(currentTime + 2, gml_id);
       currentTime += 3;
     });
     
-    return transactionsFromGmlId;
+    
+    return this.getCityObjectFromListOfGmlId(transactionsFromGmlId);
   }
 
   /**
    * Get all CityObject with gml ID
-   * 
+   * @param {Map}
    */
   getCityObjectFromListOfGmlId(listOfGmlId) {
     let listCOTransaction = [];
     listOfGmlId.forEach( gml_id => {
-      listCOTransaction.push(this.layerManager.pickCityObjectByBatchTable(gml_id));
+      listCOTransaction.push(this.layerManager.pickCityObjectByBatchTable('gml_id', gml_id));
     });
+
+    return listCOTransaction;
   }
 }
