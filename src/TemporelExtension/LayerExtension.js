@@ -77,9 +77,19 @@ export class LayerExtension {
     this.unSelectedStyle = new CityObjectStyle({
       materialProps: { opacity: 0.1, color: 0xffffff },
     });
+
+    this.testStyle = new CityObjectStyle({
+      materialProps: { opacity: 1, color: 0xffffff },
+    });
+
     this.view3D.layerManager.registerStyle(
       'unSelected',
       this.unSelectedStyle
+    );
+    
+    this.view3D.layerManager.registerStyle(
+      'test',
+      this.testStyle
     );
 
   }
@@ -255,7 +265,10 @@ export class LayerExtension {
     let index = 0;
     this.listTemporalProvider.forEach(temporalProvider => {
       const CO = listOfCityObjects[index];
-      this.setStyleSelectionSTC(CO); //Apply style
+      if (!CO)
+        return;
+
+      this.setStyleSelectionSTC(listOfCityObjects, temporalProvider.tilesManager); //Apply style
 
       //Here change how to select CO
       const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
@@ -341,22 +354,35 @@ export class LayerExtension {
   }
 
   /**
-   * 
-   * @param {CityObject} selectedCityObject 
+   * Set transparent around selected CO
+   * @param {Array<CityObject>} COChain
+   * @param {TilesManager} tilesManager
    */
-  setStyleSelectionSTC(selectedCityObject){
-    this.view3D.layerManager.tilesManagers.forEach( tilesManager => {
-      tilesManager.tiles.forEach( tile => {
-        if (!tile.cityObjects)
-          return;
-        tile.cityObjects.forEach(cityObject => {
-          if (selectedCityObject.tile.tileId !=  cityObject.tile.tileId ) {
-            tilesManager.setStyle(cityObject.cityObjectId, this.unSelectedStyle);
-            tilesManager.applyStyles(); // TO-DO : Chercher dans Temporal provider / ExtModel / TransactionParTuile / Destinattion + source
-          }
-        });
-      });
+  setStyleSelectionSTC(COChain, tilesManager){
+    tilesManager.tiles.forEach( tile => {
+      if (!tile.cityObjects)
+        return;
+      if (tile.tileId != COChain[0].cityObjectId.tileId) {
+        // tilesManager.setStyle(cityObject.cityObjectId, this.unSelectedStyle);
+        tilesManager.setStyleToTile(tile.tileId, this.unSelectedStyle);
+        tilesManager.applyStyles(); 
+
+      }
     });
+    const tile = tilesManager.tiles[COChain[0].cityObjectId.tileId];
+    tile.cityObjects.forEach(CO => {
+      COChain.forEach(selectedCO => {
+        if (CO.cityObjectId.equal(selectedCO.cityObjectId)){
+          tilesManager.setStyle(CO.cityObjectId, this.testStyle);
+          tilesManager.applyStyles(); 
+        } else {
+          tilesManager.setStyleToTile(tile.tileId, this.unSelectedStyle);
+          tilesManager.applyStyles(); 
+        }
+      });
+
+    });
+    
   }
 
   /**
@@ -391,7 +417,7 @@ export class LayerExtension {
       transactionsFromGmlId.set(currentTime + 2, gml_id);
       currentTime += 3;
     });
-
+    console.log(transactionsFromGmlId);
     return this.getCityObjectFromListOfGmlId(transactionsFromGmlId);
   }
 
@@ -402,9 +428,12 @@ export class LayerExtension {
   getCityObjectFromListOfGmlId(listOfGmlId) {
     let listCOTransaction = [];
     listOfGmlId.forEach( gml_id => {
-      listCOTransaction.push(this.layerManager.pickCityObjectByBatchTable('gml_id', gml_id));
+      const CO = this.layerManager.pickCityObjectByBatchTable('gml_id', gml_id);
+      if (!CO)
+        return;
+      listCOTransaction.push(CO);
     });
-
+    console.log(listCOTransaction);
     return listCOTransaction;
   }
 }
