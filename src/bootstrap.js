@@ -98,16 +98,18 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   //Temporal PROVIDER
   const listTemporalProvider = [];
   const tilesManagers = app.getFrame3DPlanar().getLayerManager().tilesManagers;
-  for( let i = 0; i < tilesManagers.length - 1; i++) {
-      
-    let model = new $3DTemporalExtension();
-  
-    const dataTemporal = new TemporalProvider(
-      model,
-      tilesManagers[i],
-      2009 + i
-    );
-    listTemporalProvider.push(dataTemporal);
+  for( let i = 0; i < tilesManagers.length; i++) {
+
+    if (tilesManagers[i].layer.registeredExtensions['3DTILES_temporal']){
+      let model = new $3DTemporalExtension();
+    
+      const dataTemporal = new TemporalProvider(
+        model,
+        tilesManagers[i],
+        2009 + i
+      );
+      listTemporalProvider.push(dataTemporal);
+    }
   }
 
   // //// CITY OBJECTS PROVIDER

@@ -33,6 +33,8 @@ export class LayerExtension {
 
     this.temporalProviders = temporalProviders;
 
+    this.transactionsCylinders = [];
+
     this.tilesMangersSTC = [];
 
     this.tilesDates = [];
@@ -52,7 +54,6 @@ export class LayerExtension {
       element.addEventListener(
         TilesManager.EVENT_TILE_LOADED, () => {
           if (this.layerManager.getTotal3DTilesTileCount() == this.layerManager.getLoaded3DTilesTileCount()){
-            console.log('loaded');
             this.createSpaceTimeCube();
 
             //EVENT
@@ -267,15 +268,16 @@ export class LayerExtension {
     let height = 0;
 
     let index = 0;
+    this.removeAllTransactionsCylinders();
     this.temporalProviders.forEach(temporalProvider => {
       const CO = listOfCityObjects[index];
       if (!CO)
         return;
 
+      temporalProvider.changeTileState(temporalProvider.tilesManager);
       this.setStyleSelectionSTC(listOfCityObjects, temporalProvider.tilesManager); //Apply style
-
+      
       const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
-      console.log(transactionType);
       this.createTransactionLine(transactionType, CO, height);
 
       index++;
@@ -313,9 +315,6 @@ export class LayerExtension {
    * @param {number} height
    */
   createTransactionLine(transactionType, cityObject, height){
-
-    const points = [];
-    points.push( new udviz.THREE.Vector3(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + height) );
     const geometry = new udviz.THREE.CylinderGeometry( 5, 5, 150, 16);
     // let geometry;
     let material;
@@ -343,11 +342,11 @@ export class LayerExtension {
       default:
         break;
     }
-    // const line = new udviz.THREE.Line( geometry, material ); 
     const cylinder = new udviz.THREE.Mesh( geometry, material );
     cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 75 + height);
     cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
     cylinder.updateMatrixWorld();
+    this.transactionsCylinders.push(cylinder);
     this.view3D.getScene().add( cylinder );
   }
 
@@ -432,5 +431,14 @@ export class LayerExtension {
       listCOTransaction.push(CO);
     });
     return listCOTransaction;
+  }
+
+  removeAllTransactionsCylinders(){
+    if (this.transactionsCylinders){
+      this.transactionsCylinders.forEach(cylinder => {
+        this.view3D.getScene().remove(cylinder);
+      });
+      console.log(this.transactionsCylinders);
+    }
   }
 }
