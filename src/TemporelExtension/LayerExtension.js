@@ -20,10 +20,10 @@ export class LayerExtension {
    * Creates the layer choice windows
    *
    * @param {udviz.Frame3DPlanar} view3D
-   * @param {Array<TemporalProvider>} listTemporalProvider
+   * @param {Array<TemporalProvider>} temporalProviders
    * @param {SparqlWidgetView}  sparqlWidgetView
    */
-  constructor(view3D, listTemporalProvider, sparqlWidgetView) {
+  constructor(view3D, temporalProviders, sparqlWidgetView) {
     this.layerManager = view3D.layerManager;
     this.view3D = view3D;
 
@@ -31,16 +31,19 @@ export class LayerExtension {
 
     this.temporalDiv;
 
-    this.listTemporalProvider = listTemporalProvider;
+    this.temporalProviders = temporalProviders;
 
-    this.listTilesDates = [];
+    this.tilesMangersSTC = [];
+
+    this.tilesDates = [];
     let date = 2009; // hard coded value should be a parameter
-    this.listTemporalProvider.forEach( temporalProvider => {
-      this.listTilesDates.push([temporalProvider.tilesManager,date]);
+    this.temporalProviders.forEach( temporalProvider => {
+      this.tilesDates.push([temporalProvider.tilesManager,date]);
+      this.tilesMangersSTC.push(temporalProvider.tilesManager);
       date+=1;
     });
 
-    this.rangeData = Math.abs(this.listTilesDates[0][1] - this.listTilesDates[this.listTilesDates.length - 1][1]) / 100;
+    this.rangeData = Math.abs(this.tilesDates[0][1] - this.tilesDates[this.tilesDates.length - 1][1]) / 100;
     
     this.windowCreated();
     this.createdDotElementData();
@@ -49,6 +52,7 @@ export class LayerExtension {
       element.addEventListener(
         TilesManager.EVENT_TILE_LOADED, () => {
           if (this.layerManager.getTotal3DTilesTileCount() == this.layerManager.getLoaded3DTilesTileCount()){
+            console.log('loaded');
             this.createSpaceTimeCube();
 
             //EVENT
@@ -67,7 +71,7 @@ export class LayerExtension {
             };
             const viewerDiv = document.getElementById('viewerDiv');
             viewerDiv.addEventListener('mousedown', clickListener);
-            
+              
           }
         }
       );
@@ -75,21 +79,12 @@ export class LayerExtension {
 
     //Register Style
     this.unSelectedStyle = new CityObjectStyle({
-      materialProps: { opacity: 0.1, color: 0xffffff },
-    });
-
-    this.testStyle = new CityObjectStyle({
-      materialProps: { opacity: 1, color: 0xffffff },
+      materialProps: { opacity: 0.2, color: 0xffffff },
     });
 
     this.view3D.layerManager.registerStyle(
       'unSelected',
       this.unSelectedStyle
-    );
-    
-    this.view3D.layerManager.registerStyle(
-      'test',
-      this.testStyle
     );
 
   }
@@ -119,7 +114,7 @@ export class LayerExtension {
     
     viewerDiv.append(this.temporalDiv);
 
-    let olderData = this.listTilesDates[0][1];
+    let olderData = this.tilesDates[0][1];
     let rangeData = this.rangeData;
 
     let rangeOne = document.querySelector('input[name="rangeOne"]'),
@@ -147,9 +142,9 @@ export class LayerExtension {
 
     //Hide or Show data
     rangeOne.oninput = () => {
-      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.listTilesDates[0][1];
-      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.listTilesDates[0][1];
-      this.listTilesDates.forEach(element => {
+      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.tilesDates[0][1];
+      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.tilesDates[0][1];
+      this.tilesDates.forEach(element => {
         if (element[1] < valueOne || element[1] > valueTwo){
           element[0].layer.visible = false;
         }else{
@@ -160,9 +155,9 @@ export class LayerExtension {
     };
 
     rangeTwo.oninput = () => {
-      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.listTilesDates[0][1];
-      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.listTilesDates[0][1];
-      this.listTilesDates.forEach(element => {
+      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.tilesDates[0][1];
+      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.tilesDates[0][1];
+      this.tilesDates.forEach(element => {
         if (element[1] < valueOne || element[1] > valueTwo){
           element[0].layer.visible = false;
         }else{
@@ -187,7 +182,7 @@ export class LayerExtension {
   createdDotElementData(){
 
     //Create html element
-    this.listTilesDates.forEach(element => {
+    this.tilesDates.forEach(element => {
       let dotElement = document.createElement('span');
       dotElement.className = 'dot';
 
@@ -196,7 +191,7 @@ export class LayerExtension {
       c.set(element[0].color);
       dotElement.style.backgroundColor = '#' + c.getHexString();
 
-      dotElement.style.left = (((element[1] - this.listTilesDates[0][1]) * 590) / (this.rangeData * 100) - 5).toString() + 'px' ;
+      dotElement.style.left = (((element[1] - this.tilesDates[0][1]) * 590) / (this.rangeData * 100) - 5).toString() + 'px' ;
       document.getElementsByClassName('range-slider container')[0].append(dotElement);
     });
   }
@@ -207,7 +202,7 @@ export class LayerExtension {
   createSpaceTimeCube(){
     let maxHeightLayers = 0;
     let currentTime = 2009;
-    this.listTemporalProvider.forEach(temporalProvider => {
+    this.temporalProviders.forEach(temporalProvider => {
       const layer = temporalProvider.tilesManager.layer;
       layer.root.children.forEach(object => {
         // Height
@@ -272,15 +267,15 @@ export class LayerExtension {
     let height = 0;
 
     let index = 0;
-    this.listTemporalProvider.forEach(temporalProvider => {
+    this.temporalProviders.forEach(temporalProvider => {
       const CO = listOfCityObjects[index];
       if (!CO)
         return;
 
       this.setStyleSelectionSTC(listOfCityObjects, temporalProvider.tilesManager); //Apply style
 
-      //Here change how to select CO
       const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
+      console.log(transactionType);
       this.createTransactionLine(transactionType, CO, height);
 
       index++;
@@ -293,7 +288,7 @@ export class LayerExtension {
    */
   displayAllTransaction(){
     let height = 0;
-    this.listTemporalProvider.forEach(temporalProvider => { // Parcours des provider
+    this.temporalProviders.forEach(temporalProvider => { // Parcours des provider
       const tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
       for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
         const tileDisplayStates = tiles.get(tileId + 1);
@@ -321,45 +316,39 @@ export class LayerExtension {
 
     const points = [];
     points.push( new udviz.THREE.Vector3(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + height) );
-    let geometry;
+    const geometry = new udviz.THREE.CylinderGeometry( 5, 5, 150, 16);
+    // let geometry;
     let material;
     switch (transactionType) {
       case 'creation':
-        //Line
-        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 150 + height) );
-        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-        material = new udviz.THREE.LineBasicMaterial( { color: 'green' } );
+        material = new udviz.THREE.MeshBasicMaterial( {color: 'green'} );
         break;
       case 'demolition':
-        //Line
-        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z - 150 + height) );
-        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-        material = new udviz.THREE.LineBasicMaterial( { color: 'red' } );
+        material = new udviz.THREE.MeshBasicMaterial( {color: 'red'} );
         break;
       case 'modification':
-        //Line
-        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 150 + height) );
-        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-        material = new udviz.THREE.LineBasicMaterial( { color: 'yellow' } );
+        material = new udviz.THREE.MeshBasicMaterial( {color: 'yellow'} );
         break;
       case 'noTransaction':
-        //Line
-        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 150 + height) );
-        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-        material = new udviz.THREE.LineBasicMaterial( { color: 'white' } );
+        material = new udviz.THREE.MeshBasicMaterial( {color: 'white'} );
         break;
       case 'union':
-        //Line
-        points.push( new udviz.THREE.Vector3( cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 150 + height) );
-        geometry = new udviz.THREE.BufferGeometry().setFromPoints( points );
-        material = new udviz.THREE.LineBasicMaterial( { color: 'blue' } );
+        material = new udviz.THREE.MeshBasicMaterial( {color: 'blue'} );
+        break;
+      case 'hide':
+        material = new udviz.THREE.MeshBasicMaterial( {color: 'purple', opacity: 0.0} );
+        material.transparent = true;
         break;
     
       default:
         break;
     }
-    const line = new udviz.THREE.Line( geometry, material ); 
-    this.view3D.getScene().add( line );
+    // const line = new udviz.THREE.Line( geometry, material ); 
+    const cylinder = new udviz.THREE.Mesh( geometry, material );
+    cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 75 + height);
+    cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
+    cylinder.updateMatrixWorld();
+    this.view3D.getScene().add( cylinder );
   }
 
   /**
@@ -378,19 +367,19 @@ export class LayerExtension {
 
       }
     });
-    const tile = tilesManager.tiles[COChain[0].cityObjectId.tileId];
-    tile.cityObjects.forEach(CO => {
-      COChain.forEach(selectedCO => {
-        if (CO.cityObjectId.equal(selectedCO.cityObjectId)){
-          tilesManager.setStyle(CO.cityObjectId, this.testStyle);
-          tilesManager.applyStyles(); 
-        } else {
-          tilesManager.setStyleToTile(tile.tileId, this.unSelectedStyle);
-          tilesManager.applyStyles(); 
-        }
-      });
+    // const tile = tilesManager.tiles[COChain[0].cityObjectId.tileId];
+    // tile.cityObjects.forEach(CO => {
+    //   COChain.forEach(selectedCO => {
+    //     if (CO.cityObjectId.equal(selectedCO.cityObjectId)){
+    //       tilesManager.setStyle(CO.cityObjectId, this.testStyle);
+    //       tilesManager.applyStyles(); 
+    //     } else {
+    //       tilesManager.setStyleToTile(tile.tileId, this.unSelectedStyle);
+    //       tilesManager.applyStyles(); 
+    //     }
+    //   });
 
-    });
+    // });
     
   }
 
@@ -442,7 +431,6 @@ export class LayerExtension {
         return;
       listCOTransaction.push(CO);
     });
-    console.log(listCOTransaction);
     return listCOTransaction;
   }
 }
