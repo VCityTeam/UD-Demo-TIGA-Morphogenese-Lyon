@@ -9,6 +9,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   '../assets/config/extent_lyon.json',
   '../assets/config/frame3D_planars.json',
   '../assets/config/layer/3DTiles_temporal.json',
+  '../assets/config/layer/3DTiles.json',
   '../assets/config/layer/base_maps.json',
   '../assets/config/layer/elevation.json',
   '../assets/config/widget/about.json',
@@ -45,6 +46,12 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   // /// ADD LAYERS
   udvizBrowser.add3DTilesLayers(
     configs['3DTiles_temporal'],
+    frame3DPlanar.layerManager,
+    frame3DPlanar.itownsView
+  );
+
+  udvizBrowser.add3DTilesLayers(
+    configs['3DTiles'],
     frame3DPlanar.layerManager,
     frame3DPlanar.itownsView
   );
@@ -91,7 +98,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   //Temporal PROVIDER
   const listTemporalProvider = [];
   const tilesManagers = app.getFrame3DPlanar().getLayerManager().tilesManagers;
-  for( let i = 0; i < tilesManagers.length; i++) {
+  for( let i = 0; i < tilesManagers.length - 1; i++) {
       
     let model = new $3DTemporalExtension();
   

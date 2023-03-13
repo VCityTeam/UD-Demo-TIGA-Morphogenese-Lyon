@@ -34,9 +34,9 @@ export class LayerExtension {
     this.listTemporalProvider = listTemporalProvider;
 
     this.listTilesDates = [];
-    let date = 2009;
-    this.layerManager.tilesManagers.forEach( tile => {
-      this.listTilesDates.push([tile,date]);
+    let date = 2009; // hard coded value should be a parameter
+    this.listTemporalProvider.forEach( temporalProvider => {
+      this.listTilesDates.push([temporalProvider.tilesManager,date]);
       date+=1;
     });
 
@@ -49,7 +49,7 @@ export class LayerExtension {
       element.addEventListener(
         TilesManager.EVENT_TILE_LOADED, () => {
           if (this.layerManager.getTotal3DTilesTileCount() == this.layerManager.getLoaded3DTilesTileCount()){
-            this.createBurgerLayer();
+            this.createSpaceTimeCube();
 
             //EVENT
             const clickListener = (event) => {
@@ -107,6 +107,9 @@ export class LayerExtension {
     `;
   }
 
+  /**
+   * Create UI
+   */
   windowCreated() {
   
     let viewerDiv = this.view3D.rootHtml;
@@ -178,6 +181,9 @@ export class LayerExtension {
     });
   }
 
+  /**
+   * Create DOT in the temporal slider
+   */
   createdDotElementData(){
 
     //Create html element
@@ -195,11 +201,14 @@ export class LayerExtension {
     });
   }
 
-  createBurgerLayer(){
+  /**
+   * Create layer in height
+   */
+  createSpaceTimeCube(){
     let maxHeightLayers = 0;
     let currentTime = 2009;
-    this.layerManager.tilesManagers.forEach(element => {
-      const layer = element.layer;
+    this.listTemporalProvider.forEach(temporalProvider => {
+      const layer = temporalProvider.tilesManager.layer;
       layer.root.children.forEach(object => {
         // Height
         object.position.z += maxHeightLayers;
@@ -216,7 +225,7 @@ export class LayerExtension {
   } 
 
   /**
-   * 
+   * Add text next to layer in the Space Time Cube
    * @param {string} text 
    * @param {udviz.THREE.Vector3} position 
    */
@@ -280,7 +289,7 @@ export class LayerExtension {
   }
 
   /**
-   * 
+   * Display all the transaction lines
    */
   displayAllTransaction(){
     let height = 0;
@@ -303,7 +312,7 @@ export class LayerExtension {
   }
 
   /**
-   * 
+   * With the transaction types create the corect line with color
    * @param {string} transactionType 
    * @param {CityObject} cityObject
    * @param {number} height
