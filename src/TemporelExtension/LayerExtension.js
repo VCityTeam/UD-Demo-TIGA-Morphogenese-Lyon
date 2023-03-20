@@ -122,8 +122,18 @@ export class LayerExtension {
     this.temporalDiv = document.createElement('div');
     this.temporalDiv.id = 'temporal-updated';
     this.temporalDiv.innerHTML = this.innerContentHtml;
+
+    const temporalTitle = document.createElement('h1');
+    temporalTitle.textContent = 'Temporal Slider';
+
+    const temporalUI = document.createElement('div');
+    temporalUI.id = 'temporal-ui';
+    // this.temporalDiv.innerHTML = this.innerContentHtml;
+
+    temporalUI.append(temporalTitle);
+    temporalUI.append(this.temporalDiv);
     
-    viewerDiv.append(this.temporalDiv);
+    viewerDiv.append(temporalUI);
 
     let olderData = this.tilesDates[0][1];
     let rangeData = this.rangeData;
@@ -137,9 +147,9 @@ export class LayerExtension {
 
         if (this.getAttribute('name') === 'rangeOne') {
           outputOne.innerHTML =  parseInt(this.value * rangeData) + olderData;
-          outputOne.style.left = this.value / this.getAttribute('max') * 100 + '%';
+          outputOne.style.left = this.value / this.getAttribute('max') * 95 + '%';
         } else {
-          outputTwo.style.left = this.value / this.getAttribute('max') * 100 + '%';
+          outputTwo.style.left = this.value / this.getAttribute('max') * 95 + '%';
           outputTwo.innerHTML = parseInt(this.value * rangeData) + olderData;
         }
         if (parseInt(rangeOne.value) > parseInt(rangeTwo.value)) {
