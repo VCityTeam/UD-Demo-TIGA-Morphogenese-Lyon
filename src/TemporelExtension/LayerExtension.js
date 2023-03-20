@@ -221,7 +221,7 @@ export class LayerExtension {
                             <div class="legend-label">Union</div>
                           </div>
                           <div class="legend-item">
-                            <div class="legend-color" style="background-color: orange;"></div>
+                            <div class="legend-color" style="background-color: #ff7300;"></div>
                             <div class="legend-label">Division</div>
                           </div>`;
     
@@ -399,10 +399,10 @@ export class LayerExtension {
         material = new udviz.THREE.MeshPhongMaterial( {color: 'blue'} );
         break;
       case 'division':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'orange'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: '#ff7300'} );
         break;
       case 'hide':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'white'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0} );
         material.transparent = true;
         break;
     

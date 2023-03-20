@@ -20,13 +20,13 @@
 
 #temporal-updated{
     position: fixed;
-    top: 35%;
-    right: -10%;
+    top: 30%;
+    right: -5%;
     /* top: 0%; */
     /* right: -12%;  */
     width: 30%;
     height: 25%;
-    transform: rotate(90deg);
+    transform: rotate(-90deg);
 }
 
 
@@ -97,10 +97,10 @@
   border-radius: 4px;
   display: inline-block;
   font: bold 15px/30px Helvetica, Arial;
-  bottom: 75%;
+  top: 117%;
   left: 50%;
   transform: translate(-50%, 0);
-  transform: rotate(270deg);
+  transform: rotate(90deg);
 }
 
 .output.outputTwo {
