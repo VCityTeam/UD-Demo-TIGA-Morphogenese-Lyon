@@ -20,12 +20,12 @@
 
 #temporal-updated{
     position: fixed;
-    top: -5%;
-    right: -15%;
+    top: 35%;
+    right: -10%;
     /* top: 0%; */
     /* right: -12%;  */
-    width: 40%;
-    height: 100%;
+    width: 30%;
+    height: 25%;
     transform: rotate(90deg);
 }
 

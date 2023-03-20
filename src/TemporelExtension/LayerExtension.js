@@ -1,9 +1,7 @@
 /** @format */
 
-//Components
-// import { Window } from '../node_modules/ud-viz/src/Components/GUI/js/Window';
-// import { LayerManager } from 'ud-viz/src/Components/LayerManager/LayerManager';
 import './temporalExtension.css';
+import './ui-space-time-cube.css';
 import $ from 'jquery';
 import * as udviz from '../../UD-Viz/packages/browser/src';
 import { TilesManager } from '@ud-viz/browser/src/Component/Itowns/Itowns';
@@ -117,6 +115,8 @@ export class LayerExtension {
    * Create UI
    */
   windowCreated() {
+
+    this.createUiSTC();
   
     let viewerDiv = this.view3D.rootHtml;
     this.temporalDiv = document.createElement('div');
@@ -195,6 +195,37 @@ export class LayerExtension {
     }).on('mousedown input', function () {
       updateView.call(this);
     });
+  }
+
+  createUiSTC(){
+    let viewerDiv = this.view3D.rootHtml;
+    const legendDiv = document.createElement('div');
+    legendDiv.className = 'ui-space-time-cube';
+
+    legendDiv.innerHTML = `
+                          <h1 style="color: white">Legends</h1>
+                          <div class="legend-item">
+                            <div class="legend-color" style="background-color: #009900;"></div>
+                            <div class="legend-label">Construction</div>
+                          </div>
+                          <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ff0000;"></div>
+                            <div class="legend-label">Demolition</div>
+                          </div>
+                          <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ffd700;"></div>
+                            <div class="legend-label">Modify</div>
+                          </div>
+                          <div class="legend-item">
+                            <div class="legend-color" style="background-color: blue;"></div>
+                            <div class="legend-label">Union</div>
+                          </div>
+                          <div class="legend-item">
+                            <div class="legend-color" style="background-color: orange;"></div>
+                            <div class="legend-label">Division</div>
+                          </div>`;
+    
+    viewerDiv.append(legendDiv);
   }
 
   /**
