@@ -50,11 +50,11 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     frame3DPlanar.itownsView
   );
 
-  udvizBrowser.add3DTilesLayers(
-    configs['3DTiles'],
-    frame3DPlanar.layerManager,
-    frame3DPlanar.itownsView
-  );
+  // udvizBrowser.add3DTilesLayers(
+  //   configs['3DTiles'],
+  //   frame3DPlanar.layerManager,
+  //   frame3DPlanar.itownsView
+  // );
 
   udvizBrowser.addBaseMapLayer(
     configs['base_maps'][0],

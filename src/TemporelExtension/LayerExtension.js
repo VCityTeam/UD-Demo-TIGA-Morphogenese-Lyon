@@ -35,13 +35,13 @@ export class LayerExtension {
 
     this.transactionsCylinders = [];
 
-    this.tilesMangersSTC = [];
+    this.tilesManagersSTC = [];
 
     this.tilesDates = [];
     let date = 2009; // hard coded value should be a parameter
     this.temporalProviders.forEach( temporalProvider => {
       this.tilesDates.push([temporalProvider.tilesManager,date]);
-      this.tilesMangersSTC.push(temporalProvider.tilesManager);
+      this.tilesManagersSTC.push(temporalProvider.tilesManager);
       date+=1;
     });
 
@@ -86,6 +86,16 @@ export class LayerExtension {
     this.view3D.layerManager.registerStyle(
       'unSelected',
       this.unSelectedStyle
+    );
+
+    //Ground layer
+    this.whiteStyle = new CityObjectStyle({
+      materialProps: { opacity: 1, color: 0xffffff },
+    });
+
+    this.view3D.layerManager.registerStyle(
+      'whiteGround',
+      this.whiteStyle
     );
 
   }
@@ -203,6 +213,14 @@ export class LayerExtension {
   createSpaceTimeCube(){
     let maxHeightLayers = 0;
     let currentTime = 2009;
+
+    //Set style
+    this.tilesManagersSTC[0].tiles.forEach( tile => {
+      this.tilesManagersSTC[0].setStyleToTile(tile.tileId, this.whiteStyle);
+      this.tilesManagersSTC[0].applyStyles(); 
+    });
+
+
     this.temporalProviders.forEach(temporalProvider => {
       const layer = temporalProvider.tilesManager.layer;
       layer.root.children.forEach(object => {
@@ -275,7 +293,7 @@ export class LayerExtension {
         return;
 
       temporalProvider.changeTileState(temporalProvider.tilesManager);
-      this.setStyleSelectionSTC(listOfCityObjects, temporalProvider.tilesManager); //Apply style
+      // this.setStyleSelectionSTC(listOfCityObjects, temporalProvider.tilesManager); //Apply style
       
       const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
       this.createTransactionLine(transactionType, CO, height);
@@ -320,22 +338,22 @@ export class LayerExtension {
     let material;
     switch (transactionType) {
       case 'creation':
-        material = new udviz.THREE.MeshBasicMaterial( {color: 'green'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'green'} );
         break;
       case 'demolition':
-        material = new udviz.THREE.MeshBasicMaterial( {color: 'red'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'red'} );
         break;
       case 'modification':
-        material = new udviz.THREE.MeshBasicMaterial( {color: 'yellow'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'yellow'} );
         break;
       case 'noTransaction':
-        material = new udviz.THREE.MeshBasicMaterial( {color: 'white'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'white'} );
         break;
       case 'union':
-        material = new udviz.THREE.MeshBasicMaterial( {color: 'blue'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'blue'} );
         break;
       case 'hide':
-        material = new udviz.THREE.MeshBasicMaterial( {color: 'purple', opacity: 0.0} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'purple', opacity: 0.0} );
         material.transparent = true;
         break;
     

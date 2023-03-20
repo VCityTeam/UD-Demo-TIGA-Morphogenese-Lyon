@@ -3,6 +3,6 @@
     "id": "Villeurbanne",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Villeurbanne_2018_TileSet/tileset.json",
     "color": "0x7b7777",
-    "opacity": "0.5"
+    "opacity": "1"
   }
 ]
