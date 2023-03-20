@@ -201,8 +201,8 @@ export class LayerExtension {
       let c = new udviz.THREE.Color(); 
       c.set(element[0].color);
       dotElement.style.backgroundColor = '#' + c.getHexString();
-
-      dotElement.style.left = (((element[1] - this.tilesDates[0][1]) * 590) / (this.rangeData * 100) - 5).toString() + 'px' ;
+      
+      dotElement.style.left = ((element[1] - this.tilesDates[0][1]) * 98) / (this.rangeData * 100).toString() + '%' ;
       document.getElementsByClassName('range-slider container')[0].append(dotElement);
     });
   }
@@ -214,12 +214,17 @@ export class LayerExtension {
     let maxHeightLayers = 0;
     let currentTime = 2009;
 
-    //Set style
+    //Set style layer 0
     this.tilesManagersSTC[0].tiles.forEach( tile => {
       this.tilesManagersSTC[0].setStyleToTile(tile.tileId, this.whiteStyle);
       this.tilesManagersSTC[0].applyStyles(); 
     });
 
+    //Set style higher
+    this.tilesManagersSTC[this.tilesManagersSTC.length - 1].tiles.forEach( tile => {
+      this.tilesManagersSTC[this.tilesManagersSTC.length - 1].setStyleToTile(tile.tileId, this.whiteStyle);
+      this.tilesManagersSTC[this.tilesManagersSTC.length - 1].applyStyles(); 
+    });
 
     this.temporalProviders.forEach(temporalProvider => {
       const layer = temporalProvider.tilesManager.layer;
@@ -285,10 +290,11 @@ export class LayerExtension {
     //Create lines
     let height = 0;
 
-    let index = 0;
     this.removeAllTransactionsCylinders();
-    this.temporalProviders.forEach(temporalProvider => {
-      const CO = listOfCityObjects[index];
+
+    for (let i = 0 ; i < this.temporalProviders.length - 1; i++) {
+      const temporalProvider = this.temporalProviders[i];
+      const CO = listOfCityObjects[i];
       if (!CO)
         return;
 
@@ -298,9 +304,8 @@ export class LayerExtension {
       const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
       this.createTransactionLine(transactionType, CO, height);
 
-      index++;
       height += 150;
-    });
+    }
   }
 
   /**
@@ -352,8 +357,11 @@ export class LayerExtension {
       case 'union':
         material = new udviz.THREE.MeshPhongMaterial( {color: 'blue'} );
         break;
+      case 'division':
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'orange'} );
+        break;
       case 'hide':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'purple', opacity: 0.0} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'white'} );
         material.transparent = true;
         break;
     
@@ -456,7 +464,6 @@ export class LayerExtension {
       this.transactionsCylinders.forEach(cylinder => {
         this.view3D.getScene().remove(cylinder);
       });
-      console.log(this.transactionsCylinders);
     }
   }
 }
