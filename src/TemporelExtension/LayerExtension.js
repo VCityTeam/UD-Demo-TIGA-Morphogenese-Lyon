@@ -53,6 +53,7 @@ export class LayerExtension {
         TilesManager.EVENT_TILE_LOADED, () => {
           if (this.layerManager.getTotal3DTilesTileCount() == this.layerManager.getLoaded3DTilesTileCount()){
             this.createSpaceTimeCube();
+            this.displayAllTransaction();
 
             //EVENT
             const clickListener = (event) => {
@@ -203,7 +204,7 @@ export class LayerExtension {
     legendDiv.className = 'ui-space-time-cube';
 
     legendDiv.innerHTML = `
-                          <h1 style="color: white">Legends</h1>
+                          <h1 style="color: white">Legend</h1>
                           <div class="legend-item">
                             <div class="legend-color" style="background-color: #009900;"></div>
                             <div class="legend-label">Construction</div>
@@ -354,8 +355,8 @@ export class LayerExtension {
    */
   displayAllTransaction(){
     let height = 0;
-    this.temporalProviders.forEach(temporalProvider => { // Parcours des provider
-      const tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
+    for (let j = 0; j < this.temporalProviders.length - 1; j++){
+      const tiles = this.temporalProviders[j].COStyles.get(this.temporalProviders[j].currentTime);
       for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
         const tileDisplayStates = tiles.get(tileId + 1);
         for (let i = 0; i < tileDisplayStates.length; i++) {
@@ -369,7 +370,11 @@ export class LayerExtension {
         }
       }
       height+=150;
-    }); 
+    }
+    // this.temporalProviders.forEach(temporalProvider => { // Parcours des provider
+      
+      
+    // }); 
   }
 
   /**
@@ -379,30 +384,32 @@ export class LayerExtension {
    * @param {number} height
    */
   createTransactionLine(transactionType, cityObject, height){
-    const geometry = new udviz.THREE.CylinderGeometry( 5, 5, 150, 16);
+    const geometry = new udviz.THREE.CylinderGeometry( 2, 2, 150, 16);
     // let geometry;
     let material;
+    let positionTransaction = 75;
     switch (transactionType) {
       case 'creation':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'green'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'green', opacity: 0.2} );
         break;
       case 'demolition':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'red'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'red', opacity: 0.2} );
+        positionTransaction = -75;
         break;
       case 'modification':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'yellow'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'yellow', opacity: 0.2} );
         break;
       case 'noTransaction':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'white'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0.2} );
         break;
       case 'union':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'blue'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'blue', opacity: 0.2} );
         break;
       case 'division':
-        material = new udviz.THREE.MeshPhongMaterial( {color: '#ff7300'} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: '#ff7300', opacity: 0.2} );
         break;
       case 'hide':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0.2} );
         material.transparent = true;
         break;
     
@@ -410,7 +417,7 @@ export class LayerExtension {
         break;
     }
     const cylinder = new udviz.THREE.Mesh( geometry, material );
-    cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + 75 + height);
+    cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + positionTransaction + height);
     cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
     cylinder.updateMatrixWorld();
     this.transactionsCylinders.push(cylinder);
@@ -432,21 +439,7 @@ export class LayerExtension {
         tilesManager.applyStyles(); 
 
       }
-    });
-    // const tile = tilesManager.tiles[COChain[0].cityObjectId.tileId];
-    // tile.cityObjects.forEach(CO => {
-    //   COChain.forEach(selectedCO => {
-    //     if (CO.cityObjectId.equal(selectedCO.cityObjectId)){
-    //       tilesManager.setStyle(CO.cityObjectId, this.testStyle);
-    //       tilesManager.applyStyles(); 
-    //     } else {
-    //       tilesManager.setStyleToTile(tile.tileId, this.unSelectedStyle);
-    //       tilesManager.applyStyles(); 
-    //     }
-    //   });
-
-    // });
-    
+    });    
   }
 
   /**
@@ -457,7 +450,6 @@ export class LayerExtension {
     let cityObjects = [];
     this.layerManager.tilesManagers.forEach( tiles => {
       cityObjects = cityObjects.concat(tiles.pickCityObjectsByBatchTable('gml_id', cityObjectSelected.props.gml_id));
-      //AMELIORATION
     });
 
     return cityObjects;
@@ -475,7 +467,7 @@ export class LayerExtension {
     allgmlID.forEach( element => {
       const gml_id = getUriLocalname(element[1].value);
       transactionsFromGmlId.set(currentTime, gml_id);
-      if (currentTime == 2018) //To-Do hard coded value / need to be a variable
+      if (currentTime == 2015) //To-Do hard coded value / need to be a variable
         return;
       transactionsFromGmlId.set(currentTime + 1, gml_id);
       transactionsFromGmlId.set(currentTime + 2, gml_id);
