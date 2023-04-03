@@ -3,7 +3,7 @@
 import './temporalExtension.css';
 import './ui-space-time-cube.css';
 import $ from 'jquery';
-import * as udviz from '../../UD-Viz/packages/browser/src';
+import * as udviz from '@ud-viz/browser/src';
 import { TilesManager } from '@ud-viz/browser/src/Component/Itowns/Itowns';
 import { CityObject, CityObjectID } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObject';
 import { CityObjectStyle } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObjectStyle';
