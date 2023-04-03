@@ -1,7 +1,7 @@
 /** @format */
 
-import './temporalExtension.css';
-import './ui-space-time-cube.css';
+import './SpaceTimeCube/temporalExtension.css';
+import './SpaceTimeCube/ui-space-time-cube.css';
 
 import $ from 'jquery';
 
@@ -10,6 +10,8 @@ export class SpaceTimeCubeWindow {
   constructor(view3D){
     /* Setting the view3D property of the class to the view3D parameter. */
     this.view3D = view3D;
+
+    this.createHtml();
   }
 
 
