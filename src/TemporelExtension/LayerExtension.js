@@ -53,7 +53,7 @@ export class LayerExtension {
         TilesManager.EVENT_TILE_LOADED, () => {
           if (this.layerManager.getTotal3DTilesTileCount() == this.layerManager.getLoaded3DTilesTileCount()){
             this.createSpaceTimeCube();
-            this.displayAllTransaction();
+            // this.displayAllTransaction();
 
             //EVENT
             const clickListener = (event) => {
@@ -206,24 +206,16 @@ export class LayerExtension {
     legendDiv.innerHTML = `
                           <h1 style="color: white">Legend</h1>
                           <div class="legend-item">
-                            <div class="legend-color" style="background-color: #009900;"></div>
+                            <input class="legend-checkbox" type="checkbox" style="background-color: #009900;" name="scales" checked>
                             <div class="legend-label">Construction</div>
                           </div>
                           <div class="legend-item">
-                            <div class="legend-color" style="background-color: #ff0000;"></div>
+                            <input class="legend-checkbox" type="checkbox" style="background-color: #ff0000;" name="scales" checked>
                             <div class="legend-label">Demolition</div>
                           </div>
                           <div class="legend-item">
-                            <div class="legend-color" style="background-color: #ffd700;"></div>
+                            <input class="legend-checkbox" type="checkbox" style="background-color: #ffd700;" name="scales" checked>
                             <div class="legend-label">Modify</div>
-                          </div>
-                          <div class="legend-item">
-                            <div class="legend-color" style="background-color: blue;"></div>
-                            <div class="legend-label">Union</div>
-                          </div>
-                          <div class="legend-item">
-                            <div class="legend-color" style="background-color: #ff7300;"></div>
-                            <div class="legend-label">Division</div>
                           </div>`;
     
     viewerDiv.append(legendDiv);
@@ -262,11 +254,18 @@ export class LayerExtension {
       this.tilesManagersSTC[0].applyStyles(); 
     });
 
+    // //Set style layer 3
+    // this.tilesManagersSTC[3].tiles.forEach( tile => {
+    //   this.tilesManagersSTC[3].setStyleToTile(tile.tileId, this.whiteStyle);
+    //   this.tilesManagersSTC[3].applyStyles(); 
+    // });
+
+
     //Set style higher
-    this.tilesManagersSTC[this.tilesManagersSTC.length - 1].tiles.forEach( tile => {
-      this.tilesManagersSTC[this.tilesManagersSTC.length - 1].setStyleToTile(tile.tileId, this.whiteStyle);
-      this.tilesManagersSTC[this.tilesManagersSTC.length - 1].applyStyles(); 
-    });
+    // this.tilesManagersSTC[this.tilesManagersSTC.length - 1].tiles.forEach( tile => {
+    //   this.tilesManagersSTC[this.tilesManagersSTC.length - 1].setStyleToTile(tile.tileId, this.whiteStyle);
+    //   this.tilesManagersSTC[this.tilesManagersSTC.length - 1].applyStyles(); 
+    // });
 
     this.temporalProviders.forEach(temporalProvider => {
       const layer = temporalProvider.tilesManager.layer;
@@ -278,7 +277,7 @@ export class LayerExtension {
         object.updateMatrixWorld();
       });
       const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
-      const positionText = new udviz.THREE.Vector3(objectLayer.position.x - 400 , objectLayer.position.y, objectLayer.position.z + maxHeightLayers);
+      const positionText = new udviz.THREE.Vector3(objectLayer.position.x - 600 , objectLayer.position.y, objectLayer.position.z + maxHeightLayers);
       this.addTextInScene(currentTime.toString(), positionText);
       currentTime += 1;
       maxHeightLayers += 150;
@@ -384,40 +383,62 @@ export class LayerExtension {
    * @param {number} height
    */
   createTransactionLine(transactionType, cityObject, height){
-    const geometry = new udviz.THREE.CylinderGeometry( 2, 2, 150, 16);
+    
     // let geometry;
     let material;
     let positionTransaction = 75;
+    
     switch (transactionType) {
       case 'creation':
         material = new udviz.THREE.MeshPhongMaterial( {color: 'green', opacity: 0.2} );
+        this.addCyclinderTransaction(cityObject, material, height);
         break;
       case 'demolition':
         material = new udviz.THREE.MeshPhongMaterial( {color: 'red', opacity: 0.2} );
-        positionTransaction = -75;
+        // positionTransaction = -75;
+        this.addCyclinderTransaction(cityObject, material, height);
         break;
       case 'modification':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'yellow', opacity: 0.2} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'yellow', opacity: 1} );
+        this.addCyclinderTransaction(cityObject, material, height);
         break;
       case 'noTransaction':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0.2} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 1} );
+        this.addCyclinderTransaction(cityObject, material, height);
         break;
-      case 'union':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'blue', opacity: 0.2} );
-        break;
-      case 'division':
-        material = new udviz.THREE.MeshPhongMaterial( {color: '#ff7300', opacity: 0.2} );
-        break;
+      // case 'union':
+      //   material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0.2} );
+      //   material.transparent = true;
+      //   break;
+      // case 'division':
+      //   material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0.2} );
+      //   break;
       case 'hide':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0.2} );
+        material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0} );
         material.transparent = true;
+        this.addCyclinderTransaction(cityObject, material, height);
         break;
-    
       default:
         break;
     }
+    // if (transactionType == 'construction'){
+    // material = new udviz.THREE.MeshPhongMaterial( {color: 'green', opacity: 1} );
+    // positionTransaction = -75;
+    // const cylinder = new udviz.THREE.Mesh( geometry, material );
+    // cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + positionTransaction + height);
+    // cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
+    // cylinder.updateMatrixWorld();
+    // this.transactionsCylinders.push(cylinder);
+    // this.view3D.getScene().add( cylinder );
+    // }
+  }
+
+  addCyclinderTransaction(cityObject, material, height){
+    // const cylinderDistance = Math.abs(c height);
+    const geometry = new udviz.THREE.CylinderGeometry( 2, 2, 150, 16);
+    
     const cylinder = new udviz.THREE.Mesh( geometry, material );
-    cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + positionTransaction + height);
+    cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, (height - 75) + cityObject.centroid.z);
     cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
     cylinder.updateMatrixWorld();
     this.transactionsCylinders.push(cylinder);
