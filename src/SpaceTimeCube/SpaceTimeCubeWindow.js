@@ -1,9 +1,12 @@
 /** @format */
 
-import './SpaceTimeCube/temporalExtension.css';
-import './SpaceTimeCube/ui-space-time-cube.css';
+import './temporalExtension.css';
+import './ui-space-time-cube.css';
+import { THREE } from '@ud-viz/browser/src';
 
 import $ from 'jquery';
+
+/* It creates a temporal slider and a legend for the Space Time Cube */
 
 export class SpaceTimeCubeWindow {
 
@@ -11,16 +14,30 @@ export class SpaceTimeCubeWindow {
     /* Setting the view3D property of the class to the view3D parameter. */
     this.view3D = view3D;
 
+    //STC Data FIX ME
+    this.olderData = 2009;
+    this.rangeData = 0.10;
+    this.tilesDates = [2009, 2015];
+
+    this.rangeSliderclass = 'range-slider container';
+
     this.createHtml();
   }
 
 
+  /**
+ * adds the checkbox and the temporal slider html to the root view
+ */
   createHtml(){
     this.addCheckboxTransactionHtml();
     this.addTemporalSliderHtml();
+    this.createdDotElementData();
   }
 
 
+  /**
+ * This function adds the temporal slider to the viewer
+ */
   addTemporalSliderHtml(){
   
     const viewerDiv = this.view3D.rootHtml;
@@ -41,7 +58,7 @@ export class SpaceTimeCubeWindow {
     
     viewerDiv.append(temporalUI);
 
-    let olderData = this.tilesDates[0][1];
+    let olderData = this.olderData;
     let rangeData = this.rangeData;
 
     let rangeOne = document.querySelector('input[name="rangeOne"]'),
@@ -69,29 +86,29 @@ export class SpaceTimeCubeWindow {
 
     //Hide or Show data
     rangeOne.oninput = () => {
-      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.tilesDates[0][1];
-      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.tilesDates[0][1];
-      this.tilesDates.forEach(element => {
-        if (element[1] < valueOne || element[1] > valueTwo){
-          element[0].layer.visible = false;
-        }else{
-          element[0].layer.visible = true;
-        }          
-        this.layerManager.notifyChange();
-      }); 
+      let valueOne = parseInt(rangeOne.value * rangeData) + olderData;
+      let valueTwo = parseInt(rangeTwo.value * rangeData) + olderData;
+    //   this.tilesDates.forEach(element => {
+    //     if (element[1] < valueOne || element[1] > valueTwo){
+    //       element[0].layer.visible = false;
+    //     }else{
+    //       element[0].layer.visible = true;
+    //     }          
+    //     this.layerManager.notifyChange();
+    //   }); 
     };
 
     rangeTwo.oninput = () => {
-      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + this.tilesDates[0][1];
-      let valueOne = parseInt(rangeOne.value * this.rangeData) + this.tilesDates[0][1];
-      this.tilesDates.forEach(element => {
-        if (element[1] < valueOne || element[1] > valueTwo){
-          element[0].layer.visible = false;
-        }else{
-          element[0].layer.visible = true;
-        }          
-        this.layerManager.notifyChange();
-      }); 
+      let valueTwo = parseInt(rangeTwo.value * rangeData) + olderData;
+      let valueOne = parseInt(rangeOne.value * rangeData) + olderData;
+    //   this.tilesDates.forEach(element => {
+    //     if (element[1] < valueOne || element[1] > valueTwo){
+    //       element[0].layer.visible = false;
+    //     }else{
+    //       element[0].layer.visible = true;
+    //     }          
+    //     this.layerManager.notifyChange();
+    //   }); 
     };
 
     updateView.call(rangeOne);
@@ -103,6 +120,9 @@ export class SpaceTimeCubeWindow {
     });
   }
 
+  /**
+ * It creates a div element, adds some HTML to it, and then appends it to the viewer div
+ */
   addCheckboxTransactionHtml(){
     const viewerDiv = this.view3D.rootHtml;
     const legendDiv = document.createElement('div');
@@ -126,10 +146,30 @@ export class SpaceTimeCubeWindow {
     viewerDiv.append(legendDiv);
   }
 
+  /**
+   * Create DOT in the temporal slider
+   */
+  createdDotElementData(){
+
+    //Create html element
+    this.tilesDates.forEach(element => {
+      let dotElement = document.createElement('span');
+      dotElement.className = 'dot';
+  
+      //Transform decimal color in hexa
+      let c = new THREE.Color(); 
+      c.set('white');
+      dotElement.style.backgroundColor = '#' + c.getHexString();
+        
+      dotElement.style.left = ((element - this.olderData) * 98) / (this.rangeData * 100).toString() + '%' ;
+      document.getElementsByClassName(this.rangeSliderclass)[0].append(dotElement);
+    });
+  }
+
 
   get temporalSliderHtml() {
     return `
-        <section class="range-slider container">
+        <section class="${this.rangeSliderclass}">
           <span class="output outputOne"></span>
           <span class="output outputTwo"></span>
           <span class="full-range"></span>

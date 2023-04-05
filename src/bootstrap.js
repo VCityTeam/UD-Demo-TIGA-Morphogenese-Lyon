@@ -3,7 +3,7 @@ import * as udvizBrowser  from '@ud-viz/browser';
 import { $3DTemporalExtension } from '@ud-viz/browser/src/Component/Widget/Temporal/Model/3DTemporalExtension';
 import { TemporalProvider } from '@ud-viz/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider';
 import { LayerExtension } from './SpaceTimeCube/LayerExtension.js';
-import { SpaceTimeCubeWindow } from './SpaceTimeCubeWindow.js';
+import { SpaceTimeCubeWindow } from './SpaceTimeCube/SpaceTimeCubeWindow.js';
 
 udvizBrowser.FileUtil.loadMultipleJSON([
   '../assets/config/all_widget.json',
@@ -146,9 +146,9 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     name: 'SPARQL Query',
   });
 
-  // const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider, sparqlWidgetView);
+  const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider, sparqlWidgetView);
 
-  const spaceTimeCubeWindow = new SpaceTimeCubeWindow(app.getFrame3DPlanar());
+  // const spaceTimeCubeWindow = new SpaceTimeCubeWindow(app.getFrame3DPlanar());
 
 
 });

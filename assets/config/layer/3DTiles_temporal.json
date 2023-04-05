@@ -41,5 +41,23 @@
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
     "extensions": ["3DTILES_temporal"],
     "color": "0xFFFFFF"
+  },
+  {
+    "id": "Temporal 2016",
+    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
+    "extensions": ["3DTILES_temporal"],
+    "color": "0xFFFFFF"
+  },
+  {
+    "id": "Temporal 2017",
+    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
+    "extensions": ["3DTILES_temporal"],
+    "color": "0xFFFFFF"
+  },
+  {
+    "id": "Temporal 2018",
+    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
+    "extensions": ["3DTILES_temporal"],
+    "color": "0xFFFFFF"
   }
 ]
