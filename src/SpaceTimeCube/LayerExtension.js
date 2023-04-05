@@ -32,13 +32,24 @@ export class LayerExtension {
     this.temporalProviders = temporalProviders;
 
     this.transactionsCylinders = [];
+    this.constructionTransactionsCylinders = [];
+    this.modificationTransactionsCylinders = [];
+    this.destructionTransactionsCylinders = [];
 
     this.tilesManagersSTC = [];
 
     this.delta = 300;
 
     this.tilesDates = [];
+
+    this.checkConstruction = false;
+    this.checkDestruction = false;
+    this.checkModification = false;
+
+
     let date = 2009; // hard coded value should be a parameter
+
+
 
     this.tilesDates.push([temporalProviders[0].tilesManager, date]);
     this.tilesManagersSTC.push(temporalProviders[0].tilesManager);
@@ -239,19 +250,52 @@ export class LayerExtension {
     legendDiv.innerHTML = `
                           <h1 style="color: white">Legend</h1>
                           <div class="legend-item">
-                            <input class="legend-checkbox" type="checkbox" style="background-color: #009900;" name="scales" checked>
+                            <input class="legend-checkbox" type="checkbox" style="background-color: #009900;" name="construction" >
                             <div class="legend-label">Construction</div>
                           </div>
                           <div class="legend-item">
-                            <input class="legend-checkbox" type="checkbox" style="background-color: #ff0000;" name="scales" checked>
+                            <input class="legend-checkbox" type="checkbox" style="background-color: #ff0000;" name="demolition" >
                             <div class="legend-label">Demolition</div>
                           </div>
                           <div class="legend-item">
-                            <input class="legend-checkbox" type="checkbox" style="background-color: #ffd700;" name="scales" checked>
+                            <input class="legend-checkbox" type="checkbox" style="background-color: #ffd700;" name="modify" >
                             <div class="legend-label">Modify</div>
                           </div>`;
     
     viewerDiv.append(legendDiv);
+
+    let checkboxs = document.getElementsByClassName('legend-checkbox');
+    checkboxs[0].addEventListener('change', () => { 
+      if (checkboxs[0].checked){
+        this.checkConstruction = true;
+        this.displayAllTransaction();
+      } else {
+        this.checkConstruction = false;
+        this.removeAllConstructionTransactionsCylinders();
+      }
+    });
+
+    checkboxs[1].addEventListener('change', () => { 
+      if (checkboxs[1].checked){
+        this.checkDestruction = true;
+        this.displayAllTransaction();
+      } else {
+        this.checkDestruction = false;
+        this.removeAllDestructionTransactionsCylinders();
+      }
+    });
+
+    checkboxs[2].addEventListener('change', () => { 
+      if (checkboxs[2].checked){
+        this.checkModification = true;
+        this.displayAllTransaction();
+      } else {
+        this.checkModification = false;
+        this.removeAllModificationTransactionsCylinders();
+      }
+    });
+
+
   }
 
   /**
@@ -415,27 +459,35 @@ export class LayerExtension {
    * Display all the transaction lines
    */
   displayAllTransaction(){
-    let height = 0;
-    for (let j = 0; j < this.temporalProviders.length - 1; j++){
-      const tiles = this.temporalProviders[j].COStyles.get(this.temporalProviders[j].currentTime);
-      for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
-        const tileDisplayStates = tiles.get(tileId + 1);
-        for (let i = 0; i < tileDisplayStates.length; i++) {
-          this.layerManager.tilesManagers.forEach( tileManager => {
-            const cityObject = tileManager.getCityObject(new CityObjectID(tileId + 1, i));
-            // tileManager.tiles[tileId]
-            if (cityObject){
-              this.createTransactionLine(tileDisplayStates[i], cityObject, height);   
-            }
-          });
-        }
-      }
-      height+=150;
+    let height = this.delta;
+    for (let j = 0; j < this.temporalProviders.length - 1; j+=3){
+      // let tiles = this.temporalProviders[j].COStyles.get(this.temporalProviders[j].currentTime);
+      // this.loopTiles(tiles);
+
+      let tiles = this.temporalProviders[j + 1].COStyles.get(this.temporalProviders[j + 1].currentTime);
+      this.loopTiles(tiles, height);
+
+      tiles = this.temporalProviders[j + 2].COStyles.get(this.temporalProviders[j + 2].currentTime);
+      this.loopTiles(tiles, height);
+
+      height+=this.delta;
     }
-    // this.temporalProviders.forEach(temporalProvider => { // Parcours des provider
-      
-      
-    // }); 
+    
+  }
+
+  loopTiles(tiles, height) {
+    for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
+      const tileDisplayStates = tiles.get(tileId + 1);
+      for (let i = 0; i < tileDisplayStates.length; i++) {
+        this.layerManager.tilesManagers.forEach( tileManager => {
+          const cityObject = tileManager.getCityObject(new CityObjectID(tileId + 1, i));
+          // tileManager.tiles[tileId]
+          if (cityObject){
+            this.createAllTransactionsLine(tileDisplayStates[i], cityObject, height);   
+          }
+        });
+      }
+    }
   }
 
   /**
@@ -498,7 +550,7 @@ export class LayerExtension {
 
   addCyclinderTransaction(cityObject, material, height){
     // const cylinderDistance = Math.abs(c height);
-    const geometry = new udviz.THREE.CylinderGeometry( 2, 2, this.delta - 20, 16);
+    const geometry = new udviz.THREE.CylinderGeometry( 2, 2, this.delta , 16);
     
     const cylinder = new udviz.THREE.Mesh( geometry, material );
     cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, (height - (this.delta / 2)) + cityObject.centroid.z);
@@ -510,13 +562,38 @@ export class LayerExtension {
 
   createAllTransactionsLine(transactionType, cityObject, height){
     let material;
-    if (transactionType == 'demolition'){
+    const geometry = new udviz.THREE.CylinderGeometry( 2, 2, height - 10, 16);
+
+    if (transactionType == 'demolition' && this.checkDestruction){
       material = new udviz.THREE.MeshPhongMaterial( {color: 'red', opacity: 1} );
-    } else if (transactionType == 'modification'){
+      const cylinder = new udviz.THREE.Mesh( geometry, material );
+      this.destructionTransactionsCylinders.push(cylinder);
+
+      cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, (height  / 2) + cityObject.centroid.z);
+      cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
+      cylinder.updateMatrixWorld();
+      this.view3D.getScene().add( cylinder );
+
+    } else if (transactionType == 'modification' && this.checkModification){
       material = new udviz.THREE.MeshPhongMaterial( {color: 'yellow', opacity: 1} );
-    } else if (transactionType == 'construction'){
+      const cylinder = new udviz.THREE.Mesh( geometry, material );
+      this.modificationTransactionsCylinders.push(cylinder);
+
+      cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, (height  / 2) + cityObject.centroid.z);
+      cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
+      cylinder.updateMatrixWorld();
+      this.view3D.getScene().add( cylinder );
+
+    } else if (transactionType == 'creation' && this.checkConstruction){
       material = new udviz.THREE.MeshPhongMaterial( {color: 'green', opacity: 1} );
-    }
+      const cylinder = new udviz.THREE.Mesh( geometry, material );
+      this.constructionTransactionsCylinders.push(cylinder);
+
+      cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, (height  / 2) + cityObject.centroid.z);
+      cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
+      cylinder.updateMatrixWorld();
+      this.view3D.getScene().add( cylinder );
+    } 
   }
 
   /**
@@ -573,6 +650,32 @@ export class LayerExtension {
   removeAllTransactionsCylinders(){
     if (this.transactionsCylinders){
       this.transactionsCylinders.forEach(cylinder => {
+        this.view3D.getScene().remove(cylinder);
+      });
+    }
+    this.removeAllConstructionTransactionsCylinders();
+    this.removeAllDestructionTransactionsCylinders();
+    this.removeAllModificationTransactionsCylinders();
+  }
+
+  removeAllConstructionTransactionsCylinders(){
+    if (this.constructionTransactionsCylinders){
+      this.constructionTransactionsCylinders.forEach(cylinder => {
+        this.view3D.getScene().remove(cylinder);
+      });
+    }
+  }
+
+  removeAllDestructionTransactionsCylinders(){
+    if (this.destructionTransactionsCylinders){
+      this.destructionTransactionsCylinders.forEach(cylinder => {
+        this.view3D.getScene().remove(cylinder);
+      });
+    }
+  }
+  removeAllModificationTransactionsCylinders(){
+    if (this.modificationTransactionsCylinders){
+      this.modificationTransactionsCylinders.forEach(cylinder => {
         this.view3D.getScene().remove(cylinder);
       });
     }
