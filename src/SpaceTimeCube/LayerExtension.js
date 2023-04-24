@@ -141,6 +141,15 @@ export class LayerExtension {
       this.modifyFill
     );
 
+    this.constructionTransparent = new CityObjectStyle({
+      materialProps: { opacity: 0.5, color: 'green' },
+    });
+
+    this.view3D.layerManager.registerStyle(
+      'constructionTransparent',
+      this.constructionTransparent
+    );
+
   }
 
   get innerContentHtml() {
@@ -326,13 +335,15 @@ export class LayerExtension {
     let currentTime = 2009;
 
     //Set style layer 0
-    this.tilesManagersSTC[0].tiles.forEach( tile => {
-      this.tilesManagersSTC[0].setStyleToTile(tile.tileId, this.whiteStyle);
-      this.tilesManagersSTC[0].applyStyles(); 
-    });
+    // this.tilesManagersSTC[0].tiles.forEach( tile => {
+    //   this.tilesManagersSTC[0].setStyleToTile(tile.tileId, this.whiteStyle);
+    //   this.tilesManagersSTC[0].applyStyles(); 
+    // });
+    this.tilesManagersSTC[0].styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
+    this.temporalProviders[0].changeVisibleTilesStates();
 
     const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
-    let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 600 , objectLayer.position.y, objectLayer.position.z);
+    let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1200 , objectLayer.position.y, objectLayer.position.z);
     this.addTextInScene(currentTime.toString(), positionText);
     currentTime += 3;
 
@@ -347,7 +358,7 @@ export class LayerExtension {
       layer = this.temporalProviders[i - 2].tilesManager.layer;
       this.setPositionLayer(layer, maxHeightLayers);
       
-      positionText = new udviz.THREE.Vector3(objectLayer.position.x - 600 , objectLayer.position.y, objectLayer.position.z + maxHeightLayers);
+      positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1200 , objectLayer.position.y, objectLayer.position.z + maxHeightLayers);
       this.addTextInScene(currentTime.toString(), positionText);
       currentTime += 3;
       maxHeightLayers += this.delta;
@@ -460,7 +471,7 @@ export class LayerExtension {
    */
   displayAllTransaction(){
     let height = this.delta;
-    for (let j = 0; j < this.temporalProviders.length - 1; j+=3){
+    for (let j = 0; j < this.temporalProviders.length - 4; j+=3){
       // let tiles = this.temporalProviders[j].COStyles.get(this.temporalProviders[j].currentTime);
       // this.loopTiles(tiles);
 
@@ -507,6 +518,7 @@ export class LayerExtension {
       case 'creation':
         material = new udviz.THREE.MeshPhongMaterial( {color: 'green', opacity: 0.2} );
         this.addCyclinderTransaction(cityObject, material, height);
+        styleTransaction = this.constructionTransparent;
         break;
       case 'demolition':
         material = new udviz.THREE.MeshPhongMaterial( {color: 'red', opacity: 0.2} );
@@ -573,6 +585,7 @@ export class LayerExtension {
       cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
       cylinder.updateMatrixWorld();
       this.view3D.getScene().add( cylinder );
+      this.applyStyletoCOTemporalLevel(cityObject, this.tilesManagersSTC[0], this.redFill);
 
     } else if (transactionType == 'modification' && this.checkModification){
       material = new udviz.THREE.MeshPhongMaterial( {color: 'yellow', opacity: 1} );
@@ -583,6 +596,7 @@ export class LayerExtension {
       cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
       cylinder.updateMatrixWorld();
       this.view3D.getScene().add( cylinder );
+      this.applyStyletoCOTemporalLevel(cityObject, this.tilesManagersSTC[0], this.modifyFill);
 
     } else if (transactionType == 'creation' && this.checkConstruction){
       material = new udviz.THREE.MeshPhongMaterial( {color: 'green', opacity: 1} );
@@ -593,6 +607,7 @@ export class LayerExtension {
       cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
       cylinder.updateMatrixWorld();
       this.view3D.getScene().add( cylinder );
+      this.applyStyletoCOTemporalLevel(cityObject, this.tilesManagersSTC[0], this.constructionTransparent);
     } 
   }
 

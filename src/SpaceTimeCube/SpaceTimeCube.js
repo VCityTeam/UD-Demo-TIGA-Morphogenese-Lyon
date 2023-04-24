@@ -18,7 +18,7 @@ export class SpaceTimeCube {
    * @param {Array<TemporalProvider>} temporalProviders
    * @param {SparqlWidgetView}  sparqlWidgetView
    */
-  constructor(view3D, temporalProviders, sparqlWidgetView, oldestDate, recentDate) {
+  constructor(view3D, temporalProviders, sparqlWidgetView) {
     this.layerManager = view3D.layerManager;
     this.view3D = view3D;
 
@@ -104,19 +104,6 @@ export class SpaceTimeCube {
       this.tilesManagersSTC[0].setStyleToTile(tile.tileId, this.whiteStyle);
       this.tilesManagersSTC[0].applyStyles(); 
     });
-
-    // //Set style layer 3
-    // this.tilesManagersSTC[3].tiles.forEach( tile => {
-    //   this.tilesManagersSTC[3].setStyleToTile(tile.tileId, this.whiteStyle);
-    //   this.tilesManagersSTC[3].applyStyles(); 
-    // });
-
-
-    //Set style higher
-    // this.tilesManagersSTC[this.tilesManagersSTC.length - 1].tiles.forEach( tile => {
-    //   this.tilesManagersSTC[this.tilesManagersSTC.length - 1].setStyleToTile(tile.tileId, this.whiteStyle);
-    //   this.tilesManagersSTC[this.tilesManagersSTC.length - 1].applyStyles(); 
-    // });
 
     this.temporalProviders.forEach(temporalProvider => {
       const layer = temporalProvider.tilesManager.layer;
