@@ -51,12 +51,6 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     frame3DPlanar.itownsView
   );
 
-  // udvizBrowser.add3DTilesLayers(
-  //   configs['3DTiles'],
-  //   frame3DPlanar.layerManager,
-  //   frame3DPlanar.itownsView
-  // );
-
   udvizBrowser.addBaseMapLayer(
     configs['base_maps'][0],
     frame3DPlanar.itownsView,
@@ -118,14 +112,6 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     app.getFrame3DPlanar().getLayerManager(),
     configs['styles']
   );
-  // cityObjectProvider.selectCityObject()
-
-  // //// CITY OBJECTS MODULE
-  const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
-    cityObjectProvider,
-    configs['styles']
-  );
-  app.addWidgetView('cityObjects', cityObjectModule.view);
 
 
   const sparqlProvider = new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
@@ -136,9 +122,10 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   
   // //// SPARQL MODULE
   const sparqlWidgetView = new udvizBrowser.Widget.Server.SparqlWidgetView(
-    sparqlProvider,
+    new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
+      configs['sparql_server']
+    ),
     cityObjectProvider,
-    listTemporalProvider,
     app.getFrame3DPlanar().getLayerManager(),
     configs['sparql_widget']
   );
