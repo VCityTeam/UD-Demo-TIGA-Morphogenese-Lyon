@@ -4,6 +4,8 @@ import { $3DTemporalExtension } from '@ud-viz/browser/src/Component/Widget/Tempo
 import { TemporalProvider } from '@ud-viz/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider';
 import { LayerExtension } from './SpaceTimeCube/LayerExtension.js';
 import { SpaceTimeCubeWindow } from './SpaceTimeCube/SpaceTimeCubeWindow.js';
+import { SpaceTimeCube } from './SpaceTimeCube/SpaceTimeCube.js';
+import { TemporalLevel } from './SpaceTimeCube/TemporalLevel.js';
 
 udvizBrowser.FileUtil.loadMultipleJSON([
   '../assets/config/all_widget.json',
@@ -90,8 +92,8 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   );
   app.addWidgetView('layerChoice', layerChoice);
 
-  //Temporal PROVIDER
-  const listTemporalProvider = [];
+  //Temporal levels
+  const temporalLevels = [];
   const tilesManagers = app.getFrame3DPlanar().getLayerManager().tilesManagers;
   for( let i = 0; i < tilesManagers.length; i++) {
 
@@ -103,7 +105,9 @@ udvizBrowser.FileUtil.loadMultipleJSON([
         tilesManagers[i],
         2009 + i
       );
-      listTemporalProvider.push(dataTemporal);
+
+      const temporalLevel = new TemporalLevel(dataTemporal, 2009 + i);
+      temporalLevels.push(temporalLevel);
     }
   }
 
@@ -133,9 +137,11 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     name: 'SPARQL Query',
   });
 
-  const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider, sparqlWidgetView);
+  // const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider, sparqlWidgetView);
 
-  // const spaceTimeCubeWindow = new SpaceTimeCubeWindow(app.getFrame3DPlanar());
+  const spaceTimeCube = new SpaceTimeCube(app.getFrame3DPlanar(), temporalLevels);
+
+  const spaceTimeCubeWindow = new SpaceTimeCubeWindow(app.getFrame3DPlanar());
 
 
 });

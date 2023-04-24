@@ -8,6 +8,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { getUriLocalname } from '@ud-viz/browser/src/Component/Widget/Server/SPARQL/Model/URI';
 import { SparqlWidgetView } from '@ud-viz/browser/src/Component/Widget/Server/Server';
+import { TemporalLevel } from './TemporalLevel';
 
 
 export class SpaceTimeCube {
@@ -15,14 +16,14 @@ export class SpaceTimeCube {
    * Creates the layer choice windows
    *
    * @param {udviz.Frame3DPlanar} view3D
-   * @param {Array<TemporalProvider>} temporalProviders
+   * @param {Array<TemporalLevel>} temporalLevels
    * @param {SparqlWidgetView}  sparqlWidgetView
    */
-  constructor(view3D, temporalProviders, sparqlWidgetView) {
+  constructor(view3D, temporalLevels, sparqlWidgetView) {
     this.layerManager = view3D.layerManager;
     this.view3D = view3D;
 
-    this.temporalProviders = temporalProviders;
+    this.temporalLevels = temporalLevels;
 
     this.transactionsCylinders = [];
 
@@ -30,16 +31,13 @@ export class SpaceTimeCube {
 
     this.tilesDates = [];
     let date = 2009; // hard coded value should be a parameter
-    this.temporalProviders.forEach( temporalProvider => {
-      this.tilesDates.push([temporalProvider.tilesManager,date]);
-      this.tilesManagersSTC.push(temporalProvider.tilesManager);
+    this.temporalLevels.forEach( temporalLevel => {
+      this.tilesDates.push([temporalLevel.temporalProvider.tilesManager,date]);
+      this.tilesManagersSTC.push(temporalLevel.temporalProvider.tilesManager);
       date+=1;
     });
 
     this.rangeData = Math.abs(this.tilesDates[0][1] - this.tilesDates[this.tilesDates.length - 1][1]) / 100;
-    
-    this.windowCreated();
-    this.createdDotElementData();
 
     this.view3D.layerManager.tilesManagers.forEach(element => {
       element.addEventListener(
@@ -105,8 +103,8 @@ export class SpaceTimeCube {
       this.tilesManagersSTC[0].applyStyles(); 
     });
 
-    this.temporalProviders.forEach(temporalProvider => {
-      const layer = temporalProvider.tilesManager.layer;
+    this.temporalLevels.forEach(temporalLevel => {
+      const layer = temporalLevel.temporalProvider.tilesManager.layer;
       layer.root.children.forEach(object => {
         // Height
         object.position.z += maxHeightLayers;
@@ -171,16 +169,16 @@ export class SpaceTimeCube {
 
     this.removeAllTransactionsCylinders();
 
-    for (let i = 0 ; i < this.temporalProviders.length - 1; i++) {
-      const temporalProvider = this.temporalProviders[i];
+    for (let i = 0 ; i < this.temporalLevels.length - 1; i++) {
+      const temporalLevel = this.temporalLevels[i].temporalProvider;
       const CO = listOfCityObjects[i];
       if (!CO)
         return;
 
-      temporalProvider.changeTileState(temporalProvider.tilesManager);
-      // this.setStyleSelectionSTC(listOfCityObjects, temporalProvider.tilesManager); //Apply style
+      temporalLevel.changeTileState(temporalLevel.tilesManager);
+      // this.setStyleSelectionSTC(listOfCityObjects, temporalLevel.tilesManager); //Apply style
       
-      const transactionType = temporalProvider.COStyles.get(temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
+      const transactionType = temporalLevel.COStyles.get(temporalLevel.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
       this.createTransactionLine(transactionType, CO, height);
 
       height += 150;
@@ -192,8 +190,8 @@ export class SpaceTimeCube {
    */
   displayAllTransaction(){
     let height = 0;
-    for (let j = 0; j < this.temporalProviders.length - 1; j++){
-      const tiles = this.temporalProviders[j].COStyles.get(this.temporalProviders[j].currentTime);
+    for (let j = 0; j < this.temporalLevels.length - 1; j++){
+      const tiles = this.temporalLevels[j].temporalProvider.COStyles.get(this.temporalLevels[j].temporalProvider.currentTime);
       for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
         const tileDisplayStates = tiles.get(tileId + 1);
         for (let i = 0; i < tileDisplayStates.length; i++) {

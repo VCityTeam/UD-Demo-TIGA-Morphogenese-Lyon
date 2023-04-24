@@ -10,9 +10,10 @@ import $ from 'jquery';
 
 export class SpaceTimeCubeWindow {
 
-  constructor(view3D){
+  constructor(view3D, spaceTimeCube){
     /* Setting the view3D property of the class to the view3D parameter. */
     this.view3D = view3D;
+    this.spaceTimeCube = spaceTimeCube;
 
     //STC Data FIX ME
     this.olderData = 2009;
@@ -36,7 +37,7 @@ export class SpaceTimeCubeWindow {
 
 
   /**
- * This function adds the temporal slider to the viewer
+ * Add the temporal slider to the viewer
  */
   addTemporalSliderHtml(){
   
@@ -121,7 +122,7 @@ export class SpaceTimeCubeWindow {
   }
 
   /**
- * It creates a div element, adds some HTML to it, and then appends it to the viewer div
+ * Creates legend checkbox
  */
   addCheckboxTransactionHtml(){
     const viewerDiv = this.view3D.rootHtml;

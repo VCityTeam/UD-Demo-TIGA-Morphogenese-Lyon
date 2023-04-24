@@ -12,7 +12,7 @@ export class TemporalLevel {
 
     this.temporalProvider = temporalProvider;
 
-    this.date= date;
+    this.date = date;
         
     this.position = new THREE.Vector3();
   }
