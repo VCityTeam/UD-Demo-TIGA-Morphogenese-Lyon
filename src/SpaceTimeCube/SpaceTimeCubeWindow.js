@@ -21,12 +21,12 @@ export class SpaceTimeCubeWindow {
     this.view3D = view3D;
     this.spaceTimeCube = spaceTimeCube;
 
-    //STC Data FIX ME
     this.olderData = spaceTimeCube.tilesDated[0][1];
-    this.rangeData = 0.10;
+
+    this.rangeData = Math.abs(this.spaceTimeCube.tilesDated[0][1] - this.spaceTimeCube.tilesDated[this.spaceTimeCube.tilesDated.length - 1][1]) / 100
 
     //Tiles dates
-    this.millesimes = [2009, 2015];
+    this.millesimes = [];
 
     for( let i = 0; i < spaceTimeCube.tilesDated.length; i+=3){
       this.millesimes.push(spaceTimeCube.tilesDated[i][1]);
@@ -72,14 +72,13 @@ export class SpaceTimeCubeWindow {
     viewerDiv.append(temporalUI);
 
     let olderData = this.olderData;
-    let rangeData = this.rangeData;
-
+    const rangeData = this.rangeData;
     let rangeOne = document.querySelector('input[name="rangeOne"]'),
       rangeTwo = document.querySelector('input[name="rangeTwo"]'),
       outputOne = document.querySelector('.outputOne'),
       outputTwo = document.querySelector('.outputTwo'),
       inclRange = document.querySelector('.incl-range'),
-      updateView = function () {
+      updateView = function() {
 
         if (this.getAttribute('name') === 'rangeOne') {
           outputOne.innerHTML =  parseInt(this.value * rangeData) + olderData;
@@ -101,27 +100,27 @@ export class SpaceTimeCubeWindow {
     rangeOne.oninput = () => {
       let valueOne = parseInt(rangeOne.value * rangeData) + olderData;
       let valueTwo = parseInt(rangeTwo.value * rangeData) + olderData;
-    //   this.millesimes.forEach(element => {
-    //     if (element[1] < valueOne || element[1] > valueTwo){
-    //       element[0].layer.visible = false;
-    //     }else{
-    //       element[0].layer.visible = true;
-    //     }          
-    //     this.layerManager.notifyChange();
-    //   }); 
+      this.spaceTimeCube.tilesDated.forEach(element => {
+        if (element[1] < valueOne || element[1] > valueTwo){
+          element[0].layer.visible = false;
+        }else{
+          element[0].layer.visible = true;
+        }          
+        this.view3D.layerManager.notifyChange();
+      }); 
     };
 
     rangeTwo.oninput = () => {
-      let valueTwo = parseInt(rangeTwo.value * rangeData) + olderData;
-      let valueOne = parseInt(rangeOne.value * rangeData) + olderData;
-    //   this.millesimes.forEach(element => {
-    //     if (element[1] < valueOne || element[1] > valueTwo){
-    //       element[0].layer.visible = false;
-    //     }else{
-    //       element[0].layer.visible = true;
-    //     }          
-    //     this.layerManager.notifyChange();
-    //   }); 
+      let valueTwo = parseInt(rangeTwo.value * this.rangeData) + olderData;
+      let valueOne = parseInt(rangeOne.value * this.rangeData) + olderData;
+      this.spaceTimeCube.tilesDated.forEach(element => {
+        if (element[1] < valueOne || element[1] > valueTwo){
+          element[0].layer.visible = false;
+        }else{
+          element[0].layer.visible = true;
+        }          
+        this.view3D.layerManager.notifyChange();
+      }); 
     };
 
     updateView.call(rangeOne);

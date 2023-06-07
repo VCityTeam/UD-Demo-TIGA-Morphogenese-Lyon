@@ -33,14 +33,21 @@ export class SpaceTimeCube {
 
     this.delta = 300;
     let date = 2009; // hard coded value should be a parameter
-    
-    this.temporalLevels.forEach( temporalLevel => {
-      this.tilesDated.push([temporalLevel.temporalProvider.tilesManager, date]);
-      this.tilesManagersSTC.push(temporalLevel.temporalProvider.tilesManager);
-      date+=1;
-    });
 
-    this.rangeData = Math.abs(this.tilesDated[0][1] - this.tilesDated[this.tilesDated.length - 1][1]) / 100;
+    this.tilesManagersSTC.push(temporalLevels[0].temporalProvider.tilesManager);
+    this.tilesDated.push([temporalLevels[0].temporalProvider.tilesManager, date]);
+
+    for(let i = 3; i < this.temporalLevels.length; i+=3){
+      date+=3;
+      this.tilesDated.push([temporalLevels[i].temporalProvider.tilesManager, date]);
+      this.tilesManagersSTC.push(temporalLevels[i].temporalProvider.tilesManager);
+
+      this.tilesDated.push([temporalLevels[i - 1].temporalProvider.tilesManager, date]);
+      this.tilesManagersSTC.push(temporalLevels[i - 1].temporalProvider.tilesManager);
+
+      this.tilesDated.push([temporalLevels[i - 2].temporalProvider.tilesManager, date]);
+      this.tilesManagersSTC.push(temporalLevels[i - 2].temporalProvider.tilesManager);
+    }
 
     this.view3D.layerManager.tilesManagers.forEach(element => {
       element.addEventListener(
