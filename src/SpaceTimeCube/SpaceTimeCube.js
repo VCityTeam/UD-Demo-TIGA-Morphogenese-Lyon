@@ -168,23 +168,33 @@ export class SpaceTimeCube {
       return;
 
     //Create lines
-    let height = 0;
+    let height = this.delta;
 
     this.removeAllTransactionsCylinders();
+    let indexCO = 0;
+    for (let i = 0 ; i < this.temporalProviders.length - 1; i+=3) {
 
-    for (let i = 0 ; i < this.temporalLevels.length - 1; i++) {
-      const temporalLevel = this.temporalLevels[i].temporalProvider;
-      const CO = listOfCityObjects[i];
+      const CO = listOfCityObjects[indexCO];
       if (!CO)
         return;
-
-      temporalLevel.changeTileState(temporalLevel.tilesManager);
-      // this.setStyleSelectionSTC(listOfCityObjects, temporalLevel.tilesManager); //Apply style
       
-      const transactionType = temporalLevel.COStyles.get(temporalLevel.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
-      this.createTransactionLine(transactionType, CO, height);
+      // let transactionType = temporalProvider.COStyles.get(this.temporalProviders[i].currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
+      // this.createTransactionLine(transactionType, CO, height);
+      let tilesManager;
+      let cityObjectBefore;
+      if (indexCO != 0){
+        tilesManager = this.temporalProviders[i].tilesManager;
+        cityObjectBefore = listOfCityObjects[indexCO - 1];
+      }
 
-      height += 150;
+      let transactionType = this.temporalProviders[i + 1].COStyles.get(this.temporalProviders[i + 1].currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
+      this.createTransactionLine(transactionType, CO, height, tilesManager, cityObjectBefore);
+
+      transactionType = this.temporalProviders[i + 2].COStyles.get(this.temporalProviders[i + 2].currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
+      this.createTransactionLine(transactionType, CO, height, tilesManager, cityObjectBefore);
+
+      height += this.delta;
+      indexCO++;
     }
   }
 
@@ -208,7 +218,7 @@ export class SpaceTimeCube {
   }
 
   /**
-   * With the transaction types create the corect line with color
+   * With the transaction types create the correct line with color
    * @param {string} transactionType 
    * @param {CityObject} cityObject
    * @param {number} height

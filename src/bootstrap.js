@@ -139,7 +139,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
 
   // const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider, sparqlWidgetView);
 
-  const spaceTimeCube = new SpaceTimeCube(app.getFrame3DPlanar(), temporalLevels);
+  const spaceTimeCube = new SpaceTimeCube(app.getFrame3DPlanar(), temporalLevels, sparqlWidgetView);
 
   const spaceTimeCubeWindow = new SpaceTimeCubeWindow(app.getFrame3DPlanar(), spaceTimeCube);
 
