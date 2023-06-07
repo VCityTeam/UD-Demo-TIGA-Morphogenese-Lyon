@@ -141,7 +141,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
 
   const spaceTimeCube = new SpaceTimeCube(app.getFrame3DPlanar(), temporalLevels);
 
-  const spaceTimeCubeWindow = new SpaceTimeCubeWindow(app.getFrame3DPlanar());
+  const spaceTimeCubeWindow = new SpaceTimeCubeWindow(app.getFrame3DPlanar(), spaceTimeCube);
 
 
 });

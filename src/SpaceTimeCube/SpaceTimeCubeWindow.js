@@ -1,8 +1,9 @@
 /** @format */
 
+import { SpaceTimeCube } from './SpaceTimeCube';
 import './temporalExtension.css';
 import './ui-space-time-cube.css';
-import { THREE } from '@ud-viz/browser/src';
+import { Frame3DPlanar, THREE } from '@ud-viz/browser/src';
 
 import $ from 'jquery';
 
@@ -10,15 +11,26 @@ import $ from 'jquery';
 
 export class SpaceTimeCubeWindow {
 
+  /**
+   * 
+   * @param {Frame3DPlanar} view3D 
+   * @param {SpaceTimeCube} spaceTimeCube 
+   */
   constructor(view3D, spaceTimeCube){
     /* Setting the view3D property of the class to the view3D parameter. */
     this.view3D = view3D;
     this.spaceTimeCube = spaceTimeCube;
 
     //STC Data FIX ME
-    this.olderData = 2009;
+    this.olderData = spaceTimeCube.tilesDated[0][1];
     this.rangeData = 0.10;
-    this.tilesDates = [2009, 2015];
+
+    //Tiles dates
+    this.millesimes = [2009, 2015];
+
+    for( let i = 0; i < spaceTimeCube.tilesDated.length; i+=3){
+      this.millesimes.push(spaceTimeCube.tilesDated[i][1]);
+    }
 
     this.rangeSliderclass = 'range-slider container';
 
@@ -89,7 +101,7 @@ export class SpaceTimeCubeWindow {
     rangeOne.oninput = () => {
       let valueOne = parseInt(rangeOne.value * rangeData) + olderData;
       let valueTwo = parseInt(rangeTwo.value * rangeData) + olderData;
-    //   this.tilesDates.forEach(element => {
+    //   this.millesimes.forEach(element => {
     //     if (element[1] < valueOne || element[1] > valueTwo){
     //       element[0].layer.visible = false;
     //     }else{
@@ -102,7 +114,7 @@ export class SpaceTimeCubeWindow {
     rangeTwo.oninput = () => {
       let valueTwo = parseInt(rangeTwo.value * rangeData) + olderData;
       let valueOne = parseInt(rangeOne.value * rangeData) + olderData;
-    //   this.tilesDates.forEach(element => {
+    //   this.millesimes.forEach(element => {
     //     if (element[1] < valueOne || element[1] > valueTwo){
     //       element[0].layer.visible = false;
     //     }else{
@@ -153,7 +165,7 @@ export class SpaceTimeCubeWindow {
   createdDotElementData(){
 
     //Create html element
-    this.tilesDates.forEach(element => {
+    this.millesimes.forEach(element => {
       let dotElement = document.createElement('span');
       dotElement.className = 'dot';
   

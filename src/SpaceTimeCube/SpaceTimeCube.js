@@ -29,18 +29,18 @@ export class SpaceTimeCube {
 
     this.tilesManagersSTC = [];
 
-    this.tilesDates = [];
+    this.tilesDated = [];
 
     this.delta = 300;
     let date = 2009; // hard coded value should be a parameter
     
     this.temporalLevels.forEach( temporalLevel => {
-      this.tilesDates.push([temporalLevel.temporalProvider.tilesManager,date]);
+      this.tilesDated.push([temporalLevel.temporalProvider.tilesManager, date]);
       this.tilesManagersSTC.push(temporalLevel.temporalProvider.tilesManager);
       date+=1;
     });
 
-    this.rangeData = Math.abs(this.tilesDates[0][1] - this.tilesDates[this.tilesDates.length - 1][1]) / 100;
+    this.rangeData = Math.abs(this.tilesDated[0][1] - this.tilesDated[this.tilesDated.length - 1][1]) / 100;
 
     this.view3D.layerManager.tilesManagers.forEach(element => {
       element.addEventListener(
@@ -115,13 +115,12 @@ export class SpaceTimeCube {
       this.temporalLevels[i].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
 
       layer = this.temporalLevels[i - 1].temporalProvider.tilesManager.layer;
-      // this.setPositionLayer(layer, maxHeightLayers);
       this.temporalLevels[i - 1].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
 
       layer = this.temporalLevels[i - 2].temporalProvider.tilesManager.layer;
-      // this.setPositionLayer(layer, maxHeightLayers);
       this.temporalLevels[i - 2].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
       
+      //Set millesime text in the 3D scene
       positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1200 , objectLayer.position.y, objectLayer.position.z + temporalHeight);
       this.addTextInScene(currentTime.toString(), positionText);
       currentTime += 3;
