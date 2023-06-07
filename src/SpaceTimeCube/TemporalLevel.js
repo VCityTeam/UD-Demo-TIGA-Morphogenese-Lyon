@@ -26,7 +26,9 @@ export class TemporalLevel {
     // Set layer
     const layer = this.temporalProvider.tilesManager.layer;
     layer.root.children.forEach(object => {
-      object.position.z = position.z;
+      object.position.z += position.z;
+      const centroidBB = new THREE.Vector3();
+      object.boundingVolume.box.getCenter(centroidBB);
       object.updateMatrixWorld();
     });
   }

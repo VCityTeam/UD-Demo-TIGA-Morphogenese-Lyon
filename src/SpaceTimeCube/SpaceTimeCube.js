@@ -30,7 +30,10 @@ export class SpaceTimeCube {
     this.tilesManagersSTC = [];
 
     this.tilesDates = [];
+
+    this.delta = 300;
     let date = 2009; // hard coded value should be a parameter
+    
     this.temporalLevels.forEach( temporalLevel => {
       this.tilesDates.push([temporalLevel.temporalProvider.tilesManager,date]);
       this.tilesManagersSTC.push(temporalLevel.temporalProvider.tilesManager);
@@ -91,33 +94,39 @@ export class SpaceTimeCube {
   }
 
   /**
-   * Create layer in height
+   * Create Space time cube representation
    */
   createSpaceTimeCube(){
-    let maxHeightLayers = 0;
-    let currentTime = 2009;
+    let temporalHeight = this.delta;
+    let currentTime = this.temporalLevels[0].date; //older millesime data
 
-    //Set style layer 0
-    this.tilesManagersSTC[0].tiles.forEach( tile => {
-      this.tilesManagersSTC[0].setStyleToTile(tile.tileId, this.whiteStyle);
-      this.tilesManagersSTC[0].applyStyles(); 
-    });
+    // Set the color of the ground layer in blank
+    this.tilesManagersSTC[0].styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
+    this.temporalLevels[0].temporalProvider.changeVisibleTilesStates();
 
-    this.temporalLevels.forEach(temporalLevel => {
-      const layer = temporalLevel.temporalProvider.tilesManager.layer;
-      layer.root.children.forEach(object => {
-        // Height
-        object.position.z += maxHeightLayers;
-        const centroidBB = new udviz.THREE.Vector3();
-        object.boundingVolume.box.getCenter(centroidBB);
-        object.updateMatrixWorld();
-      });
-      const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
-      const positionText = new udviz.THREE.Vector3(objectLayer.position.x - 600 , objectLayer.position.y, objectLayer.position.z + maxHeightLayers);
+    const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
+    let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1200 , objectLayer.position.y, objectLayer.position.z);
+    this.addTextInScene(currentTime.toString(), positionText);
+    currentTime += 3; // Text integration
+
+    for(let i = 3; i < this.temporalLevels.length; i+=3){
+
+      let layer = this.temporalLevels[i].temporalProvider.tilesManager.layer;
+      this.temporalLevels[i].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
+
+      layer = this.temporalLevels[i - 1].temporalProvider.tilesManager.layer;
+      // this.setPositionLayer(layer, maxHeightLayers);
+      this.temporalLevels[i - 1].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
+
+      layer = this.temporalLevels[i - 2].temporalProvider.tilesManager.layer;
+      // this.setPositionLayer(layer, maxHeightLayers);
+      this.temporalLevels[i - 2].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
+      
+      positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1200 , objectLayer.position.y, objectLayer.position.z + temporalHeight);
       this.addTextInScene(currentTime.toString(), positionText);
-      currentTime += 1;
-      maxHeightLayers += 150;
-    });
+      currentTime += 3;
+      temporalHeight += this.delta;
+    }
   } 
 
   /**
@@ -186,7 +195,7 @@ export class SpaceTimeCube {
   }
 
   /**
-   * Display all the transaction lines
+   * Display all the transaction lines between temporal level
    */
   displayAllTransaction(){
     let height = 0;
@@ -253,16 +262,6 @@ export class SpaceTimeCube {
       default:
         break;
     }
-    // if (transactionType == 'construction'){
-    // material = new udviz.THREE.MeshPhongMaterial( {color: 'green', opacity: 1} );
-    // positionTransaction = -75;
-    // const cylinder = new udviz.THREE.Mesh( geometry, material );
-    // cylinder.position.set(cityObject.centroid.x, cityObject.centroid.y, cityObject.centroid.z + positionTransaction + height);
-    // cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
-    // cylinder.updateMatrixWorld();
-    // this.transactionsCylinders.push(cylinder);
-    // this.view3D.getScene().add( cylinder );
-    // }
   }
 
   addCyclinderTransaction(cityObject, material, height){
