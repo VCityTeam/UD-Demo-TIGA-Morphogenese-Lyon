@@ -156,6 +156,37 @@ export class SpaceTimeCubeWindow {
                           </div>`;
     
     viewerDiv.append(legendDiv);
+
+    let checkboxs = document.getElementsByClassName('legend-checkbox');
+    checkboxs[0].addEventListener('change', () => { 
+      if (checkboxs[0].checked){
+        this.spaceTimeCube.checkConstruction = true;
+        this.spaceTimeCube.displayAllTransaction();
+      } else {
+        this.checkConstruction = false;
+        this.spaceTimeCube.removeAllConstructionTransactionsCylinders();
+      }
+    });
+
+    checkboxs[1].addEventListener('change', () => { 
+      if (checkboxs[1].checked){
+        this.spaceTimeCube.checkDestruction = true;
+        this.spaceTimeCube.displayAllTransaction();
+      } else {
+        this.spaceTimeCube.checkDestruction = false;
+        this.spaceTimeCube.removeAllDestructionTransactionsCylinders();
+      }
+    });
+
+    checkboxs[2].addEventListener('change', () => { 
+      if (checkboxs[2].checked){
+        this.spaceTimeCube.checkModification = true;
+        this.spaceTimeCube.displayAllTransaction();
+      } else {
+        this.checkModification = false;
+        this.spaceTimeCube.removeAllModificationTransactionsCylinders();
+      }
+    });
   }
 
   /**
