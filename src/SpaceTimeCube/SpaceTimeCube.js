@@ -172,7 +172,7 @@ export class SpaceTimeCube {
 
     this.removeAllTransactionsCylinders();
     let indexCO = 0;
-    for (let i = 0 ; i < this.temporalProviders.length - 1; i+=3) {
+    for (let i = 0 ; i < this.temporalLevels.length - 1; i+=3) {
 
       const CO = listOfCityObjects[indexCO];
       if (!CO)
@@ -183,14 +183,14 @@ export class SpaceTimeCube {
       let tilesManager;
       let cityObjectBefore;
       if (indexCO != 0){
-        tilesManager = this.temporalProviders[i].tilesManager;
+        tilesManager = this.temporalLevels[i].temporalProvider.tilesManager;
         cityObjectBefore = listOfCityObjects[indexCO - 1];
       }
 
-      let transactionType = this.temporalProviders[i + 1].COStyles.get(this.temporalProviders[i + 1].currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
+      let transactionType = this.temporalLevels[i + 1].temporalProvider.COStyles.get(this.temporalLevels[i + 1].temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
       this.createTransactionLine(transactionType, CO, height, tilesManager, cityObjectBefore);
 
-      transactionType = this.temporalProviders[i + 2].COStyles.get(this.temporalProviders[i + 2].currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
+      transactionType = this.temporalLevels[i + 2].temporalProvider.COStyles.get(this.temporalLevels[i + 2].temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
       this.createTransactionLine(transactionType, CO, height, tilesManager, cityObjectBefore);
 
       height += this.delta;
