@@ -178,8 +178,6 @@ export class SpaceTimeCube {
       if (!CO)
         return;
       
-      // let transactionType = temporalProvider.COStyles.get(this.temporalProviders[i].currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
-      // this.createTransactionLine(transactionType, CO, height);
       let tilesManager;
       let cityObjectBefore;
       if (indexCO != 0){
