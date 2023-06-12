@@ -5,6 +5,7 @@ import { TemporalProvider } from '@ud-viz/browser/src/Component/Widget/Temporal/
 import { SpaceTimeCubeWindow } from './SpaceTimeCube/SpaceTimeCubeWindow.js';
 import { SpaceTimeCube } from './SpaceTimeCube/SpaceTimeCube.js';
 import { TemporalLevel } from './SpaceTimeCube/TemporalLevel.js';
+import { TilesManager } from '@ud-viz/browser/src/Component/Itowns/Itowns';
 
 udvizBrowser.FileUtil.loadMultipleJSON([
   '../assets/config/all_widget.json',
@@ -139,6 +140,33 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   // const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider, sparqlWidgetView);
 
   const spaceTimeCube = new SpaceTimeCube(app.getFrame3DPlanar(), temporalLevels, sparqlWidgetView);
+
+  app.getFrame3DPlanar().layerManager.tilesManagers.forEach(element => {
+    element.addEventListener(
+      TilesManager.EVENT_TILE_LOADED, () => {
+        if (app.getFrame3DPlanar().layerManager.getTotal3DTilesTileCount() == app.getFrame3DPlanar().layerManager.getLoaded3DTilesTileCount()){
+          spaceTimeCube.createSpaceTimeCube();
+
+          //EVENT
+          const clickListener = (event) => {
+            const cityObject = app.getFrame3DPlanar().layerManager.pickCityObject(event);
+
+            if (cityObject){
+              // Get transaction chain
+              sparqlWidgetView.window.sparqlProvider.addEventListener(udvizBrowser.Widget.Server.SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
+                (response) =>
+                  spaceTimeCube.selectionCityObjectSTC(spaceTimeCube.parseSPARQLrequete(response))
+              );
+              sparqlWidgetView.window.getTransactionChain(cityObject.props.gml_id);
+            }
+
+          };
+          const viewerDiv = document.getElementById('viewerDiv');
+          viewerDiv.addEventListener('mousedown', clickListener);   
+        }
+      }
+    );
+  });
 
   const spaceTimeCubeWindow = new SpaceTimeCubeWindow(app.getFrame3DPlanar(), spaceTimeCube);
 

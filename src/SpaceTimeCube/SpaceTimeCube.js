@@ -1,7 +1,6 @@
 /** @format */
 
 import * as udviz from '@ud-viz/browser/src';
-import { TilesManager } from '@ud-viz/browser/src/Component/Itowns/Itowns';
 import { CityObject, CityObjectID } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObject';
 import { CityObjectStyle } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObjectStyle';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
@@ -40,12 +39,14 @@ export class SpaceTimeCube {
     this.checkModification = false;
 
     this.delta = 300;
-    let date = 2009; // hard coded value should be a parameter
+    let date = temporalLevels[0].date; //Older data date
+
+    this.initCOStyle();
+
 
     this.tilesManagersSTC.push(temporalLevels[0].temporalProvider.tilesManager);
     this.tilesDated.push([temporalLevels[0].temporalProvider.tilesManager, date]);
 
-    this.initCOStyle();
 
     for(let i = 3; i < this.temporalLevels.length; i+=3){
       date+=3;
@@ -58,35 +59,6 @@ export class SpaceTimeCube {
       this.tilesDated.push([temporalLevels[i - 2].temporalProvider.tilesManager, date]);
       this.tilesManagersSTC.push(temporalLevels[i - 2].temporalProvider.tilesManager);
     }
-
-    this.view3D.layerManager.tilesManagers.forEach(element => {
-      element.addEventListener(
-        TilesManager.EVENT_TILE_LOADED, () => {
-          if (this.layerManager.getTotal3DTilesTileCount() == this.layerManager.getLoaded3DTilesTileCount()){
-            this.createSpaceTimeCube();
-            // this.displayAllTransaction();
-
-            //EVENT
-            const clickListener = (event) => {
-              const cityObject = this.layerManager.pickCityObject(event);
-
-              if (cityObject){
-                // Get transaction chain
-                sparqlWidgetView.window.sparqlProvider.addEventListener(udviz.Widget.Server.SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
-                  (response) =>
-                    this.selectionCityObjectSTC(this.parseSPARQLrequete(response))
-                );
-                sparqlWidgetView.window.getTransactionChain(cityObject.props.gml_id);
-              }
-
-            };
-            const viewerDiv = document.getElementById('viewerDiv');
-            viewerDiv.addEventListener('mousedown', clickListener);
-              
-          }
-        }
-      );
-    });
   }
 
   /**

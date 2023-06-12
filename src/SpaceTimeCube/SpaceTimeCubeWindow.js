@@ -23,7 +23,7 @@ export class SpaceTimeCubeWindow {
 
     this.olderData = spaceTimeCube.tilesDated[0][1];
 
-    this.rangeData = Math.abs(this.spaceTimeCube.tilesDated[0][1] - this.spaceTimeCube.tilesDated[this.spaceTimeCube.tilesDated.length - 1][1]) / 100
+    this.rangeData = Math.abs(this.spaceTimeCube.tilesDated[0][1] - this.spaceTimeCube.tilesDated[this.spaceTimeCube.tilesDated.length - 1][1]) / 100;
 
     //Tiles dates
     this.millesimes = [];
