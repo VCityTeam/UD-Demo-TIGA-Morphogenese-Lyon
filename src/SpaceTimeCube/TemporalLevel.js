@@ -1,5 +1,4 @@
 import { THREE } from '@ud-viz/browser/src';
-import { TemporalProvider } from '@ud-viz/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider';
 
 export class TemporalLevel {
 

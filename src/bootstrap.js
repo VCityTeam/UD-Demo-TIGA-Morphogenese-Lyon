@@ -118,7 +118,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   );
 
 
-  const sparqlProvider = new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
+  new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
     configs['sparql_server']
   );
 
@@ -168,7 +168,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     );
   });
 
-  const spaceTimeCubeWindow = new SpaceTimeCubeWindow(app.getFrame3DPlanar(), spaceTimeCube);
+  new SpaceTimeCubeWindow(app.getFrame3DPlanar(), spaceTimeCube);
 
 
 });

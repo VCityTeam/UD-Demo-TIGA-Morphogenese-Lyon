@@ -1,13 +1,11 @@
 /** @format */
 
 import * as udviz from '@ud-viz/browser/src';
-import { CityObject, CityObjectID } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObject';
+import { CityObjectID } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObject';
 import { CityObjectStyle } from '@ud-viz/browser/src/Component/Itowns/3DTiles/Model/CityObjectStyle';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { getUriLocalname } from '@ud-viz/browser/src/Component/Widget/Server/SPARQL/Model/URI';
-import { SparqlWidgetView } from '@ud-viz/browser/src/Component/Widget/Server/Server';
-import { TemporalLevel } from './TemporalLevel';
 
 
 export class SpaceTimeCube {
@@ -16,9 +14,8 @@ export class SpaceTimeCube {
    *
    * @param {udviz.Frame3DPlanar} view3D
    * @param {Array<TemporalLevel>} temporalLevels
-   * @param {SparqlWidgetView}  sparqlWidgetView
    */
-  constructor(view3D, temporalLevels, sparqlWidgetView) {
+  constructor(view3D, temporalLevels) {
     this.layerManager = view3D.layerManager;
     this.view3D = view3D;
 
@@ -79,13 +76,10 @@ export class SpaceTimeCube {
 
     for(let i = 3; i < this.temporalLevels.length; i+=3){
 
-      let layer = this.temporalLevels[i].temporalProvider.tilesManager.layer;
       this.temporalLevels[i].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
 
-      layer = this.temporalLevels[i - 1].temporalProvider.tilesManager.layer;
       this.temporalLevels[i - 1].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
 
-      layer = this.temporalLevels[i - 2].temporalProvider.tilesManager.layer;
       this.temporalLevels[i - 2].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
       
       //Set millesime text in the 3D scene

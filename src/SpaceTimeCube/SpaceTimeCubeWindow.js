@@ -1,9 +1,8 @@
 /** @format */
 
-import { SpaceTimeCube } from './SpaceTimeCube';
 import './temporalExtension.css';
 import './ui-space-time-cube.css';
-import { Frame3DPlanar, THREE } from '@ud-viz/browser/src';
+import { THREE } from '@ud-viz/browser/src';
 
 import $ from 'jquery';
 
@@ -14,7 +13,7 @@ export class SpaceTimeCubeWindow {
   /**
    * 
    * @param {Frame3DPlanar} view3D 
-   * @param {SpaceTimeCube} spaceTimeCube 
+   * @param {SpaceTimeCube} SpaceTimeCube 
    */
   constructor(view3D, spaceTimeCube){
     /* Setting the view3D property of the class to the view3D parameter. */
