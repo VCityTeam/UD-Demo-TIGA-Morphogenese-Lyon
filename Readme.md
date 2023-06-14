@@ -1,5 +1,3 @@
-# TO-DO
-- Install doc
 
 # Morphogenèse urbaine : Définition du projet 
 
