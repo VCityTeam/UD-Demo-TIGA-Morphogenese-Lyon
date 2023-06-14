@@ -1,0 +1,74 @@
+{
+  "height": 500,
+  "width": 500,
+  "fontSize": 4,
+  "queries": [
+    {
+      "title": "Select a CityGML Building with ID: 'VILLEURBANNE_00012_23'",
+      "formats": {
+        "graph": "Graph"
+      },
+      "filepath": "./assets/queries/buildingByIDQuery.rq"
+    },
+    {
+      "title": "Select an IFC Slab with ID: '2Q4QvRyEvCrefpeva98EMR'",
+      "formats": {
+        "graph": "Graph"
+      },
+      "filepath": "./assets/queries/ifcSlabByIDQuery.rq"
+    },
+    {
+      "title": "Count how many IFC Slabs are in the graph",
+      "formats": {
+        "table": "Table"
+      },
+      "filepath": "./assets/queries/ifcSlabCountQuery.rq"
+    },
+    {
+      "title": "Select all IFC Slabs in the graph",
+      "formats": {
+        "graph": "Graph"
+      },
+      "filepath": "./assets/queries/ifcSlabQuery.rq"
+    },
+    {
+      "title": "Select several random features within the 2012 version of the city model",
+      "formats": {
+        "graph": "Graph"
+      },
+      "filepath": "./assets/queries/version.rq"
+    }
+  ],
+  "namespaceLabels": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
+    "http://www.w3.org/2000/01/rdf-schema#": "rdfs",
+    "http://www.w3.org/2002/07/owl#": "owl",
+    "http://www.w3.org/2001/XMLSchema#": "xsd",
+    "https://w3id.org/list#": "list",
+    "http://www.w3.org/2004/02/skos/core#": "skos",
+    "http://www.opengis.net/gml#": "gml",
+    "http://www.opengis.net/ont/gml#": "gmlowl",
+    "http://www.opengis.net/def/uom/OGC/1.0/": "units",
+    "http://www.opengis.net/ont/geosparql#": "geo",
+    "http://www.opengis.net/def/function/geosparql/": "geof",
+    "http://strdf.di.uoa.gr/ontology#": "strdf",
+    "http://www.w3.org/1999/xlink#": "xlink",
+    "https://w3id.org/express#": "express",
+    "http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#": "ifc",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/core#": "core",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/building#": "bldg",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/bridge#": "brid",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/landuse#": "luse",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/appearance#": "app",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/relief#": "dem",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/cityfurniture#": "frn",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/generics#": "gen",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/cityobjectgroup#": "grp",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/texturedsurface#": "tex",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/tunnel#": "tun",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/vegetation#": "veg",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/waterbody#": "wtr",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/versioning#": "vers",
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/Workspace/3.0/transactiontypes#": "type"
+  }
+}

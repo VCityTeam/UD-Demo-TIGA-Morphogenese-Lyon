@@ -1,0 +1,59 @@
+
+.ui-space-time-cube{
+    position: absolute;
+    width: 20%;
+    height: auto;
+    bottom: 0%;
+    background-color: rgba(30,30,30,0.9);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: baseline;
+    z-index: 100;
+    
+}
+
+.legend-item {
+    margin-left: 5%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 2%;
+  }
+  
+  .legend-checkbox {
+    appearance: none;
+    background-color: #fafafa;
+    border: 1px solid #cacece;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+    padding: 9px;
+    border-radius: 3px;
+    display: inline-block;
+    position: relative;
+  }
+
+  .legend-checkbox:active, .legend-checkbox:checked:active {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .legend-checkbox:checked {
+    background-color: #e9ecee;
+    border: 1px solid #adb8c0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
+    color: #000000;
+  }
+
+  .legend-checkbox:checked:after {
+    content: '\2714';
+    font-size: 14px;
+    position: absolute;
+    top: 0px;
+    left: 3px;
+    color: #000000;
+  }
+  
+  .legend-label {
+    font-size: 80%;
+    color: white;
+  }
