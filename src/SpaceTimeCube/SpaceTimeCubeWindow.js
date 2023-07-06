@@ -182,7 +182,7 @@ export class SpaceTimeCubeWindow {
         this.spaceTimeCube.checkModification = true;
         this.spaceTimeCube.displayAllTransaction();
       } else {
-        this.checkModification = false;
+        this.spaceTimeCube.checkModification = false;
         this.spaceTimeCube.removeAllModificationTransactionsCylinders();
       }
     });
