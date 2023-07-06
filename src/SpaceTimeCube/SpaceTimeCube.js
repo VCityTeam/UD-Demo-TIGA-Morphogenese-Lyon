@@ -25,8 +25,7 @@ export class SpaceTimeCube {
     this.constructionTransactionsCylinders = [];
     this.modificationTransactionsCylinders = [];
     this.destructionTransactionsCylinders = [];
-
-
+  
     this.tilesManagersSTC = [];
 
     this.tilesDated = [];
@@ -40,10 +39,8 @@ export class SpaceTimeCube {
 
     this.initCOStyle();
 
-
     this.tilesManagersSTC.push(temporalLevels[0].temporalProvider.tilesManager);
     this.tilesDated.push([temporalLevels[0].temporalProvider.tilesManager, date]);
-
 
     for(let i = 3; i < this.temporalLevels.length; i+=3){
       date+=3;
@@ -70,7 +67,7 @@ export class SpaceTimeCube {
     this.temporalLevels[0].temporalProvider.changeVisibleTilesStates();
 
     const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
-    let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1200 , objectLayer.position.y, objectLayer.position.z);
+    let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1200 , objectLayer.position.y, objectLayer.position.z); // This value should be calculated with teh dated data
     this.addTextInScene(currentTime.toString(), positionText);
     currentTime += 3; // Text integration
 
@@ -187,7 +184,7 @@ export class SpaceTimeCube {
    * @param {CityObject} cityObject
    * @param {number} height
    * @param {TilesManager} tilesManages_before
-   * @param {CityObject} CO_before
+   * @param {udviz.CityObject} CO_before
    */
   createTransactionLine(transactionType, cityObject, height, tilesManager_before, CO_before){
     

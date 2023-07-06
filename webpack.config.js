@@ -38,7 +38,7 @@ module.exports = (env) => {
   if (debugBuild)
     plugins.push(
       new HtmlWebpackPlugin({
-        title: 'Demo debug',
+        title: 'VCity-STC',
         filename: 'index.html',
       })
     );

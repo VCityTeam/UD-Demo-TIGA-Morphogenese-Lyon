@@ -142,15 +142,15 @@ export class SpaceTimeCubeWindow {
     legendDiv.innerHTML = `
                           <h1 style="color: white">Legend</h1>
                           <div class="legend-item">
-                            <input class="legend-checkbox" type="checkbox" style="background-color: #009900;" name="scales" checked>
+                            <input class="legend-checkbox" type="checkbox" style="background-color: #009900;" name="scales" >
                             <div class="legend-label">Construction</div>
                           </div>
                           <div class="legend-item">
-                            <input class="legend-checkbox" type="checkbox" style="background-color: #ff0000;" name="scales" checked>
+                            <input class="legend-checkbox" type="checkbox" style="background-color: #ff0000;" name="scales" >
                             <div class="legend-label">Demolition</div>
                           </div>
                           <div class="legend-item">
-                            <input class="legend-checkbox" type="checkbox" style="background-color: #ffd700;" name="scales" checked>
+                            <input class="legend-checkbox" type="checkbox" style="background-color: #ffd700;" name="scales" >
                             <div class="legend-label">Modify</div>
                           </div>`;
     
@@ -162,7 +162,7 @@ export class SpaceTimeCubeWindow {
         this.spaceTimeCube.checkConstruction = true;
         this.spaceTimeCube.displayAllTransaction();
       } else {
-        this.checkConstruction = false;
+        this.spaceTimeCube.checkConstruction = false;
         this.spaceTimeCube.removeAllConstructionTransactionsCylinders();
       }
     });
