@@ -2,6 +2,10 @@
 # Morphogenèse urbaine : Définition du projet 
 
 * [Aim of the project](#aim-of-the-project)
+* [Project stakeholders]()
+ * [Project design and development]()
+ * [Supervision and validation of the project]()
+* [Installing and running this demonstration]()
 
 ![image](./img/exampleCreation.png)
 
@@ -11,42 +15,26 @@ This project is part of action 14 (Think and do Tank) of the [TIGA project](http
 
 The aim of the urban morphogenesis project is to develop a digital tool, in the form of a web interface, to visualise in 3D the evolution of the urban form of the Lyon metropolitan area over the period 1950-2020. The aim is to visualise changes linked to changes in industrial work. The aim will be to observe how the development of industry has transformed the Lyon metropolitan area by showing how urban forms have changed and emerged to deal with the problems associated with changes in work.  
 
-This modelling shows that there is a degree of stability for businesses in the area, but at the same time industry has changed, particularly in the city centre.     
+This modelling shows that there is a degree of stability for businesses in the area, but at the same time industry has changed, particularly in the city centre.    
 
-À l’aide de scénarii, L’utilisateur de la plateforme pourra se déplacer au-dessus de la Métropole à une période choisie et observer les transformations de la ville. Selon son profil, l’utilisateur n’aura pas accès aux mêmes fonctionnalités. Un utilisateur « profane » sera davantage guidé dans son parcours sur la plateforme qu’un utilisateur « expert ». L’interface proposera aux utilisateurs, différentes story map racontant l’histoire d’un territoire précis : son évolution matérielle et immatérielle. Les transformations mises en lumière par cette plateforme numérique seront les suivantes : 
+This project is an opportunity to (re)question 3D temporal visualisations of an area. We want to show not just the variations in buildings, but also their internal functions. Visualising the evolution of the territory in all its forms allows us to become aware of the subtle evolution, or otherwise, of certain districts. It is then that, beyond a simple web interface, a decision-making tool takes shape. 
 
- - Apparition/Disparition des bâtiments de la Métropole de Lyon sur la période considérée ; 
+## Project stakeholders 
+### Project design and development: 
 
- - Transformation de la voirie ; 
+ - [Clarisse Aubert](https://imu.universite-lyon.fr/clarisse-aubert--290503.kjsp?RH=1671099790039), Geomaticien ingeneer, LabEx IMU ; 
 
- - Transformation des usages du bâti ; 
+ - [Corentin Gautier](https://corentingaut.github.io/), PhD student in computer sciences, LabEx IMU, LIRIS ; 
 
- - Description de certains bâtiments/lieux ; 
+ - [Éléonore Gendry](https://fr.linkedin.com/in/eleonore-gendry), PhD student in human sciences, LabEx IMU, EVS. 
 
-- Possibilité de voir la transformation de certains bâtiments/lieux à travers des photographies avant/après ; 
+### Supervision and validation of the project: 
 
- - Sur des quartiers définis : transformation précise de la morphologie urbaine du quartier sur la période considérée (transformations des tracés, des tissus urbains, évolution démographique etc.).  
+- [Gilles Gesquière](https://liris.cnrs.fr/page-membre/gilles-gesquiere), Professor at the University Lyon 2 ; 
 
-Ce projet est l’occasion de (re)questionner les visualisations temporelles 3D d’un territoire. Au-delà des variations des bâtiments, c’est également les fonctions internes à ceux-ci que nous voulons montrer. Visualiser l’évolution du territoire sous toutes ses formes, permet de 
+- [Véronique Tessier](https://imu.universite-lyon.fr/veronique-teissier--283505.kjsp?RH=1671099790039), Project Manager, TIGA – Action 14 ; 
 
-prendre conscience de l’évolution subtile, ou non, de certains quartiers. C’est alors, qu’au-delà d’une simple interface web, se dessine un outil d’aide à la décision, grâce au passé, se dessine le futur. 
-
-## Acteurs du projet  
-### Conception et développement du projet : 
-
- - Clarisse Aubert, Ingénieure en géomatique, LabEx IMU ; 
-
- - Corentin Gautier, Ingénieur d’Étude en développement informatique, LabEx IMU, LIRIS ; 
-
- - Éléonore Gendry, Doctorante en sciences sociales, LabEx IMU, EVS. 
-
-### Encadrement, validation du projet : 
-
-- Gilles Gesquière, Directeur du LabEx IMU ; 
-
-- Véronique Tessier, Chargée de mission, TIGA – Action 14 ; 
-
-- Jean-Yves Toussaint, Responsable Scientifique et Technique du LabEx IMU. 
+- [Jean-Yves Toussaint](https://fr.linkedin.com/in/jean-yves-toussaint-268029b6), Professor at INSA. 
 
 ## Installing and running this demonstration
 ### Strabon-context
