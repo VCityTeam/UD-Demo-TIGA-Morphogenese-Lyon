@@ -1,15 +1,17 @@
 
 # Morphogenèse urbaine : Définition du projet 
 
+* [Aim of the project](#aim-of-the-project)
+
 ![image](./img/exampleCreation.png)
 
-Ce projet s’inscrit dans le cadre de l’action 14 (Think and do Tank) du projet TIGA piloté par la Métropole de Lyon. Il vise à mettre en place un travail partenarial entre deux laboratoires de recherche parties prenantes du Think and do Tank : le laboratoire d’Informatique en Image et Systèmes d’Information (LIRIS) et le laboratoire Environnement, Ville et Société (EVS). S’organisant au sein du LabEx IMU, le projet de morphogenèse urbaine cherche à initier une démarche transdisciplinaire autour de l’urbain en mobilisant les acteurs de la recherche au profit de la collectivité ou des citoyens.  
+This project is part of action 14 (Think and do Tank) of the [TIGA project](https://www.tank-ssi.org/) led by the Metropole of Lyon. It aims to set up a partnership between two research laboratories involved in the Think and do Tank: the Image and Information Systems Computing Laboratory ([LIRIS](https://liris.cnrs.fr/)) and the Environment, City and Society Laboratory ([EVS](https://umr5600.cnrs.fr/fr/accueil/)). Organised within the [LabEx IMU](https://imu.universite-lyon.fr/), the urban morphogenesis project seeks to initiate a cross-disciplinary approach to urban issues by mobilising research players for the benefit of local authorities and citizens.  
 
-## Objectifs du projet   
+## Aim of the project  
 
-L’objectif du projet de morphogenèse urbaine est de développer un outil numérique, sous la forme d’une interface web, permettant de visualiser en 3D l’évolution de la forme urbaine de la Métropole de Lyon sur la période 1950 – 2020. L’objectif est de visualiser les évolutions liées aux mutations du travail industriel. Il s’agira alors d’observer comment l’évolution de l’industrie a transformé la Métropole lyonnaise en montrant comment les formes urbaines ont changé, sont apparues pour régler des problématiques liées aux mutations du travail.  
+The aim of the urban morphogenesis project is to develop a digital tool, in the form of a web interface, to visualise in 3D the evolution of the urban form of the Lyon metropolitan area over the period 1950-2020. The aim is to visualise changes linked to changes in industrial work. The aim will be to observe how the development of industry has transformed the Lyon metropolitan area by showing how urban forms have changed and emerged to deal with the problems associated with changes in work.  
 
-Ces modélisations fourniront des éléments montrant qu’une certaine stabilité de l’entreprise existe sur le territoire mais, qu’en même temps l’industrie a muté, particulièrement en centre-ville.   
+This modelling shows that there is a degree of stability for businesses in the area, but at the same time industry has changed, particularly in the city centre.     
 
 À l’aide de scénarii, L’utilisateur de la plateforme pourra se déplacer au-dessus de la Métropole à une période choisie et observer les transformations de la ville. Selon son profil, l’utilisateur n’aura pas accès aux mêmes fonctionnalités. Un utilisateur « profane » sera davantage guidé dans son parcours sur la plateforme qu’un utilisateur « expert ». L’interface proposera aux utilisateurs, différentes story map racontant l’histoire d’un territoire précis : son évolution matérielle et immatérielle. Les transformations mises en lumière par cette plateforme numérique seront les suivantes : 
 
