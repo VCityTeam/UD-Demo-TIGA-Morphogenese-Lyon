@@ -105,7 +105,7 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     const dataTemporal = new TemporalProvider(
       new $3DTemporalExtension(),
       tilesManagers[i],
-      2009 + indexDate
+      2009
     );
     const dataTemporalConstruction = new TemporalProvider(
       new $3DTemporalExtension(),
@@ -115,10 +115,11 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     const dataTemporalDestruction = new TemporalProvider(
       new $3DTemporalExtension(),
       tilesManagers[i + 2],
-      2009 + indexDate
+      2009 + indexDate + 1
     );
-    temporalLevels.push(new TemporalLevel(dataTemporal, 2009 + i, [dataTemporal, dataTemporalConstruction, dataTemporalDestruction]));
+    temporalLevels.push(new TemporalLevel(2009 + i, [dataTemporal, dataTemporalConstruction, dataTemporalDestruction]));
     indexDate++;
+    console.log(i);
   }
   console.log(temporalLevels);
 

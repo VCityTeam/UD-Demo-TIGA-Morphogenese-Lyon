@@ -7,13 +7,13 @@
     "opacity": "1"
   },
   {
-    "id": "Temporal 2010",
+    "id": "Temporal 2009 Construction",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
     "extensions": ["3DTILES_temporal"],
     "color": "0xFFFFFF"
   },
   {
-    "id": "Temporal 2011",
+    "id": "Temporal 2009 Destruction",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
     "extensions": ["3DTILES_temporal"],
     "color": "0xFFFFFF"
@@ -25,13 +25,13 @@
     "color": "0xFFFFFF"
   },
   {
-    "id": "Temporal 2013",
+    "id": "Temporal 2012 Construction",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
     "extensions": ["3DTILES_temporal"],
     "color": "0xFFFFFF"
   },
   {
-    "id": "Temporal 2014",
+    "id": "Temporal 2012 Destruction",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
     "extensions": ["3DTILES_temporal"],
     "color": "0xFFFFFF"
@@ -43,19 +43,31 @@
     "color": "0xFFFFFF"
   },
   {
-    "id": "Temporal 2016",
+    "id": "Temporal 2015 Construction",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
     "extensions": ["3DTILES_temporal"],
     "color": "0xFFFFFF"
   },
   {
-    "id": "Temporal 2017",
+    "id": "Temporal 2015 Destruction",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
     "extensions": ["3DTILES_temporal"],
     "color": "0xFFFFFF"
   },
   {
     "id": "Temporal 2018",
+    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
+    "extensions": ["3DTILES_temporal"],
+    "color": "0xFFFFFF"
+  },
+  {
+    "id": "Temporal 2018 Construction",
+    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
+    "extensions": ["3DTILES_temporal"],
+    "color": "0xFFFFFF"
+  },
+  {
+    "id": "Temporal 2018 Destruction",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
     "extensions": ["3DTILES_temporal"],
     "color": "0xFFFFFF"

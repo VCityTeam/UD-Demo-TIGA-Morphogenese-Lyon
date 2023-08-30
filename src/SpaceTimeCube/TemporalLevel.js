@@ -7,9 +7,7 @@ export class TemporalLevel {
  * @param {TemporalProvider} temporalProvider 
  * @param {number} date 
  */
-  constructor(temporalProvider, date, temporalProviders){
-
-    this.temporalProvider = temporalProvider; // Mettre une liste peut être
+  constructor(date, temporalProviders){
 
     this.temporalProviders = temporalProviders; //List because we use the Jaillot approach with intermediate state of the data that regroup construction and destruction
 

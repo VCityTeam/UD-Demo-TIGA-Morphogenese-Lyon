@@ -25,36 +25,14 @@ export class SpaceTimeCube {
     this.constructionTransactionsCylinders = [];
     this.modificationTransactionsCylinders = [];
     this.destructionTransactionsCylinders = [];
-  
-    this.tilesManagersSTC = [];
-
-    this.tilesDated = [];
 
     this.checkConstruction = false;
     this.checkDestruction = false;
     this.checkModification = false;
 
     this.delta = 300;// this need to be change
-    let dateOlder = temporalLevels[0].date; //Older data date in years
-    let dateNewest = temporalLevels[temporalLevels.length - 1].date;
 
     this.initCOStyle();
-
-    this.tilesManagersSTC.push(temporalLevels[0].temporalProvider.tilesManager);
-    this.tilesDated.push([temporalLevels[0].temporalProvider.tilesManager, dateOlder]);
-
-    //Initialize list
-    for(let i = 3; i < this.temporalLevels.length; i+=3){
-      dateOlder+=3;
-      this.tilesDated.push([temporalLevels[i].temporalProvider.tilesManager, dateOlder]);
-      this.tilesManagersSTC.push(temporalLevels[i].temporalProvider.tilesManager);
-
-      this.tilesDated.push([temporalLevels[i - 1].temporalProvider.tilesManager, dateOlder]);
-      this.tilesManagersSTC.push(temporalLevels[i - 1].temporalProvider.tilesManager);
-
-      this.tilesDated.push([temporalLevels[i - 2].temporalProvider.tilesManager, dateOlder]);
-      this.tilesManagersSTC.push(temporalLevels[i - 2].temporalProvider.tilesManager);
-    }
   }
 
   /**
@@ -62,29 +40,22 @@ export class SpaceTimeCube {
    */
   createSpaceTimeCube(){
     let temporalHeight = this.delta;
-    let currentTime = this.temporalLevels[0].date; //older millesime data
 
     // Set the color of the ground layer in blank
-    this.tilesManagersSTC[0].styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
-    this.temporalLevels[0].temporalProvider.changeVisibleTilesStates();
+    this.temporalLevels[0].temporalProviders[0].tilesManager.styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
+    this.temporalLevels[0].temporalProviders[0].changeVisibleTilesStates();
 
     const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
-    let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1200 , objectLayer.position.y, objectLayer.position.z); // This value should be calculated with teh dated data
-    this.addTextInScene(currentTime.toString(), positionText);
-    currentTime += 3; // Text integration
+    let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1000 , objectLayer.position.y, objectLayer.position.z); // This value should be calculated with teh dated data
+    this.addTextInScene(this.temporalLevels[0].date.toString(), positionText);
 
-    for(let i = 3; i < this.temporalLevels.length; i+=3){
+    for(let i = 1; i < this.temporalLevels.length; i++){
 
       this.temporalLevels[i].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
-
-      this.temporalLevels[i - 1].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
-
-      this.temporalLevels[i - 2].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
       
       //Set millesime text in the 3D scene
-      positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1200 , objectLayer.position.y, objectLayer.position.z + temporalHeight);
-      this.addTextInScene(currentTime.toString(), positionText);
-      currentTime += 3;
+      positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1000 , objectLayer.position.y, objectLayer.position.z + temporalHeight);
+      this.addTextInScene(this.temporalLevels[i].date.toString(), positionText);
       temporalHeight += this.delta;
     }
   } 
@@ -165,17 +136,12 @@ export class SpaceTimeCube {
    * Display all the transaction lines
    */
   displayAllTransaction(){
-    let height = this.delta;
-    for (let j = 0; j < this.temporalLevels.length - 4; j+=3){
-      // let tiles = this.temporalProviders[j].COStyles.get(this.temporalProviders[j].currentTime);
-      // this.loopTiles(tiles);
-
-      let tiles = this.temporalLevels[j + 1].temporalProvider.COStyles.get(this.temporalLevels[j + 1].temporalProvider.currentTime);
-      this.loopTiles(tiles, height);
-
-      tiles = this.temporalLevels[j + 2].temporalProvider.COStyles.get(this.temporalLevels[j + 2].temporalProvider.currentTime);
-      this.loopTiles(tiles, height);
-
+    let height = 0;
+    for (let i = 0; i < this.temporalLevels.length; i++){
+      this.temporalLevels[i].temporalProviders.forEach(temporalProvider => {
+        let tiles = temporalProvider.COStyles.get(temporalProvider.currentTime);
+        this.loopTiles(tiles, height);
+      });
       height+=this.delta;
     }
   }
@@ -337,7 +303,7 @@ export class SpaceTimeCube {
       cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
       cylinder.updateMatrixWorld();
       this.view3D.getScene().add( cylinder );
-      this.applyStyletoCOTemporalLevel(cityObject, this.tilesManagersSTC[0], this.redFill);
+      this.applyStyletoCOTemporalLevel(cityObject, this.temporalLevels[0].temporalProviders[0].tilesManager, this.redFill);
 
     } else if (transactionType == 'modification' && this.checkModification){
       material = new udviz.THREE.MeshPhongMaterial( {color: 'yellow', opacity: 1} );
@@ -348,7 +314,7 @@ export class SpaceTimeCube {
       cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
       cylinder.updateMatrixWorld();
       this.view3D.getScene().add( cylinder );
-      this.applyStyletoCOTemporalLevel(cityObject, this.tilesManagersSTC[0], this.modifyFill);
+      this.applyStyletoCOTemporalLevel(cityObject, this.temporalLevels[0].temporalProviders[0].tilesManager, this.modifyFill);
 
     } else if (transactionType == 'creation' && this.checkConstruction){
       material = new udviz.THREE.MeshPhongMaterial( {color: 'green', opacity: 1} );
@@ -359,7 +325,7 @@ export class SpaceTimeCube {
       cylinder.setRotationFromAxisAngle(new udviz.THREE.Vector3(1, 0, 0), 1.5708);
       cylinder.updateMatrixWorld();
       this.view3D.getScene().add( cylinder );
-      this.applyStyletoCOTemporalLevel(cityObject, this.tilesManagersSTC[0], this.constructionTransparent);
+      this.applyStyletoCOTemporalLevel(cityObject, this.temporalLevels[0].temporalProviders[0].tilesManager, this.constructionTransparent);
     } 
   }
 
