@@ -95,21 +95,32 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   //Temporal levels
   const temporalLevels = [];
   const tilesManagers = app.getFrame3DPlanar().getLayerManager().tilesManagers;
-  for( let i = 0; i < tilesManagers.length; i++) {
+  let indexDate = 0;
+  for( let i = 0; i < tilesManagers.length - 1; i+=3) {
+    if (!tilesManagers[i].layer.registeredExtensions['3DTILES_temporal'])
+      return;
 
-    if (tilesManagers[i].layer.registeredExtensions['3DTILES_temporal']){
-      let model = new $3DTemporalExtension();
-    
-      const dataTemporal = new TemporalProvider(
-        model,
-        tilesManagers[i],
-        2009 + i
-      );
-
-      const temporalLevel = new TemporalLevel(dataTemporal, 2009 + i);
-      temporalLevels.push(temporalLevel);
-    }
+    // let model = new $3DTemporalExtension();
+  
+    const dataTemporal = new TemporalProvider(
+      new $3DTemporalExtension(),
+      tilesManagers[i],
+      2009 + indexDate
+    );
+    const dataTemporalConstruction = new TemporalProvider(
+      new $3DTemporalExtension(),
+      tilesManagers[i + 1],
+      2009 + indexDate
+    );
+    const dataTemporalDestruction = new TemporalProvider(
+      new $3DTemporalExtension(),
+      tilesManagers[i + 2],
+      2009 + indexDate
+    );
+    temporalLevels.push(new TemporalLevel(dataTemporal, 2009 + i, [dataTemporal, dataTemporalConstruction, dataTemporalDestruction]));
+    indexDate++;
   }
+  console.log(temporalLevels);
 
   // //// CITY OBJECTS PROVIDER
   const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(

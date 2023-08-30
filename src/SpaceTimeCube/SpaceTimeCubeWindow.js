@@ -20,15 +20,15 @@ export class SpaceTimeCubeWindow {
     this.view3D = view3D;
     this.spaceTimeCube = spaceTimeCube;
 
-    this.olderData = spaceTimeCube.tilesDated[0][1];
+    this.olderData = spaceTimeCube.temporalLevels[0].date;
 
-    this.rangeData = Math.abs(this.spaceTimeCube.tilesDated[0][1] - this.spaceTimeCube.tilesDated[this.spaceTimeCube.tilesDated.length - 1][1]) / 100;
+    this.rangeData = Math.abs(this.spaceTimeCube.temporalLevels[0].date - this.spaceTimeCube.temporalLevels[this.spaceTimeCube.temporalLevels.length - 1].date) / 100;
 
     //Tiles dates
     this.millesimes = [];
 
-    for( let i = 0; i < spaceTimeCube.tilesDated.length; i+=3){
-      this.millesimes.push(spaceTimeCube.tilesDated[i][1]);
+    for( let i = 0; i < spaceTimeCube.temporalLevels.length; i++){
+      this.millesimes.push(spaceTimeCube.temporalLevels[i].date);
     }
 
     this.rangeSliderclass = 'range-slider container';
@@ -99,26 +99,30 @@ export class SpaceTimeCubeWindow {
     rangeOne.oninput = () => {
       let valueOne = parseInt(rangeOne.value * rangeData) + olderData;
       let valueTwo = parseInt(rangeTwo.value * rangeData) + olderData;
-      this.spaceTimeCube.tilesDated.forEach(element => {
-        if (element[1] < valueOne || element[1] > valueTwo){
-          element[0].layer.visible = false;
-        }else{
-          element[0].layer.visible = true;
-        }          
-        this.view3D.layerManager.notifyChange();
+      this.spaceTimeCube.temporalLevels.forEach(temporalLevel => {
+        temporalLevel.temporalProviders.forEach(element => {
+          if (temporalLevel.date < valueOne || temporalLevel.date > valueTwo){
+            element.tilesManager.layer.visible = false;
+          }else{
+            element.tilesManager.layer.visible = true;
+          }          
+          this.view3D.layerManager.notifyChange();
+        });
       }); 
     };
 
     rangeTwo.oninput = () => {
       let valueTwo = parseInt(rangeTwo.value * this.rangeData) + olderData;
       let valueOne = parseInt(rangeOne.value * this.rangeData) + olderData;
-      this.spaceTimeCube.tilesDated.forEach(element => {
-        if (element[1] < valueOne || element[1] > valueTwo){
-          element[0].layer.visible = false;
-        }else{
-          element[0].layer.visible = true;
-        }          
-        this.view3D.layerManager.notifyChange();
+      this.spaceTimeCube.temporalLevels.forEach(temporalLevel => {
+        temporalLevel.temporalProviders.forEach(element => {
+          if (temporalLevel.date < valueOne || temporalLevel.date > valueTwo){
+            element.tilesManager.layer.visible = false;
+          }else{
+            element.tilesManager.layer.visible = true;
+          }          
+          this.view3D.layerManager.notifyChange();
+        });
       }); 
     };
 

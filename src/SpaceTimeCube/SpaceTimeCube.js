@@ -34,23 +34,25 @@ export class SpaceTimeCube {
     this.checkDestruction = false;
     this.checkModification = false;
 
-    this.delta = 300;
-    let date = temporalLevels[0].date; //Older data date
+    this.delta = 300;// this need to be change
+    let dateOlder = temporalLevels[0].date; //Older data date in years
+    let dateNewest = temporalLevels[temporalLevels.length - 1].date;
 
     this.initCOStyle();
 
     this.tilesManagersSTC.push(temporalLevels[0].temporalProvider.tilesManager);
-    this.tilesDated.push([temporalLevels[0].temporalProvider.tilesManager, date]);
+    this.tilesDated.push([temporalLevels[0].temporalProvider.tilesManager, dateOlder]);
 
+    //Initialize list
     for(let i = 3; i < this.temporalLevels.length; i+=3){
-      date+=3;
-      this.tilesDated.push([temporalLevels[i].temporalProvider.tilesManager, date]);
+      dateOlder+=3;
+      this.tilesDated.push([temporalLevels[i].temporalProvider.tilesManager, dateOlder]);
       this.tilesManagersSTC.push(temporalLevels[i].temporalProvider.tilesManager);
 
-      this.tilesDated.push([temporalLevels[i - 1].temporalProvider.tilesManager, date]);
+      this.tilesDated.push([temporalLevels[i - 1].temporalProvider.tilesManager, dateOlder]);
       this.tilesManagersSTC.push(temporalLevels[i - 1].temporalProvider.tilesManager);
 
-      this.tilesDated.push([temporalLevels[i - 2].temporalProvider.tilesManager, date]);
+      this.tilesDated.push([temporalLevels[i - 2].temporalProvider.tilesManager, dateOlder]);
       this.tilesManagersSTC.push(temporalLevels[i - 2].temporalProvider.tilesManager);
     }
   }
