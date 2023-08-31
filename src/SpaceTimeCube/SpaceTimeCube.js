@@ -257,7 +257,6 @@ export class SpaceTimeCube {
       transactionsFromGmlId.set(currentTime + 2, gml_id);
       currentTime += 3;
     });
-    console.log(transactionsFromGmlId);
     return this.getCityObjectFromListOfGmlId(transactionsFromGmlId);
   }
   

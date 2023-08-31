@@ -101,12 +101,11 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     new $3DTemporalExtension(),
     tilesManagers[0],
     2009
-  )])); //Initialize ground temporal layer]));
+  )])); //Initialize ground temporal layer
+
   for( let i = 1; i < tilesManagers.length - 1; i+=3) {
     if (!tilesManagers[i].layer.registeredExtensions['3DTILES_temporal'])
       return;
-
-    // let model = new $3DTemporalExtension();
   
     const dataTemporal = new TemporalProvider(
       new $3DTemporalExtension(),
@@ -125,7 +124,6 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     );
     temporalLevels.push(new TemporalLevel(2009 + i + 2, [dataTemporal, dataTemporalConstruction, dataTemporalDestruction]));
   }
-  console.log(temporalLevels);
 
   // //// CITY OBJECTS PROVIDER
   const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
