@@ -107,9 +107,9 @@ export class SpaceTimeCube {
     //Create lines
     let height = this.delta;
 
-    this.removeAllTransactionsCylinders();
+    this.cleanAllTransactionDisplayed();
     let indexCO = 0;
-    for (let i = 0 ; i < this.temporalLevels.length - 1; i+=3) {
+    for (let i = 1 ; i < this.temporalLevels.length - 1; i++) {
 
       const CO = listOfCityObjects[indexCO];
       if (!CO)
@@ -117,16 +117,16 @@ export class SpaceTimeCube {
       
       let tilesManager;
       let cityObjectBefore;
-      if (indexCO != 0){
-        tilesManager = this.temporalLevels[i].temporalProvider.tilesManager;
-        cityObjectBefore = listOfCityObjects[indexCO - 1];
-      }
-
-      let transactionType = this.temporalLevels[i + 1].temporalProvider.COStyles.get(this.temporalLevels[i + 1].temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
-      this.createTransactionLine(transactionType, CO, height, tilesManager, cityObjectBefore);
-
-      transactionType = this.temporalLevels[i + 2].temporalProvider.COStyles.get(this.temporalLevels[i + 2].temporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
-      this.createTransactionLine(transactionType, CO, height, tilesManager, cityObjectBefore);
+      this.temporalLevels[i].temporalProviders.forEach(TemporalProvider => {
+        if (indexCO != 0){
+          tilesManager = this.temporalLevels[i - 1].temporalProviders[0].tilesManager;
+          console.log(TemporalProvider);
+          cityObjectBefore = listOfCityObjects[indexCO - 1];
+        }
+  
+        let transactionType = TemporalProvider.COStyles.get(TemporalProvider.currentTime).get(CO.cityObjectId.tileId)[CO.cityObjectId.batchId];
+        this.createTransactionLine(transactionType, CO, height, tilesManager, cityObjectBefore);
+      });
 
       height += this.delta;
       indexCO++;
@@ -181,11 +181,11 @@ export class SpaceTimeCube {
         material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 1} );
         this.addCyclinderTransaction(cityObject, material, height);
         break;
-      case 'hide':
-        material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0} );
-        material.transparent = true;
-        this.addCyclinderTransaction(cityObject, material, height);
-        break;
+      // case 'hide':
+      //   material = new udviz.THREE.MeshPhongMaterial( {color: 'white', opacity: 0} );
+      //   material.transparent = true;
+      //   this.addCyclinderTransaction(cityObject, material, height);
+      //   break;
       default:
         break;
     }
@@ -332,12 +332,19 @@ export class SpaceTimeCube {
 
 
 
-  removeAllTransactionsCylinders(){
+  cleanAllTransactionDisplayed(){
     if (this.transactionsCylinders){
       this.transactionsCylinders.forEach(cylinder => {
         this.view3D.getScene().remove(cylinder);
       });
     }
+
+    //Clean style apply on selection
+    this.temporalLevels.forEach(temporalLevel => {
+      temporalLevel.applyStyleTemporalProvidersWithCurrentTime();
+    });
+
+    //Remove cylinder transactions
     this.removeAllConstructionTransactionsCylinders();
     this.removeAllDestructionTransactionsCylinders();
     this.removeAllModificationTransactionsCylinders();

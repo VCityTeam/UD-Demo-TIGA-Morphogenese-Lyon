@@ -4,8 +4,9 @@ export class TemporalLevel {
 
   /**
  * 
- * @param {TemporalProvider} temporalProvider 
+ * 
  * @param {number} date 
+ * @param {Array<TemporalProvider>} temporalProvider 
  */
   constructor(date, temporalProviders){
 
@@ -31,6 +32,12 @@ export class TemporalLevel {
         object.boundingVolume.box.getCenter(centroidBB);
         object.updateMatrixWorld();
       });
+    });
+  }
+
+  applyStyleTemporalProvidersWithCurrentTime(){
+    this.temporalProviders.forEach( temporalProvider => {
+      temporalProvider.changeVisibleTilesStates();
     });
   }
 }
