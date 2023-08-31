@@ -44,13 +44,13 @@ export class SpaceTimeCube {
     // Set the color of the ground layer in blank
     this.temporalLevels[0].temporalProviders[0].tilesManager.styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
     this.temporalLevels[0].temporalProviders[0].changeVisibleTilesStates();
-
+    
     const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
     let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1000 , objectLayer.position.y, objectLayer.position.z); // This value should be calculated with teh dated data
     this.addTextInScene(this.temporalLevels[0].date.toString(), positionText);
-
+    
     for(let i = 1; i < this.temporalLevels.length; i++){
-
+      
       this.temporalLevels[i].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
       
       //Set millesime text in the 3D scene
@@ -58,6 +58,7 @@ export class SpaceTimeCube {
       this.addTextInScene(this.temporalLevels[i].date.toString(), positionText);
       temporalHeight += this.delta;
     }
+    
   } 
 
   /**
@@ -344,6 +345,8 @@ export class SpaceTimeCube {
 
   removeAllConstructionTransactionsCylinders(){
     if (this.constructionTransactionsCylinders){
+      this.temporalLevels[0].temporalProviders[0].tilesManager.styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
+      this.temporalLevels[0].temporalProviders[0].changeVisibleTilesStates();
       this.constructionTransactionsCylinders.forEach(cylinder => {
         this.view3D.getScene().remove(cylinder);
       });
@@ -352,6 +355,8 @@ export class SpaceTimeCube {
 
   removeAllDestructionTransactionsCylinders(){
     if (this.destructionTransactionsCylinders){
+      this.temporalLevels[0].temporalProviders[0].tilesManager.styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
+      this.temporalLevels[0].temporalProviders[0].changeVisibleTilesStates();
       this.destructionTransactionsCylinders.forEach(cylinder => {
         this.view3D.getScene().remove(cylinder);
       });
@@ -360,6 +365,8 @@ export class SpaceTimeCube {
 
   removeAllModificationTransactionsCylinders(){
     if (this.modificationTransactionsCylinders){
+      this.temporalLevels[0].temporalProviders[0].tilesManager.styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
+      this.temporalLevels[0].temporalProviders[0].changeVisibleTilesStates();
       this.modificationTransactionsCylinders.forEach(cylinder => {
         this.view3D.getScene().remove(cylinder);
       });

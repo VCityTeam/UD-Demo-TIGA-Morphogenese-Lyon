@@ -92,11 +92,17 @@ udvizBrowser.FileUtil.loadMultipleJSON([
   );
   app.addWidgetView('layerChoice', layerChoice);
 
+    
   //Temporal levels
   const temporalLevels = [];
   const tilesManagers = app.getFrame3DPlanar().getLayerManager().tilesManagers;
-  let indexDate = 0;
-  for( let i = 0; i < tilesManagers.length - 1; i+=3) {
+
+  temporalLevels.push(new TemporalLevel(2009, [  new TemporalProvider(
+    new $3DTemporalExtension(),
+    tilesManagers[0],
+    2009
+  )])); //Initialize ground temporal layer]));
+  for( let i = 1; i < tilesManagers.length - 1; i+=3) {
     if (!tilesManagers[i].layer.registeredExtensions['3DTILES_temporal'])
       return;
 
@@ -105,21 +111,19 @@ udvizBrowser.FileUtil.loadMultipleJSON([
     const dataTemporal = new TemporalProvider(
       new $3DTemporalExtension(),
       tilesManagers[i],
-      2009
+      2009 + i
     );
     const dataTemporalConstruction = new TemporalProvider(
       new $3DTemporalExtension(),
       tilesManagers[i + 1],
-      2009 + indexDate
+      2009 + i + 1
     );
     const dataTemporalDestruction = new TemporalProvider(
       new $3DTemporalExtension(),
       tilesManagers[i + 2],
-      2009 + indexDate + 1
+      2009 + i + 2
     );
-    temporalLevels.push(new TemporalLevel(2009 + i, [dataTemporal, dataTemporalConstruction, dataTemporalDestruction]));
-    indexDate++;
-    console.log(i);
+    temporalLevels.push(new TemporalLevel(2009 + i + 2, [dataTemporal, dataTemporalConstruction, dataTemporalDestruction]));
   }
   console.log(temporalLevels);
 
