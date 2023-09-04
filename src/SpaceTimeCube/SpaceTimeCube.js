@@ -15,7 +15,7 @@ export class SpaceTimeCube {
    * @param {udviz.Frame3DPlanar} view3D
    * @param {Array<TemporalLevel>} temporalLevels
    */
-  constructor(view3D, temporalLevels) {
+  constructor(view3D, temporalLevels, delta) {
     this.layerManager = view3D.layerManager;
     this.view3D = view3D;
 
@@ -30,33 +30,39 @@ export class SpaceTimeCube {
     this.checkDestruction = false;
     this.checkModification = false;
 
-    this.delta = 300;// this need to be change
+    this.delta = delta;// this need to be change
 
-    this.initCOStyle();
+    // this.initCOStyle();
   }
 
   /**
    * Create Space time cube representation
    */
-  createSpaceTimeCube(){
+  createSpaceTimeCube(initialDate){
     let temporalHeight = this.delta;
+    let date = initialDate;
+
+    //Initialize level 0
+    this.temporalLevels[0].update(initialDate);
+    const initialPosition = this.temporalLevels[0].temporalWrappers[0].temporalC3DTilesLayer.root.children[0].position;
 
     // Set the color of the ground layer in blank
-    this.temporalLevels[0].temporalProviders[0].tilesManager.styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
-    this.temporalLevels[0].temporalProviders[0].changeVisibleTilesStates();
+    // this.temporalLevels[0].temporalWrappers[0].tilesManager.styleManager.registeredStyles.noTransaction.materialProps.opacity = 1;
+    // this.temporalLevels[0].temporalProviders[0].changeVisibleTilesStates();
     
-    const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0];
-    let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1000 , objectLayer.position.y, objectLayer.position.z); // This value should be calculated with teh dated data
-    this.addTextInScene(this.temporalLevels[0].date.toString(), positionText);
+    // const objectLayer = this.layerManager.tilesManagers[0].tiles[0].layer.root.children[0]; //existe plus
+    // let positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1000 , objectLayer.position.y, objectLayer.position.z); // This value should be calculated with teh dated data
+    // this.addTextInScene(this.temporalLevels[0].date.toString(), positionText);
     
     for(let i = 1; i < this.temporalLevels.length; i++){
-      
-      this.temporalLevels[i].setPosition(new udviz.THREE.Vector3(0, 0, temporalHeight));
+      this.temporalLevels[i].setPosition(new udviz.THREE.Vector3(0, 0, initialPosition.z + temporalHeight));
+      this.temporalLevels[i].update(date);
       
       //Set millesime text in the 3D scene
-      positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1000 , objectLayer.position.y, objectLayer.position.z + temporalHeight);
-      this.addTextInScene(this.temporalLevels[i].date.toString(), positionText);
+      // positionText = new udviz.THREE.Vector3(objectLayer.position.x - 1000 , objectLayer.position.y, objectLayer.position.z + temporalHeight);
+      // this.addTextInScene(this.temporalLevels[i].date.toString(), positionText);
       temporalHeight += this.delta;
+      date+=3;
     }
     
   } 
@@ -239,26 +245,26 @@ export class SpaceTimeCube {
   }
   
 
-  /**
-   * 
-   * @param {JSON} query 
-   * @returns {Map} Map of transactions chain
-   */
-  parseSPARQLrequete(query) {
-    let transactionsFromGmlId = new Map(); 
-    const allgmlID = Object.entries(query.results.bindings[0]);
-    let currentTime = 2009;
-    allgmlID.forEach( element => {
-      const gml_id = getUriLocalname(element[1].value);
-      transactionsFromGmlId.set(currentTime, gml_id);
-      if (currentTime == 2015) //To-Do hard coded value / need to be a variable
-        return;
-      transactionsFromGmlId.set(currentTime + 1, gml_id);
-      transactionsFromGmlId.set(currentTime + 2, gml_id);
-      currentTime += 3;
-    });
-    return this.getCityObjectFromListOfGmlId(transactionsFromGmlId);
-  }
+  // /**
+  //  * 
+  //  * @param {JSON} query 
+  //  * @returns {Map} Map of transactions chain
+  //  */
+  // parseSPARQLrequete(query) {
+  //   let transactionsFromGmlId = new Map(); 
+  //   const allgmlID = Object.entries(query.results.bindings[0]);
+  //   let currentTime = 2009;
+  //   allgmlID.forEach( element => {
+  //     const gml_id = getUriLocalname(element[1].value);
+  //     transactionsFromGmlId.set(currentTime, gml_id);
+  //     if (currentTime == 2015) //To-Do hard coded value / need to be a variable
+  //       return;
+  //     transactionsFromGmlId.set(currentTime + 1, gml_id);
+  //     transactionsFromGmlId.set(currentTime + 2, gml_id);
+  //     currentTime += 3;
+  //   });
+  //   return this.getCityObjectFromListOfGmlId(transactionsFromGmlId);
+  // }
   
   /**
    * Get all CityObject with gml ID
@@ -275,20 +281,20 @@ export class SpaceTimeCube {
     return listCOTransaction;
   }
 
-  loopTiles(tiles, height) {
-    for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
-      const tileDisplayStates = tiles.get(tileId + 1);
-      for (let i = 0; i < tileDisplayStates.length; i++) {
-        this.view3D.layerManager.tilesManagers.forEach( tileManager => {
-          const cityObject = tileManager.getCityObject(new CityObjectID(tileId + 1, i));
-          // tileManager.tiles[tileId]
-          if (cityObject){
-            this.createAllTransactionsLine(tileDisplayStates[i], cityObject, height);   
-          }
-        });
-      }
-    }
-  }
+  // loopTiles(tiles, height) {
+  //   for ( let tileId = 0 ; tileId < tiles.size; tileId++) {
+  //     const tileDisplayStates = tiles.get(tileId + 1);
+  //     for (let i = 0; i < tileDisplayStates.length; i++) {
+  //       this.view3D.layerManager.tilesManagers.forEach( tileManager => {
+  //         const cityObject = tileManager.getCityObject(new CityObjectID(tileId + 1, i));
+  //         // tileManager.tiles[tileId]
+  //         if (cityObject){
+  //           this.createAllTransactionsLine(tileDisplayStates[i], cityObject, height);   
+  //         }
+  //       });
+  //     }
+  //   }
+  // }
 
   createAllTransactionsLine(transactionType, cityObject, height){
     let material;
@@ -390,43 +396,43 @@ export class SpaceTimeCube {
     tilesManager.applyStyles(); 
   }
 
-  initCOStyle(){
-    //Ground layer
-    this.whiteStyle = new CityObjectStyle({
-      materialProps: { opacity: 1, color: 0xffffff },
-    });
+  // initCOStyle(){
+  //   //Ground layer
+  //   this.whiteStyle = new CityObjectStyle({
+  //     materialProps: { opacity: 1, color: 0xffffff },
+  //   });
   
-    this.view3D.layerManager.registerStyle(
-      'whiteGround',
-      this.whiteStyle
-    );
+  //   this.view3D.layerManager.registerStyle(
+  //     'whiteGround',
+  //     this.whiteStyle
+  //   );
   
-    //Fill style
-    this.redFill = new CityObjectStyle({
-      materialProps: { opacity: 1, color: 0xff0000 },
-    });
+  //   //Fill style
+  //   this.redFill = new CityObjectStyle({
+  //     materialProps: { opacity: 1, color: 0xff0000 },
+  //   });
   
-    this.view3D.layerManager.registerStyle(
-      'redFill',
-      this.redFill
-    );
+  //   this.view3D.layerManager.registerStyle(
+  //     'redFill',
+  //     this.redFill
+  //   );
   
-    this.modifyFill = new CityObjectStyle({
-      materialProps: { opacity: 1, color: 0xffd700 },
-    });
+  //   this.modifyFill = new CityObjectStyle({
+  //     materialProps: { opacity: 1, color: 0xffd700 },
+  //   });
   
-    this.view3D.layerManager.registerStyle(
-      'modifyFill',
-      this.modifyFill
-    );
+  //   this.view3D.layerManager.registerStyle(
+  //     'modifyFill',
+  //     this.modifyFill
+  //   );
   
-    this.constructionTransparent = new CityObjectStyle({
-      materialProps: { opacity: 0.5, color: 'green' },
-    });
+  //   this.constructionTransparent = new CityObjectStyle({
+  //     materialProps: { opacity: 0.5, color: 'green' },
+  //   });
   
-    this.view3D.layerManager.registerStyle(
-      'constructionTransparent',
-      this.constructionTransparent
-    );
-  }
+  //   this.view3D.layerManager.registerStyle(
+  //     'constructionTransparent',
+  //     this.constructionTransparent
+  //   );
+  // }
 }

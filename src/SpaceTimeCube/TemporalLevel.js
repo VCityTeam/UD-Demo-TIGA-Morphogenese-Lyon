@@ -6,11 +6,11 @@ export class TemporalLevel {
  * 
  * 
  * @param {number} date 
- * @param {Array<TemporalProvider>} temporalProvider 
+ * @param {Array<TemporalProvider>} temporalWrappers 
  */
-  constructor(date, temporalProviders){
+  constructor(date, temporalWrappers){
 
-    this.temporalProviders = temporalProviders; //List because we use the Jaillot approach with intermediate state of the data that regroup construction and destruction
+    this.temporalWrappers = temporalWrappers; //List because we use the Jaillot approach with intermediate state of the data that regroup construction and destruction
 
     this.date = date;
         
@@ -24,10 +24,9 @@ export class TemporalLevel {
   setPosition(position){
 
     // Set layer
-    this.temporalProviders.forEach(temporalProvider => {
-      const layer = temporalProvider.tilesManager.layer;
-      layer.root.children.forEach(object => {
-        object.position.z += position.z;
+    this.temporalWrappers.forEach(temporalWrapper => {
+      temporalWrapper.temporalC3DTilesLayer.root.children.forEach(object => {
+        object.position.z = position.z;
         const centroidBB = new THREE.Vector3();
         object.boundingVolume.box.getCenter(centroidBB);
         object.updateMatrixWorld();
@@ -39,5 +38,12 @@ export class TemporalLevel {
     this.temporalProviders.forEach( temporalProvider => {
       temporalProvider.changeVisibleTilesStates();
     });
+  }
+
+  update(date){
+    this.date = date;
+    for(let i = 0; i < this.temporalWrappers.length; i++){
+      this.temporalWrappers[i].update(date + i);
+    }
   }
 }

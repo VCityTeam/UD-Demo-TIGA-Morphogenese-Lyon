@@ -3,8 +3,8 @@ import * as udvizBrowser  from '@ud-viz/browser';
 // import { $3DTemporalExtension } from '@ud-viz/browser/src/Component/Widget/Temporal/Model/3DTemporalExtension';
 // import { TemporalProvider } from '@ud-viz/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider';
 // import { SpaceTimeCubeWindow } from './SpaceTimeCube/SpaceTimeCubeWindow.js';
-// import { SpaceTimeCube } from './SpaceTimeCube/SpaceTimeCube.js';
-// import { TemporalLevel } from './SpaceTimeCube/TemporalLevel.js';
+import { SpaceTimeCube } from './SpaceTimeCube/SpaceTimeCube.js';
+import { TemporalLevel } from './SpaceTimeCube/TemporalLevel.js';
 // import { TilesManager } from '@ud-viz/browser/src/Component/Itowns/Itowns';
 
 udvizBrowser.loadMultipleJSON([
@@ -111,24 +111,56 @@ udvizBrowser.loadMultipleJSON([
     frame3DPlanar.itownsView
   );
 
+  const temporalLevels = [];
   const temporalWrappers = [];
   
   const C3DTileslayers = frame3DPlanar.itownsView.getLayers().filter(el => el.isC3DTilesLayer && el.registeredExtensions
     .isExtensionRegistered('3DTILES_temporal'));
-  
-  for(let i = 0; i < C3DTileslayers.length; i++){
-    const temporalWrapper = new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(C3DTileslayers[i]);
-    temporalWrappers.push(temporalWrapper);
-    C3DTileslayers[i].addEventListener(
+
+  // frame3DPlanar.itownsView
+  //   .getLayers()
+  //   .filter(el => el.isC3DTilesLayer && el.registeredExtensions
+  //     .isExtensionRegistered('3DTILES_temporal'))
+  //   .forEach((c3DTilesLayer) => {
+  //     c3DTilesLayer.addEventListener(
+  //       udvizBrowser.itowns.C3DTILES_LAYER_EVENTS
+  //         .ON_TILE_CONTENT_LOADED,
+  //       ({ tileContent }) => {
+  //         const temporalWrapper = new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(tileContent);
+  //         temporalWrapper.update(temporalWrapper.knownDatesForAllTiles[i]);
+  //         temporalWrappers.push(temporalWrapper);
+  //       }
+  //     );
+  //   });
+  temporalLevels.push(new TemporalLevel(null,
+    [new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(C3DTileslayers[0])]));
+
+  for(let i = 1; i < C3DTileslayers.length - 1; i+=3){
+    // const temporalWrapper = new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(C3DTileslayers[i]);
+    temporalLevels.push(new TemporalLevel(null, 
+      [new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(C3DTileslayers[i]),
+        new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(C3DTileslayers[i + 1]),
+        new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(C3DTileslayers[i + 2])]));
+  }
+
+  console.log(temporalLevels);
+
+  const spaceTimeCube = new SpaceTimeCube(frame3DPlanar, temporalLevels, 300);
+
+  C3DTileslayers.forEach((c3DTileslayer) => {
+    c3DTileslayer.addEventListener(
       udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
       () => {
-        temporalWrapper.update(temporalWrapper.knownDatesForAllTiles[i]);
-        frame3DPlanar.itownsView.notifyChange();
+        let date = temporalLevels[0].temporalWrappers[0].knownDatesForAllTiles[0];
+        if(date && c3DTileslayer.root.children[0]){
+          spaceTimeCube.createSpaceTimeCube(date);
+        }
       }
     );
-  }
-  console.log(temporalWrappers);
-  
+  });
+    
+
+
   //     temporalDateSelector.
   // // //// SPARQL MODULE
   // const sparqlWidget = new udvizBrowser.Widget.Server.SparqlQueryWindow(
@@ -160,15 +192,29 @@ udvizBrowser.loadMultipleJSON([
   //   temporalDateSelector.domElement
   // );
     
-  //Temporal levels
-  // const temporalLevels = [];
-  // const tilesManagers = app.getFrame3DPlanar().getLayerManager().tilesManagers;
+    
+  // C3DTileslayers.forEach( C3DTilesLayer => {
+  //   const temporalWrapper = new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(C3DTilesLayer);
+  //   C3DTilesLayer.update = udvizBrowser.itowns.process3dTilesNode( () => {
+  //     // il faut update quand y a pas de styleDate
+  //     if (temporalWrapper.styleDate != null){
 
-  // temporalLevels.push(new TemporalLevel(2009, [  new TemporalProvider(
-  //   new $3DTemporalExtension(),
-  //   tilesManagers[0],
-  //   2009
-  // )])); //Initialize ground temporal layer
+  //       console.log(temporalWrapper.styleDate);
+  //     }
+
+  //   });
+  // });
+
+  // // temporalLevels.push(new TemporalLevel(2009, [  new TemporalProvider(
+  // //   new $3DTemporalExtension(),
+  // //   tilesManagers[0],
+  // //   2009
+  // // )])); //Initialize ground temporal layer
+
+  // for (let i = 1; i < temporalWrappers.length - 1; i +=3){
+  //   temporalLevels.push(new TemporalLevel(temporalWrappers[i + 2].styleDate, [temporalWrappers[i], temporalWrappers[i + 1], temporalWrappers[i + 2]]));
+  //   console.log(temporalWrappers);
+  // }
 
   // for( let i = 1; i < tilesManagers.length - 1; i+=3) {
   //   if (!tilesManagers[i].layer.registeredExtensions['3DTILES_temporal'])
@@ -215,6 +261,7 @@ udvizBrowser.loadMultipleJSON([
   // // const temporalExtension = new LayerExtension(app.getFrame3DPlanar(), listTemporalProvider, sparqlWidgetView);
 
   // const spaceTimeCube = new SpaceTimeCube(app.getFrame3DPlanar(), temporalLevels, sparqlWidgetView);
+
 
   // app.getFrame3DPlanar().layerManager.tilesManagers.forEach(element => {
   //   element.addEventListener(
