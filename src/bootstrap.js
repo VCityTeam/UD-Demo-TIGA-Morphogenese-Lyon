@@ -100,12 +100,7 @@ udvizBrowser.loadMultipleJSON([
   // );
 
   // TEMPORAL MODULE
-  // const temporalDateSelector =
-  //   new udvizBrowser.Widget.Temporal.DateSelector(
-  //     frame3DPlanar.itownsView,
-  //     configs['temporal']
-  //   );
-
+  
   // temporalDateSelector.domElement.style.zIndex = 2;
   // temporalDateSelector.domElement.style.position = 'relative';
   // frame3DPlanar.domElementUI.appendChild(
@@ -116,18 +111,54 @@ udvizBrowser.loadMultipleJSON([
     frame3DPlanar.itownsView
   );
 
-  // TEMPORAL MODULE
-  const temporalDateSelector =
-  new udvizBrowser.Widget.Temporal.DateSelector(
-    frame3DPlanar.itownsView,
-    configs['temporal']
-  );
+  const temporalWrappers = [];
+  
+  const C3DTileslayers = frame3DPlanar.itownsView.getLayers().filter(el => el.isC3DTilesLayer && el.registeredExtensions
+    .isExtensionRegistered('3DTILES_temporal'));
+  
+  for(let i = 0; i < C3DTileslayers.length; i++){
+    const temporalWrapper = new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(C3DTileslayers[i]);
+    temporalWrappers.push(temporalWrapper);
+    C3DTileslayers[i].addEventListener(
+      udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+      () => {
+        temporalWrapper.update(temporalWrapper.knownDatesForAllTiles[i]);
+        frame3DPlanar.itownsView.notifyChange();
+      }
+    );
+  }
+  console.log(temporalWrappers);
+  
+  //     temporalDateSelector.
+  // // //// SPARQL MODULE
+  // const sparqlWidget = new udvizBrowser.Widget.Server.SparqlQueryWindow(
+  //   new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
+  //     configs['sparql_server']
+  //   ),
+  //   frame3DPlanar.itownsView,
+  //   configs['sparql_widget']
+  // );
+  // const parent = document.createElement('div');
+  // parent.style.backgroundColor = 'gray';
+  // parent.style.width = 'fit-content';
+  // parent.style.position = 'relative';
+  // parent.style.zIndex = 2;
+  // parent.appendChild(sparqlWidget.domElement);
 
-  temporalDateSelector.domElement.style.zIndex = 2;
-  temporalDateSelector.domElement.style.position = 'relative';
-  frame3DPlanar.domElementUI.appendChild(
-    temporalDateSelector.domElement
-  );
+  // frame3DPlanar.domElementUI.appendChild(parent);
+
+  // TEMPORAL MODULE
+  // const temporalDateSelector =
+  // new udvizBrowser.Widget.Temporal.DateSelector(
+  //   frame3DPlanar.itownsView,
+  //   configs['temporal']
+  // );
+
+  // temporalDateSelector.domElement.style.zIndex = 2;
+  // temporalDateSelector.domElement.style.position = 'relative';
+  // frame3DPlanar.domElementUI.appendChild(
+  //   temporalDateSelector.domElement
+  // );
     
   //Temporal levels
   // const temporalLevels = [];
